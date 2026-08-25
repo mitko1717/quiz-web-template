@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/button";
 import type { DifficultyLevel, DifficultyProgressionResponse } from "@/lib/types";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 
 const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
 
@@ -108,7 +108,7 @@ export function DifficultySelector({ value, onChange, progression, disabled = fa
           <div className={innerClassName}>
             {LEVELS.map((level) => {
               const active = value === level;
-              const levelData = progression?.levels.find((entry) => entry.difficultyLevel === level);
+              const levelData = progression?.levels.find((e) => e.difficultyLevel === level);
               const unlocked = levelData?.unlocked ?? level === 1;
               const buttonDisabled = disabled || !unlocked;
               const towards = levelData?.correctAnswersTowardsUnlock ?? 0;

@@ -48,22 +48,20 @@ async function proxy(request: NextRequest, path: string[]): Promise<NextResponse
 
   const targetUrl = buildTargetUrl(request, path);
 
-  const response = await fetch(targetUrl, {
+  const res = await fetch(targetUrl, {
     method,
     headers: buildForwardHeaders(request),
     body: hasBody ? await request.arrayBuffer() : undefined,
     cache: "no-store",
   });
 
-  const responseHeaders = new Headers(response.headers);
+  const { status, statusText, headers } = res;
+
+  const responseHeaders = new Headers(headers);
   responseHeaders.delete("content-encoding");
   responseHeaders.delete("content-length");
 
-  return new NextResponse(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers: responseHeaders,
-  });
+  return new NextResponse(res.body, { status, statusText, headers: responseHeaders });
 }
 
 type RouteContext = {

@@ -6,7 +6,7 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import { Button } from "@/components/button";
 import { SectionLabel } from "@/components/SectionLabel";
 import { useAuthContext } from "@/components/AuthGate";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTelegram } from "@/providers/TelegramProvider";
 

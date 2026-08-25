@@ -5,7 +5,7 @@ import Script from "next/script";
 import { useAuthContext } from "@/components/AuthGate";
 import { Button } from "@/components/button";
 import { BodyText, SectionLabel } from "@/components/SectionLabel";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { useTelegram } from "@/providers/TelegramProvider";
 
 type GoogleCredentialResponse = {
@@ -15,7 +15,7 @@ type GoogleCredentialResponse = {
 type GoogleIdApi = {
   initialize: (config: {
     client_id: string;
-    callback: (response: GoogleCredentialResponse) => void;
+    callback: (res: GoogleCredentialResponse) => void;
     ux_mode?: "popup" | "redirect";
   }) => void;
   renderButton: (
@@ -85,8 +85,8 @@ export function SignInPanel() {
     if (!isGuest || !isGoogleConfigured || !googleScriptReady || !googleButtonRef.current) return;
     if (!googleApi) return;
     
-    const handleGoogleCredential = async (response: GoogleCredentialResponse) => {
-      const credential = response.credential?.trim();
+    const handleGoogleCredential = async (res: GoogleCredentialResponse) => {
+      const credential = res.credential?.trim();
       if (!credential) {
         setProviderError(t("auth_google_missing_credential"));
         return;
@@ -151,8 +151,8 @@ export function SignInPanel() {
         usePopup: true,
       });
 
-      const response = await appleAuth.signIn();
-      const identityToken = response.authorization?.id_token?.trim();
+      const res = await appleAuth.signIn();
+      const identityToken = res.authorization?.id_token?.trim();
       if (!identityToken) throw new Error(t("auth_apple_missing_identity_token"));
 
       await linkWithApple(identityToken);

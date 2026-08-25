@@ -1,7 +1,8 @@
 import { AdminPageContent } from "@/components/AdminPageContent";
 import { AuthGate } from "@/components/AuthGate";
+import { topicConfig } from "@/lib/topic.config";
 
-export const metadata = { title: "Admin — Capitalz Quiz" };
+export const metadata = { title: `Admin — ${topicConfig.appName}` };
 
 export default function AdminPage() {
   return (

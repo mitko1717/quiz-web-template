@@ -9,7 +9,7 @@ import { Modal } from "@/components/Modal";
 import { useQuiz } from "@/hooks/useQuiz";
 import { useProfileQuery, useUpdateProfileDifficultyMutation } from "@/hooks/useProfile";
 import { DashboardHeader } from "./DashboardHeader";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { type DifficultyLevel } from "@/lib/types";
 
 const HIGHER_LEVEL_SUGGESTION_STREAKS: Partial<Record<DifficultyLevel, number>> = {
@@ -90,7 +90,7 @@ export function QuizPlayground() {
   useEffect(() => {
     if (!answerResult) return;
 
-    const answerKey = `${question?.countryId ?? 'unknown'}:${difficulty}:${answerResult.correct}:${answerResult.answerRevealed}:${answerResult.updatedStreak}:${answerResult.attemptsRemaining}`;
+    const answerKey = `${question?.itemId ?? 'unknown'}:${difficulty}:${answerResult.correct}:${answerResult.answerRevealed}:${answerResult.updatedStreak}:${answerResult.attemptsRemaining}`;
     const isNewAnswer = lastProcessedAnswerRef.current !== answerKey;
 
     if (isNewAnswer) {
@@ -118,7 +118,7 @@ export function QuizPlayground() {
       sessionCorrectStreakRef.current = 0;
       setSuggestedDifficulty(nextDifficulty);
     }
-  }, [answerResult, difficulty, highestUnlockedDifficulty, question?.countryId]);
+  }, [answerResult, difficulty, highestUnlockedDifficulty, question?.itemId]);
 
   const closeSuggestionModal = useCallback(() => {
     setSuggestedDifficulty(null);

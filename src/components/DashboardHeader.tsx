@@ -1,7 +1,7 @@
 "use client";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import type { DashboardHeaderProps } from "./DashboardHeader.types";
 
 export function DashboardHeader({ dailyStreak, totalInsightPoints = null, onLanguageChange, headerAction }: DashboardHeaderProps) {

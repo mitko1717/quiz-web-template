@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@/components/toast";
-import { I18nProvider } from "@/providers/I18nProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { TelegramProvider } from "@/providers/TelegramProvider";
+import { topicConfig } from "@/lib/topic.config";
+import { I18nProvider } from "@/components/I18nProvider";
 
 export const metadata: Metadata = {
-  title: "Capitalz Quiz",
-  description: "A quiz app to test your knowledge of world capitals.",
+  title: topicConfig.appName,
+  description: `${topicConfig.appName} quiz`,
   icons: {
     icon: "/logo/tab-logo.jpeg",
     shortcut: "/logo/tab-logo.jpeg",

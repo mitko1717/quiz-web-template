@@ -4,11 +4,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/apiClient";
 import { queryKeys } from "@/lib/queryKeys";
 import type { AuthMode } from "@/lib/types";
-import { useI18n } from "@/providers/I18nProvider";
 import { resolveReferralContext } from "@/lib/auth-referral";
+import { topicConfig } from "@/lib/topic.config";
+import { useI18n } from "@/components/I18nProvider";
 
-const DEVICE_ID_KEY = "capital-quiz-device-id";
-const AUTH_SESSION_KEY = "capital-quiz-auth-session";
+const DEVICE_ID_KEY = `${topicConfig.slug}-device-id`;
+const AUTH_SESSION_KEY = `${topicConfig.slug}-auth-session`;
 
 interface StoredAuthSession {
   token: string;
@@ -142,7 +143,7 @@ export function useAppleLinkMutation(persistSession: PersistSession, invalidateP
   });
 }
 
-export function useTelegramLoginMutation(persistSession: PersistSession, invalidateProfile: InvalidateProfile, token: string | null) {
+export function useTgLoginMutation(persistSession: PersistSession, invalidateProfile: InvalidateProfile, token: string | null) {
   return useMutation({
     mutationFn: (initData: string) => {
       const referralContext = readReferralContext(token);
@@ -299,7 +300,7 @@ export function useAuth() {
   const localLoginMutation = useLocalAdminLoginMutation(persistSession, invalidateProfile);
   const googleLinkMutation = useGoogleLinkMutation(persistSession, invalidateProfile, token);
   const appleLinkMutation = useAppleLinkMutation(persistSession, invalidateProfile, token);
-  const telegramLoginMutation = useTelegramLoginMutation(persistSession, invalidateProfile, token);
+  const tgLoginMutation = useTgLoginMutation(persistSession, invalidateProfile, token);
 
   const loginAsGuest = async () => {
     try {
@@ -339,7 +340,7 @@ export function useAuth() {
 
   const loginWithTelegram = async (initData: string) => {
     try {
-      await telegramLoginMutation.mutateAsync(initData);
+      await tgLoginMutation.mutateAsync(initData);
     } catch (cause) {
       const message = toErrorMessage(cause, t("auth_telegram_login_failed"));
       throw new Error(message);
@@ -353,23 +354,11 @@ export function useAuth() {
     localLoginMutation.reset();
     googleLinkMutation.reset();
     appleLinkMutation.reset();
-    telegramLoginMutation.reset();
+    tgLoginMutation.reset();
   };
 
-  const loading =
-    isRestoringSession ||
-    guestLoginMutation.isPending ||
-    localLoginMutation.isPending ||
-    googleLinkMutation.isPending ||
-    appleLinkMutation.isPending ||
-    telegramLoginMutation.isPending;
-
-  const firstError =
-    guestLoginMutation.error ??
-    localLoginMutation.error ??
-    googleLinkMutation.error ??
-    appleLinkMutation.error ??
-    telegramLoginMutation.error;
+  const loading = isRestoringSession || guestLoginMutation.isPending || localLoginMutation.isPending || googleLinkMutation.isPending || appleLinkMutation.isPending || tgLoginMutation.isPending;
+  const firstError = guestLoginMutation.error ?? localLoginMutation.error ?? googleLinkMutation.error ?? appleLinkMutation.error ?? tgLoginMutation.error;
 
   const error = firstError ? toErrorMessage(firstError, t('common_unexpected_error')) : null;
 
@@ -383,7 +372,7 @@ export function useAuth() {
     isLocalAdminLoginPending: localLoginMutation.isPending,
     isGoogleLinkPending: googleLinkMutation.isPending,
     isAppleLinkPending: appleLinkMutation.isPending,
-    isTelegramLoginPending: telegramLoginMutation.isPending,
+    isTelegramLoginPending: tgLoginMutation.isPending,
     loginAsGuest,
     loginAsLocalAdmin,
     loginWithTelegram,

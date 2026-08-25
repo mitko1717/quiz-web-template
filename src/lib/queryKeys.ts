@@ -1,4 +1,4 @@
-import type { DifficultyLevel, QuestionDirection, QuizContinentScope, QuizInputMode } from '@/lib/types';
+import type { DifficultyLevel, QuestionDirection, QuizScope, QuizInputMode } from '@/lib/types';
 
 export const queryKeys = {
   profile: (token: string) => ['profile', token] as const,
@@ -7,7 +7,7 @@ export const queryKeys = {
   progressByDifficulty: (token: string, difficulty: DifficultyLevel) => ['progress', token, 'difficulty', difficulty] as const,
   progressStats: (token: string) => ['progress', token, 'stats'] as const,
   quizSession: (token: string) => ['quiz', token, 'session'] as const,
-  quizCard: (token: string, difficulty: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizContinentScope) =>
+  quizCard: (token: string, difficulty: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizScope) =>
     ['quiz', token, 'card', difficulty, mode, direction, scope] as const,
   dailyChallenge: (token: string) => ['daily-challenge', token] as const,
   adminUsers: (token: string, limit: number, offset: number, search: string) => ['admin', token, 'users', limit, offset, search] as const,

@@ -1,5 +1,5 @@
 import { Button } from "@/components/button";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 
 interface PaginationProps {
   currentPage: number;

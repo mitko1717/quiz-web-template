@@ -10,9 +10,9 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { OfflineStateHint } from "@/components/Skeleton";
 import { AnswerOption } from "./AnswerOption";
 import { CardSection } from "./CardSection";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { HintType, QuestionDirection, QuizInputMode } from "@/lib/types";
-import { QuizModeControls, scopeLabelKey } from "@/components/QuizModeControls";
+import { QuizModeControls } from "@/components/QuizModeControls";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import type {
   ActionRowProps,
@@ -28,6 +28,8 @@ import type {
   QuestionHeadingProps,
   ResultNoticeProps
 } from "./QuestionCard.types";
+import { topicConfig } from "@/lib/topic.config";
+import { TranslationKey } from "@/lib/i18n";
 
 function LoadingState({ inputMode }: { inputMode: QuizInputMode }) {
   const optionRowTones = inputMode === QuizInputMode.FREE_TEXT ? ["bg-base-700/70", "bg-base-700/35", "bg-base-700/25"] : Array(4).fill("bg-base-700/70");
@@ -102,16 +104,24 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
 
 function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   const { t } = useI18n();
+  const displayName = question.publicFields[topicConfig.publicFields.displayName] as string;
+  const badge = topicConfig.publicFields.badge
+    ? (question.publicFields[topicConfig.publicFields.badge] as string)
+    : null;
+
+  const answerNoun = t(`${topicConfig.slug}_answer_noun` as TranslationKey);
+  const promptNoun = t(`${topicConfig.slug}_prompt_noun` as TranslationKey);
+
   const prompt = question.questionDirection === QuestionDirection.REVERSE
-    ? t('question_prompt_reverse', { capital: question.prompt })
-    : t('question_prompt', { country: question.countryName });
+    ? t('question_prompt_reverse', { value: question.prompt, answerNoun, promptNoun })
+    : t('question_prompt', { value: displayName, promptNoun });
 
   return (
     <div className="mb-2 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-2 sm:mb-4 sm:gap-3">
       <div className="min-w-0">
         <h2 className="break-words text-lg font-semibold leading-snug text-ink-100 sm:mt-1 sm:text-2xl">
           {prompt}
-          <span className="ml-2 inline-block align-middle" aria-hidden="true">{question.flagEmoji}</span>
+          {badge ? <span className="ml-2 inline-block align-middle" aria-hidden="true">{badge}</span> : null}
         </h2>
       </div>
       {actions ? <div className="flex shrink-0 justify-end gap-2">{actions}</div> : null}
@@ -121,7 +131,9 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
 
 function FreeTextAnswerInput({ selectedOption, hasAnswered, submittingAnswer, questionDirection, onSelectOption }: FreeTextAnswerInputProps) {
   const { t } = useI18n();
-  const placeholder = questionDirection === QuestionDirection.REVERSE ? t('question_free_text_country_placeholder') : t('question_free_text_placeholder');
+  const placeholder = questionDirection === QuestionDirection.REVERSE
+    ? t('question_free_text_placeholder_reverse', { noun: t(`${topicConfig.slug}_answer_noun` as TranslationKey) })
+    : t('question_free_text_placeholder', { noun: t(`${topicConfig.slug}_prompt_noun` as TranslationKey) });
 
   return (
     <div className="mb-3">
@@ -268,13 +280,13 @@ function ModeModal({
       )}
     >
       <QuizModeControls
-          inputMode={inputMode}
-          questionDirection={questionDirection}
-          questionScope={questionScope}
-          disabled={loadingQuestion || submittingAnswer}
-          onInputModeChange={onInputModeChange}
-          onQuestionDirectionChange={onQuestionDirectionChange}
-          onQuestionScopeChange={onQuestionScopeChange}
+        inputMode={inputMode}
+        questionDirection={questionDirection}
+        questionScope={questionScope}
+        disabled={loadingQuestion || submittingAnswer}
+        onInputModeChange={onInputModeChange}
+        onQuestionDirectionChange={onQuestionDirectionChange}
+        onQuestionScopeChange={onQuestionScopeChange}
       />
     </Modal>
   );
@@ -341,7 +353,7 @@ export function QuestionCard({
   const [modeModalOpen, setModeModalOpen] = useState(false);
   const hasAnswered = Boolean(skipResult) || Boolean(answerResult?.answerRevealed);
   const isFreeTextMode = inputMode === QuizInputMode.FREE_TEXT;
-  const transitionKey = loadingQuestion ? 'loading' : `${questionDirection}:${inputMode}:${question?.countryId ?? 'empty'}`;
+  const transitionKey = loadingQuestion ? 'loading' : `${questionDirection}:${inputMode}:${question?.itemId ?? 'empty'}`;
   const resultState = answerResult?.correct === true
       ? 'correct'
     : skipResult || answerResult?.correct === false || wrongSelections.length > 0
@@ -358,7 +370,7 @@ export function QuestionCard({
       <ModeTrigger
         disabled={loadingQuestion || submittingAnswer}
         onOpen={() => setModeModalOpen(true)}
-        scopeLabel={t(scopeLabelKey(questionScope))}
+        scopeLabel={t((topicConfig.scopes.find((s) => s.value === questionScope)?.labelKey ?? '') as TranslationKey)}
       />
       <HintTrigger disabled={hintDisabled} pending={usingHint} hasResult={Boolean(hintResult)} onOpen={() => setHintModalOpen(true)} />
     </>

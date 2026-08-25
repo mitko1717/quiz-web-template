@@ -9,17 +9,18 @@ import { Modal } from "@/components/Modal";
 import { AdminPanel } from "@/components/AdminPanel";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/Skeleton";
 import { LANGUAGE_FLAGS } from "@/lib/constants/language-flags";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { Button } from "@/components/button";
 import { BodyText, SectionLabel } from "@/components/SectionLabel";
 import { SignInPanel } from "@/components/SignInPanel";
 import { QuizModeControls } from "@/components/QuizModeControls";
 import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope } from "@/lib/quiz-mode-preferences";
-import { QuestionDirection, QuizContinentScope, QuizInputMode } from "@/lib/types";
+import { QuestionDirection, QuizScope, QuizInputMode, Language } from "@/lib/types";
 import { useProfileQuery, useResetProfileMutation } from "@/hooks/useProfile";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useTelegram } from "@/providers/TelegramProvider";
 import { toast } from "@/components/toast";
+import { topicConfig } from "@/lib/topic.config";
 
 export function SettingsPageContent() {
   const { token, authMode, logout, setPreferredLanguage } = useAuthContext();
@@ -30,7 +31,7 @@ export function SettingsPageContent() {
   const resetProfileMutation = useResetProfileMutation(token);
   const [preferredInputMode, setPreferredInputMode] = useState<QuizInputMode>(() => readStoredInputMode());
   const [preferredQuestionDirection, setPreferredQuestionDirection] = useState<QuestionDirection>(() => readStoredQuestionDirection());
-  const [preferredQuestionScope, setPreferredQuestionScope] = useState<QuizContinentScope>(() => readStoredQuestionScope());
+  const [preferredQuestionScope, setPreferredQuestionScope] = useState<QuizScope>(() => readStoredQuestionScope());
   const [resetProgress, setResetProgress] = useState(true);
   const [resetAttempts, setResetAttempts] = useState(true);
   const [deleteAccount, setDeleteAccount] = useState(false);
@@ -100,17 +101,15 @@ export function SettingsPageContent() {
     writeStoredQuestionDirection(direction);
   };
 
-  const updatePreferredQuestionScope = (scope: QuizContinentScope) => {
+  const updatePreferredQuestionScope = (scope: QuizScope) => {
     setPreferredQuestionScope(scope);
     writeStoredQuestionScope(scope);
   };
 
-  const languageFlag = LANGUAGE_FLAGS[language];
+  const languageFlag = LANGUAGE_FLAGS[language as Language] ?? '';
   const showOfflineFallback = !isOnline && !profileQuery.data && (profileQuery.isLoading || profileQuery.isFetching || Boolean(profileQuery.error));
 
-  if (showOfflineFallback) {
-    return <SettingsOfflineSkeleton />;
-  }
+  if (showOfflineFallback) return <SettingsOfflineSkeleton />;
 
   const copyReferralLink = async () => {
     if (!referralLink) return;
@@ -140,7 +139,7 @@ export function SettingsPageContent() {
   const shareReferralLink = async () => {
     if (!referralLink) return;
 
-    const shareMessage = `${t("settings_referral_share_text")}\n\n${referralLink}`;
+    const shareMessage = `${t("settings_referral_share_text", { appName: topicConfig.appName })}\n\n${referralLink}`;
     const telegramShareUrl = `https://t.me/share/url?text=${encodeURIComponent(shareMessage)}`;
     const telegramWebApp = typeof window !== "undefined" ? (window as { Telegram?: { WebApp?: { openTelegramLink?: (url: string) => void } } }).Telegram?.WebApp : undefined;
 
@@ -151,10 +150,7 @@ export function SettingsPageContent() {
       }
 
       if (navigator.share) {
-        await navigator.share({
-          title: t("settings_referral_title"),
-          text: shareMessage,
-        });
+        await navigator.share({ title: t("settings_referral_title"), text: shareMessage });
         return;
       }
     } catch {

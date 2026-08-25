@@ -5,7 +5,6 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { BodyText, SectionLabel } from "@/components/SectionLabel";
 import { useAuth } from "@/hooks/useAuth";
-import { useI18n } from "@/providers/I18nProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { FooterNav } from "@/components/FooterNav";
@@ -15,15 +14,14 @@ import { getApiBaseUrlForDisplay } from "@/lib/http";
 import type { Language } from "@/lib/i18n";
 import type { AuthContextValue, AuthGateProps } from "./AuthGate.types";
 import { useProfileQuery, useUpdateProfileLanguageMutation } from "@/hooks/useProfile";
+import { topicConfig } from "@/lib/topic.config";
+import { useI18n } from "@/components/I18nProvider";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function readAllowedLocalAdminTelegramUserIds(): string[] {
   const raw = process.env.NEXT_PUBLIC_TELEGRAM_ADMIN_USER_IDS ?? '';
-  return raw
-    .split(',')
-    .map((value) => value.trim())
-    .filter((value) => value.length > 0);
+  return raw.split(',').map((val) => val.trim()).filter((val) => val.length > 0);
 }
 
 const LOCAL_ADMIN_TELEGRAM_USER_IDS = readAllowedLocalAdminTelegramUserIds();
@@ -192,7 +190,7 @@ export function AuthGate({ children, adminOnly = false }: AuthGateProps) {
           <div className="grid gap-4 sm:gap-6 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,rgba(20,184,166,0.16),rgba(10,14,18,0.25))] p-5 sm:p-6">
               <div className="mb-2 flex items-center justify-between gap-3">
-                <SectionLabel>{t('auth_tool_label')}</SectionLabel>
+                <SectionLabel>{t('auth_tool_label', { appName: topicConfig.appName })}</SectionLabel>
                 <LanguageSwitcher compact />
               </div>
               <h1 className="mt-2 text-2xl font-semibold text-ink-100 sm:text-3xl">{t('auth_choose_mode_title')}</h1>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { ChartIcon, SettingsIcon } from "@/components/icons/DashboardIcons";
 import { CalendarIcon, HomeIcon, ShieldIcon } from "@/components/icons/FooterNavIcons";
 import type { AuthMode } from "@/lib/types";
@@ -50,12 +50,12 @@ export function FooterNav({ authMode }: FooterNavProps) {
         className="mx-auto grid max-w-5xl gap-1 px-0.5 py-1.5"
         style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
       >
-        {items.map((item) => {
-          const active = item.match(pathname);
+        {items.map((i) => {
+          const active = i.match(pathname);
           return (
-            <li key={item.href}>
+            <li key={i.href}>
               <Link
-                href={item.href}
+                href={i.href}
                 className={[
                   "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl border px-0.5 py-1 transition-colors",
                   compactLocale ? "text-[9.5px] font-semibold" : "text-[10px] font-semibold uppercase",
@@ -66,8 +66,8 @@ export function FooterNav({ authMode }: FooterNavProps) {
                 ].join(" ")}
                 aria-current={active ? "page" : undefined}
               >
-                {item.icon}
-                <span className="max-w-full text-center leading-tight whitespace-nowrap">{item.label}</span>
+                {i.icon}
+                <span className="max-w-full text-center leading-tight whitespace-nowrap">{i.label}</span>
               </Link>
             </li>
           );

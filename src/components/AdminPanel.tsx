@@ -7,7 +7,7 @@ import { BodyText, SectionLabel } from "@/components/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
 import { useAdminPanel } from "@/hooks/useAdminPanel";
 import { Pagination } from "@/components/Pagination";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/Skeleton";
 import type { AdminQuizConfigResponse, DifficultyLevel } from "@/lib/types";
 import type {
@@ -21,9 +21,9 @@ import type {
   UserDetailPanelProps,
   UserListPanelProps
 } from "./AdminPanel.types";
+import { topicConfig } from "@/lib/topic.config";
 
 const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
-const MAX_COUNTRY_COUNT = 195;
 
 function formatPercent(v: number) {
   return `${Math.round(v * 100)}%`;
@@ -147,25 +147,25 @@ function UserListPanel({ users, selectedUser, search, setSearch, loadingUsers, u
       {loadingUsers && !users ? <UserListSkeleton /> : null}
       {!loadingUsers && users?.items.length === 0 ? <p className="text-sm text-ink-300">{t("admin_no_users")}</p> : null}
       <div className="space-y-1">
-        {users?.items.map((item) => {
-          const active = selectedUser?.summary.userId === item.userId;
+        {users?.items.map((i) => {
+          const active = selectedUser?.summary.userId === i.userId;
 
           return (
             <Button
-              key={item.userId}
+              key={i.userId}
               type="button"
               variant={active ? "adminRowActive" : "adminRowIdle"}
               size="md"
-              onClick={() => onSelectUser(item.userId)}
+              onClick={() => onSelectUser(i.userId)}
               className={["w-full p-1 text-left font-normal text-sm"].join(" ")}
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="font-semibold text-ink-100">{item.displayName ?? item.tgDisplayName ?? item.tgUsername ?? item.email ?? item.deviceId ?? item.userId}</p>
+                  <p className="font-semibold text-ink-100">{i.displayName ?? i.tgDisplayName ?? i.tgUsername ?? i.email ?? i.deviceId ?? i.userId}</p>
                 </div>
                 <div className="text-left text-sm text-ink-300 sm:text-right">
-                  <p>{item.insightPointsTotal} {t('admin_points_short')}</p>
-                  <p>{formatPercent(item.accuracy)}</p>
+                  <p>{i.insightPointsTotal} {t('admin_points_short')}</p>
+                  <p>{formatPercent(i.accuracy)}</p>
                 </div>
               </div>
             </Button>
@@ -329,16 +329,16 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
     <VerticalStack>
       <div>
         <ConfigFieldTitle label={t("admin_no_repeat_title")} />
-        <p className="mb-2 text-xs text-ink-500">{t("admin_no_repeat_desc", { max: MAX_COUNTRY_COUNT })}</p>
+        <p className="mb-2 text-xs text-ink-500">{t("admin_no_repeat_desc", { max: topicConfig.maxItemCount })}</p>
         <div className="w-full max-w-[220px]">
           <Input
             type="number"
             min={1}
-            max={MAX_COUNTRY_COUNT}
+            max={topicConfig.maxItemCount}
             step={1}
             value={draft.noRepeatWindow}
             onChange={(e) => {
-              const v = Math.min(MAX_COUNTRY_COUNT, Math.max(1, Number(e.target.value)));
+              const v = Math.min(topicConfig.maxItemCount, Math.max(1, Number(e.target.value)));
               const clamped = schema ? clampBySchema(v, schema.noRepeatWindow) : v;
               setDraft((d) => ({ ...d, noRepeatWindow: clamped }));
             }}
@@ -462,7 +462,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
 
       <div>
         <ConfigFieldTitle label={t("admin_unlock_title")} />
-        <p className="mb-4 text-xs text-ink-500">{t("admin_unlock_desc", { max: MAX_COUNTRY_COUNT })}</p>
+        <p className="mb-4 text-xs text-ink-500">{t("admin_unlock_desc", { max: topicConfig.maxItemCount })}</p>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {(["2", "3", "4", "5"] as const).map((lvl) => {
             const fromLvl = Number(lvl) - 1;
@@ -477,11 +477,11 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
                 <Input
                   type="number"
                   min={1}
-                  max={MAX_COUNTRY_COUNT}
+                  max={topicConfig.maxItemCount}
                   step={1}
                   value={current}
                   onChange={(e) => {
-                    const v = Math.min(MAX_COUNTRY_COUNT, Math.max(1, Number(e.target.value)));
+                    const v = Math.min(topicConfig.maxItemCount, Math.max(1, Number(e.target.value)));
                     setDraft((d) => ({ ...d, unlockThresholds: { ...(d.unlockThresholds ?? {}), [lvl]: v } }));
                   }}
                 />
@@ -493,7 +493,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
       </div>
 
       <DifficultyNumberEditor label={t("admin_attempts_title")} values={draft.maxAttemptsByDifficulty} min={1} onChange={setAttempts} />
-  <DifficultyNumberEditor label={t("admin_insight_rewards_title")} values={draft.insightPointRewardsByDifficulty} min={0} onChange={setInsightReward} />
+      <DifficultyNumberEditor label={t("admin_insight_rewards_title")} values={draft.insightPointRewardsByDifficulty} min={0} onChange={setInsightReward} />
       <DifficultyNumberEditor label={t("admin_wrong_penalty_title")} values={draft.wrongPenaltyByDifficulty} min={0} onChange={setWrongPenalty} />
       <DifficultyNumberEditor label={t("admin_skip_penalty_title")} values={draft.skipPenaltyByDifficulty} min={0} onChange={setSkipPenalty} />
 
@@ -502,7 +502,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
         <div className="grid gap-2 md:grid-cols-2">
           <ProbabilityEditor label={t("admin_expert_none")} field="expertNoneOfAboveProbability" value={draft.expert.expertNoneOfAboveProbability} onChange={setExpertField} />
           <ProbabilityEditor label={t("admin_expert_trap")} field="expertTrapHistoryProbability" value={draft.expert.expertTrapHistoryProbability} onChange={setExpertField} />
-          <ProbabilityEditor label={t("admin_expert_same_country")} field="expertSameCountryAllOptionsProbability" value={draft.expert.expertSameCountryAllOptionsProbability} onChange={setExpertField} />
+          <ProbabilityEditor label={t("admin_expert_same_item")} field="expertSameItemAllOptionsProbability" value={draft.expert.expertSameItemAllOptionsProbability} onChange={setExpertField} />
         </div>
       </div>
 

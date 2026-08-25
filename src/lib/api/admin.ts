@@ -7,8 +7,7 @@ export const adminApi = {
     if (typeof query.limit === "number") params.set("limit", String(query.limit));
     if (typeof query.offset === "number") params.set("offset", String(query.offset));
     if (query.search) params.set("search", query.search);
-    const suffix = params.toString();
-    return request<AdminUsersStatsResponse>(`/admin/users/stats${suffix ? `?${suffix}` : ""}`, { token });
+    return request<AdminUsersStatsResponse>(`/admin/users/stats${params.toString() ? `?${params}` : ""}`, { token });
   },
 
   getUserStats(userId: string, token: string) {

@@ -51,10 +51,7 @@ function getServerSnapshot(): boolean {
 export function useNetworkStatus() {
   const isOnline = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  return {
-    isOnline,
-    isOffline: !isOnline,
-  };
+  return { isOnline, isOffline: !isOnline };
 }
 
 export function isLikelyNetworkError(cause: unknown): boolean {

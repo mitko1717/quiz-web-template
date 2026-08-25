@@ -6,8 +6,8 @@ import { apiClient } from "@/lib/apiClient";
 import { queryKeys } from "@/lib/queryKeys";
 import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope } from "@/lib/quiz-mode-preferences";
 import { useAnswerStatsQuery, useProgressForLevelQuery } from "@/hooks/useProgress";
-import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizContinentScope, QuizInputMode, type AnswerResponse, type DifficultyLevel, type HintResponse, type ProgressResponse, type QuestionResponse, type SkipResponse, type UserAnswerStatsResponse } from "@/lib/types";
-import { useI18n } from "@/providers/I18nProvider";
+import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizScope, QuizInputMode, type AnswerResponse, type DifficultyLevel, type HintResponse, type ProgressResponse, type QuestionResponse, type SkipResponse, type UserAnswerStatsResponse } from "@/lib/types";
+import { useI18n } from "@/components/I18nProvider";
 
 type QuizError = string | null;
 
@@ -18,8 +18,8 @@ interface UseQuizResult {
   setInputMode: (mode: QuizInputMode) => void;
   questionDirection: QuestionDirection;
   setQuestionDirection: (direction: QuestionDirection) => void;
-  questionScope: QuizContinentScope;
-  setQuestionScope: (scope: QuizContinentScope) => void;
+  questionScope: QuizScope;
+  setQuestionScope: (scope: QuizScope) => void;
   question: QuestionResponse | null;
   selectedOption: string | null;
   setSelectedOption: (option: string) => void;
@@ -61,7 +61,7 @@ type CachedQuizSessionState = CachedQuizCardState & {
   difficulty: DifficultyLevel;
   inputMode: QuizInputMode;
   questionDirection: QuestionDirection;
-  questionScope: QuizContinentScope;
+  questionScope: QuizScope;
 };
 
 function toErrorMessage(cause: unknown, fallback: string): string {
@@ -84,7 +84,7 @@ export function useQuiz(token: string): UseQuizResult {
   const [difficulty, setDifficultyState] = useState<DifficultyLevel>(() => initialSession?.difficulty ?? 1);
   const [inputMode, setInputModeState] = useState<QuizInputMode>(() => storedInputMode);
   const [questionDirection, setQuestionDirectionState] = useState<QuestionDirection>(() => storedQuestionDirection);
-  const [questionScope, setQuestionScopeState] = useState<QuizContinentScope>(() => storedQuestionScope);
+  const [questionScope, setQuestionScopeState] = useState<QuizScope>(() => storedQuestionScope);
   const [question, setQuestion] = useState<QuestionResponse | null>(() => initialSession?.question ?? null);
   const [selectedOption, setSelectedOptionState] = useState<string | null>(() => initialSession?.selectedOption ?? null);
   const [answerResult, setAnswerResult] = useState<AnswerResponse | null>(() => initialSession?.answerResult ?? null);
@@ -96,17 +96,17 @@ export function useQuiz(token: string): UseQuizResult {
   const [liveInsightPoints, setLiveInsightPoints] = useState<number | null>(() => initialSession?.liveInsightPoints ?? null);
   const inputModeRef = useRef<QuizInputMode>(inputMode);
   const questionDirectionRef = useRef<QuestionDirection>(questionDirection);
-  const questionScopeRef = useRef<QuizContinentScope>(questionScope);
+  const questionScopeRef = useRef<QuizScope>(questionScope);
   const hasMountedRef = useRef(false);
 
   const getQuizCardKey = useCallback(
-    (difficultyLevel: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizContinentScope) =>
+    (difficultyLevel: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizScope) =>
       queryKeys.quizCard(token, difficultyLevel, mode, direction, scope),
     [token],
   );
 
   const readCachedQuizCard = useCallback(
-    (difficultyLevel: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizContinentScope) =>
+    (difficultyLevel: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizScope) =>
       queryClient.getQueryData<CachedQuizCardState>(getQuizCardKey(difficultyLevel, mode, direction, scope)) ?? null,
     [getQuizCardKey, queryClient],
   );
@@ -115,33 +115,24 @@ export function useQuiz(token: string): UseQuizResult {
   const currentProgressQuery = useProgressForLevelQuery(token, difficulty);
 
   const fetchQuestionMutation = useMutation({
-    mutationFn: ({ difficultyLevel, mode, direction, scope }: { difficultyLevel: DifficultyLevel; mode: QuizInputMode; direction: QuestionDirection; scope: QuizContinentScope }) =>
+    mutationFn: ({ difficultyLevel, mode, direction, scope }: { difficultyLevel: DifficultyLevel; mode: QuizInputMode; direction: QuestionDirection; scope: QuizScope }) =>
       apiClient.getQuestion(difficultyLevel, mode, direction, scope, token),
   });
   const fetchQuestionRef = useRef(fetchQuestionMutation.mutateAsync);
 
   const submitAnswerMutation = useMutation({
-    mutationFn: (payload: { countryId: string; difficulty: DifficultyLevel; selectedOption: string }) =>
-      apiClient.submitAnswer(payload, token),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) });
-    },
+    mutationFn: (payload: { itemId: string; difficulty: DifficultyLevel; selectedOption: string }) => apiClient.submitAnswer(payload, token),
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) }); },
   });
 
   const skipQuestionMutation = useMutation({
-    mutationFn: (payload: { countryId: string; difficulty: DifficultyLevel }) =>
-      apiClient.skipQuestion(payload, token),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) });
-    },
+    mutationFn: (payload: { itemId: string; difficulty: DifficultyLevel }) => apiClient.skipQuestion(payload, token),
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) }); },
   });
 
   const hintMutation = useMutation({
-    mutationFn: (payload: { countryId: string; difficulty: DifficultyLevel }) =>
-      apiClient.useHint(payload, token),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) });
-    },
+    mutationFn: (payload: { itemId: string; difficulty: DifficultyLevel }) => apiClient.useHint(payload, token),
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) }); },
   });
 
   useEffect(() => {
@@ -161,7 +152,7 @@ export function useQuiz(token: string): UseQuizResult {
   }, [fetchQuestionMutation.mutateAsync]);
 
   const loadQuestion = useCallback(
-    async (difficultyLevel: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizContinentScope) => {
+    async (difficultyLevel: DifficultyLevel, mode: QuizInputMode, direction: QuestionDirection, scope: QuizScope) => {
       setError(null);
       setQuestion(null);
       setSelectedOptionState(null);
@@ -278,7 +269,7 @@ export function useQuiz(token: string): UseQuizResult {
     writeStoredQuestionDirection(direction);
   }, []);
 
-  const setQuestionScope = useCallback((scope: QuizContinentScope) => {
+  const setQuestionScope = useCallback((scope: QuizScope) => {
     setQuestionScopeState(scope);
     writeStoredQuestionScope(scope);
   }, []);
@@ -299,7 +290,7 @@ export function useQuiz(token: string): UseQuizResult {
     setError(null);
 
     try {
-      const res = await submitAnswerMutation.mutateAsync({ countryId: question.countryId, difficulty, selectedOption });
+      const res = await submitAnswerMutation.mutateAsync({ itemId: question.itemId, difficulty, selectedOption });
       setAnswerResult(res);
       setLiveInsightPoints(res.updatedInsightPoints);
       setDifficultySuggestion(res.difficultySuggestion);
@@ -323,7 +314,7 @@ export function useQuiz(token: string): UseQuizResult {
     setError(null);
 
     try {
-      const res = await skipQuestionMutation.mutateAsync({ countryId: question.countryId, difficulty });
+      const res = await skipQuestionMutation.mutateAsync({ itemId: question.itemId, difficulty });
       setSkipResult(res);
       setLiveInsightPoints(res.updatedInsightPoints);
     } catch (cause) {
@@ -341,7 +332,7 @@ export function useQuiz(token: string): UseQuizResult {
     setError(null);
 
     try {
-      const res = await hintMutation.mutateAsync({ countryId: question.countryId, difficulty });
+      const res = await hintMutation.mutateAsync({ itemId: question.itemId, difficulty });
       setHintResult(res);
       setLiveInsightPoints(res.updatedInsightPoints);
       if (res.type === HintType.REMOVE_OPTION) {

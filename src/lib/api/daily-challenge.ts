@@ -6,11 +6,7 @@ export const dailyChallengeApi = {
     return request<DailyChallengeStateResponse>("/daily-challenge", { token });
   },
 
-  submitAnswer(payload: { countryId: string; selectedOption: string }, token: string) {
-    return request<DailyChallengeAnswerResponse>("/daily-challenge/answer", {
-      method: "POST",
-      body: payload,
-      token,
-    });
+  submitAnswer(payload: { itemId: string; selectedOption: string }, token: string) {
+    return request<DailyChallengeAnswerResponse>("/daily-challenge/answer", { method: "POST", body: payload, token });
   },
 };

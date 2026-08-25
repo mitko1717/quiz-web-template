@@ -1,6 +1,6 @@
 "use client";
 
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 
 type SkeletonBlockProps = {
   className?: string;

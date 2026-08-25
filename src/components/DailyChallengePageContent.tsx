@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "@/components/AuthGate";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { CardSection } from "@/components/CardSection";
 import { Button } from "@/components/button";
@@ -15,6 +15,8 @@ import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queryKeys } from "@/lib/queryKeys";
 import { useProfileQuery } from "@/hooks/useProfile";
 import type { DailyChallengeAnswerResponse } from "@/lib/types";
+import { topicConfig } from "@/lib/topic.config";
+import { TranslationKey } from "@/lib/i18n";
 
 function toErrorMessage(cause: unknown, fallback: string): string {
   if (cause instanceof Error) return cause.message;
@@ -53,8 +55,7 @@ export function DailyChallengePageContent() {
   });
 
   const submitMutation = useMutation({
-    mutationFn: (payload: { countryId: string; selectedOption: string }) =>
-      apiClient.submitDailyChallengeAnswer(payload, token),
+    mutationFn: (payload: { itemId: string; selectedOption: string }) => apiClient.submitDailyChallengeAnswer(payload, token),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.dailyChallenge(token) }),
@@ -81,10 +82,8 @@ export function DailyChallengePageContent() {
 
     setSubmitError(null);
     try {
-      const response = await submitMutation.mutateAsync(
-        { countryId: question.countryId, selectedOption },
-      );
-      setAnswerResult(response);
+      const res = await submitMutation.mutateAsync({ itemId: question.itemId, selectedOption });
+      setAnswerResult(res);
       await dailyChallengeQuery.refetch();
       setSelectedOption(null);
     } catch (cause) {
@@ -142,7 +141,7 @@ export function DailyChallengePageContent() {
               {t("daily_challenge_question_progress", { current: currentQuestionNumber, total: totalQuestions })}
             </p>
             <h2 className="mt-2 text-xl font-semibold text-ink-100 sm:text-2xl">
-              {t("question_prompt", { country: question.countryName })}
+              {t("question_prompt", { value: question.publicFields[topicConfig.publicFields.displayName] as string, promptNoun: t(`${topicConfig.slug}_prompt_noun` as TranslationKey) })}
             </h2>
             <p className="mt-1 text-xs text-ink-400">{t("difficulty_level", { level: question.difficulty })}</p>
 

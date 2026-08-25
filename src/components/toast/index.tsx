@@ -60,8 +60,8 @@ export function Toaster() {
       }}
       aria-live="polite"
     >
-      {toasts.map(entry => (
-        <ToastItem key={entry.id} entry={entry} onRemove={() => remove(entry.id)} />
+      {toasts.map(e => (
+        <ToastItem key={e.id} entry={e} onRemove={() => remove(e.id)} />
       ))}
     </div>
   );

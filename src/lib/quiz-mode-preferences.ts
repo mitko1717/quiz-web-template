@@ -1,4 +1,5 @@
-import { QuestionDirection, QuizContinentScope, QuizInputMode } from "@/lib/types";
+import { QuestionDirection, QuizScope, QuizInputMode } from "@/lib/types";
+import { topicConfig } from "@/lib/topic.config";
 
 const INPUT_MODE_KEY = "quiz.inputMode";
 const QUESTION_DIRECTION_KEY = "quiz.questionDirection";
@@ -24,21 +25,13 @@ export function writeStoredQuestionDirection(direction: QuestionDirection): void
   if (typeof window !== "undefined") window.localStorage.setItem(QUESTION_DIRECTION_KEY, direction);
 }
 
-export function readStoredQuestionScope(): QuizContinentScope {
-  if (typeof window === "undefined") return QuizContinentScope.WORLD;
+export function readStoredQuestionScope(): QuizScope {
+  if (typeof window === "undefined") return topicConfig.worldScopeValue;
   const stored = window.localStorage.getItem(QUESTION_SCOPE_KEY);
-  switch (stored) {
-    case QuizContinentScope.AFRICA:
-    case QuizContinentScope.AMERICAS:
-    case QuizContinentScope.ASIA:
-    case QuizContinentScope.EUROPE:
-    case QuizContinentScope.OCEANIA:
-      return stored;
-    default:
-      return QuizContinentScope.WORLD;
-  }
+  const isValid = stored != null && topicConfig.scopes.some((s) => s.value === stored);
+  return isValid ? (stored as QuizScope) : topicConfig.worldScopeValue;
 }
 
-export function writeStoredQuestionScope(scope: QuizContinentScope): void {
+export function writeStoredQuestionScope(scope: QuizScope): void {
   if (typeof window !== "undefined") window.localStorage.setItem(QUESTION_SCOPE_KEY, scope);
 }

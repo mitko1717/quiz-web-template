@@ -1,34 +1,33 @@
-// ⚠️ TEMPLATE FILE — the ONLY file you edit when copying this app to a new theme.
-// If you edit anything outside this file to change theme, that's a coupling leak.
-//
-// Topic is bound at LOGIN (engine issues a JWT via issueForTopic(..., slug)).
-// Quiz/progress/profile/daily-challenge requests carry topic in the token — they
-// send no topic themselves. So the only place `slug` is used is the auth call.
+// ⚠️ Do NOT edit per theme. All theme values come from env.
+// Set them in .env / .env.local (see .env.example). Copy the app, change env, done.
+
+function req(name: string, value: string | undefined): string {
+  if (!value) throw new Error(`Missing env: ${name}`);
+  return value;
+}
+
+function parseScopes(raw: string | undefined): Array<{ value: string; labelKey: string }> {
+  // Format: "value:labelKey,value:labelKey"  e.g. "WORLD:scope.world,europe:scope.europe"
+  if (!raw) return [];
+  return raw.split(',').map((pair) => {
+    const [value, labelKey] = pair.split(':');
+    return { value: value.trim(), labelKey: (labelKey ?? value).trim() };
+  });
+}
 
 export const topicConfig = {
-  // ⚠️ CHANGE PER THEME — must match a slug in the engine's topics.manifest.json.
-  slug: 'capitals',
+  appName: process.env.NEXT_PUBLIC_APP_NAME || 'Quiz',
+  slug: req('NEXT_PUBLIC_TOPIC_SLUG', process.env.NEXT_PUBLIC_TOPIC_SLUG),
 
-  // ⚠️ CHANGE PER THEME — request payload field name for the item id.
-  // Capitals wire-compat uses 'countryId'; engine maps it to generic itemId.
-  itemIdField: 'countryId',
-
-  // ⚠️ CHANGE PER THEME — response fields the UI reads (from getPublicQuestionFields).
   publicFields: {
-    displayName: 'countryName', // main label shown to the user
-    badge: 'flagEmoji',         // small emoji/icon; set to null if the theme has none
+    displayName: req('NEXT_PUBLIC_FIELD_DISPLAY_NAME', process.env.NEXT_PUBLIC_FIELD_DISPLAY_NAME),
+    badge: process.env.NEXT_PUBLIC_FIELD_BADGE || null, // empty/unset => no badge
   },
 
-  // ⚠️ CHANGE PER THEME — scope filtering.
-  // scopeParam: query-param name the engine reads. worldScopeValue: "all / no filter".
-  scopeParam: 'continent',
-  worldScopeValue: 'WORLD',
-
-  // ⚠️ CHANGE PER THEME — scope options shown in the UI (value = what engine expects).
-  scopes: [
-    { value: 'WORLD', labelKey: 'scope.world' },
-    // capitals: continents. planets: terrestrial/gas-giant/ice-giant/dwarf. etc.
-  ],
+  scopeParam: process.env.NEXT_PUBLIC_SCOPE_PARAM || 'continent',
+  worldScopeValue: process.env.NEXT_PUBLIC_SCOPE_WORLD || 'WORLD',
+  scopes: parseScopes(process.env.NEXT_PUBLIC_SCOPES),
+  maxItemCount: Number(process.env.NEXT_PUBLIC_MAX_ITEM_COUNT) || 9999,
 } as const;
 
 export type TopicConfig = typeof topicConfig;

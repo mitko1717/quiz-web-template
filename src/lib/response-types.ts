@@ -31,10 +31,9 @@ export interface ProfileDifficultyResponse {
 }
 
 export interface QuestionResponse {
-  countryId: string;
+  itemId: string;
   prompt: string;
-  countryName: string;
-  flagEmoji: string;
+  publicFields: Record<string, unknown>;
   difficulty: DifficultyLevel;
   inputMode: QuizInputMode;
   questionDirection: QuestionDirection;
@@ -148,7 +147,7 @@ export interface AdminQuizConfigResponse {
   expert: {
     expertNoneOfAboveProbability: number;
     expertTrapHistoryProbability: number;
-    expertSameCountryAllOptionsProbability: number;
+    expertSameItemAllOptionsProbability: number;
   };
 }
 
@@ -232,8 +231,8 @@ export interface AdminUserStatsDetailsResponse {
 
 export interface DailyChallengeQuestionResponse {
   index: number;
-  countryId: string;
-  countryName: string;
+  itemId: string;
+  publicFields: Record<string, unknown>;
   difficulty: DifficultyLevel;
   options: string[];
 }

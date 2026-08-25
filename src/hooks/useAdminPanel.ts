@@ -6,7 +6,7 @@ import { apiClient } from "@/lib/apiClient";
 import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "@/components/toast";
 import type { AdminGameplayConfigSchemaResponse, AdminQuizConfigResponse, AdminUserStatsDetailsResponse, AdminUsersStatsResponse } from "@/lib/types";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
 function toErrorMessage(cause: unknown, fallback: string): string {
@@ -31,7 +31,7 @@ export function useAdminPanel(token: string, enabled: boolean, pageSize = 5) {
 
   const effectiveSelectedUserId =
     usersQuery.data && usersQuery.data.items.length > 0
-      ? (selectedUserId && usersQuery.data.items.some(item => item.userId === selectedUserId)
+      ? (selectedUserId && usersQuery.data.items.some(i => i.userId === selectedUserId)
           ? selectedUserId
           : usersQuery.data.items[0].userId)
       : null;

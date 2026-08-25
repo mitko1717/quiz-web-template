@@ -2,7 +2,7 @@
 import { useState, type KeyboardEvent } from "react";
 import { BodyText, SectionLabel } from "@/components/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import { Modal } from "@/components/Modal";
 import { Button } from "@/components/button";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/Skeleton";

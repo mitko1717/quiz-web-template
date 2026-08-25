@@ -30,14 +30,8 @@ export function CardSection({ children, className, transitionKey, resultState = 
 
     if (typeof node.animate === "function") {
       const animation = node.animate(
-        [
-          { opacity: 0.55, transform: "translateY(14px) scale(0.985)" },
-          { opacity: 1, transform: "translateY(0) scale(1)" },
-        ],
-        {
-          duration: 420,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-        }
+        [{ opacity: 0.55, transform: "translateY(14px) scale(0.985)" }, { opacity: 1, transform: "translateY(0) scale(1)" }],
+        { duration: 420, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
       );
 
       return () => animation.cancel();

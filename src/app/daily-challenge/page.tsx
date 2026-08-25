@@ -1,7 +1,8 @@
 import { AuthGate } from "@/components/AuthGate";
 import { DailyChallengePageContent } from "@/components/DailyChallengePageContent";
+import { topicConfig } from "@/lib/topic.config";
 
-export const metadata = { title: "Daily Challenge - Capitalz Quiz" };
+export const metadata = { title: `Daily Challenge - ${topicConfig.appName}` };
 
 export default function DailyChallengePage() {
   return (

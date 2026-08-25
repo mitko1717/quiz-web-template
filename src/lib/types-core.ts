@@ -11,14 +11,7 @@ export enum QuestionDirection {
   REVERSE = 'reverse'
 }
 
-export enum QuizContinentScope {
-  WORLD = 'world',
-  AFRICA = 'africa',
-  AMERICAS = 'americas',
-  ASIA = 'asia',
-  EUROPE = 'europe',
-  OCEANIA = 'oceania'
-}
+export type QuizScope = string;
 
 export enum HintType {
   REMOVE_OPTION = 'remove_option',

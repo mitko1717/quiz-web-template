@@ -1,7 +1,8 @@
 import { AuthGate } from "@/components/AuthGate";
 import { StatsPageContent } from "@/components/StatsPageContent";
+import { topicConfig } from "@/lib/topic.config";
 
-export const metadata = { title: "Stats - Capitalz Quiz" };
+export const metadata = { title: `Stats - ${topicConfig.appName}` };
 
 export default function StatsPage() {
   return (

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { type AnswerResponse, type HintResponse, type ProgressResponse, type QuestionDirection, type QuestionResponse, type QuizContinentScope, type QuizInputMode, type SkipResponse } from '@/lib/types';
+import { type AnswerResponse, type HintResponse, type ProgressResponse, type QuestionDirection, type QuestionResponse, type QuizScope, type QuizInputMode, type SkipResponse } from '@/lib/types';
 
 export interface QuestionCardProps {
   question: QuestionResponse | null;
@@ -23,8 +23,8 @@ export interface QuestionCardProps {
   onInputModeChange: (mode: QuizInputMode) => void;
   questionDirection: QuestionDirection;
   onQuestionDirectionChange: (direction: QuestionDirection) => void;
-  questionScope: QuizContinentScope;
-  onQuestionScopeChange: (scope: QuizContinentScope) => void;
+  questionScope: QuizScope;
+  onQuestionScopeChange: (scope: QuizScope) => void;
 }
 
 export type InputModeToggleProps = {
@@ -42,10 +42,10 @@ export type QuestionDirectionToggleProps = {
 };
 
 export type QuestionScopeToggleProps = {
-  questionScope: QuizContinentScope;
+  questionScope: QuizScope;
   loadingQuestion: boolean;
   submittingAnswer: boolean;
-  onQuestionScopeChange: (scope: QuizContinentScope) => void;
+  onQuestionScopeChange: (scope: QuizScope) => void;
 };
 
 export type FreeTextAnswerInputProps = {
@@ -116,12 +116,12 @@ export interface ModeModalProps {
   onClose: () => void;
   inputMode: QuizInputMode;
   questionDirection: QuestionDirection;
-  questionScope: QuizContinentScope;
+  questionScope: QuizScope;
   loadingQuestion: boolean;
   submittingAnswer: boolean;
   onInputModeChange: (mode: QuizInputMode) => void;
   onQuestionDirectionChange: (direction: QuestionDirection) => void;
-  onQuestionScopeChange: (scope: QuizContinentScope) => void;
+  onQuestionScopeChange: (scope: QuizScope) => void;
 }
 
 export type ErrorNoticeProps = {

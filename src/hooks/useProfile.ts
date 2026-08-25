@@ -37,8 +37,7 @@ export function useUpdateProfileDifficultyMutation(token: string) {
 export function useResetProfileMutation(token: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { resetProgress?: boolean; resetAttempts?: boolean; deleteAccount?: boolean }) =>
-      apiClient.resetProfile(payload, token),
+    mutationFn: (payload: { resetProgress?: boolean; resetAttempts?: boolean; deleteAccount?: boolean }) => apiClient.resetProfile(payload, token),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['profile'] }),

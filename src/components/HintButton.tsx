@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/button";
-import { useI18n } from "@/providers/I18nProvider";
+import { useI18n } from "@/components/I18nProvider";
 import type { DifficultyLevel, ProgressResponse } from "@/lib/types";
 
 type HintButtonProps = {
