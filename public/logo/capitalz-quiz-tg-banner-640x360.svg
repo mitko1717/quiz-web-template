@@ -1,0 +1,38 @@
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="circleClipB">
+      <circle cx="320" cy="150" r="105"/>
+    </clipPath>
+  </defs>
+
+  <rect width="640" height="360" fill="#0F1512"/>
+
+  <circle cx="320" cy="150" r="118" fill="none" stroke="#2A342C" stroke-width="2"/>
+  <circle cx="320" cy="150" r="105" fill="#161D19" stroke="#4C6B58" stroke-width="2"/>
+
+  <g clip-path="url(#circleClipB)">
+    <circle cx="320" cy="150" r="105" fill="#1E2620"/>
+    <g fill="#4C6B58">
+      <path d="M235 108 L265 93 L295 105 L288 128 L260 135 L242 128 Z"/>
+      <path d="M295 93 L340 78 L370 90 L378 113 L355 132 L325 128 L302 116 Z"/>
+      <path d="M350 140 L378 136 L393 155 L382 178 L358 182 L347 162 Z"/>
+      <path d="M235 145 L258 141 L270 168 L250 198 L230 182 L226 155 Z"/>
+      <path d="M285 163 L316 155 L332 178 L324 213 L297 221 L282 194 Z"/>
+      <path d="M405 128 L432 132 L440 152 L420 160 L408 144 Z"/>
+    </g>
+    <line x1="180" y1="150" x2="460" y2="150" stroke="#2A342C" stroke-width="1"/>
+    <line x1="320" y1="30" x2="320" y2="270" stroke="#2A342C" stroke-width="1"/>
+    <ellipse cx="320" cy="150" rx="105" ry="42" fill="none" stroke="#2A342C" stroke-width="1"/>
+    <ellipse cx="320" cy="150" rx="63" ry="105" fill="none" stroke="#2A342C" stroke-width="1"/>
+  </g>
+
+  <g>
+    <path d="M320 92 C343 92 362 111 362 134 C362 165 320 208 320 208 C320 208 278 165 278 134 C278 111 297 92 320 92 Z"
+          fill="#7FBF9E" stroke="#0F1512" stroke-width="3"/>
+    <circle cx="320" cy="132" r="15" fill="#0F1512"/>
+    <circle cx="320" cy="132" r="8" fill="#A8E6B0"/>
+  </g>
+
+  <text x="320" y="298" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#E9EDE9" letter-spacing="0.5">Capitalz Quiz</text>
+  <text x="320" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#7C887E" letter-spacing="2">WORLD CAPITALS QUIZ</text>
+</svg>
