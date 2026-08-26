@@ -23,8 +23,8 @@ export function MoreGamesSection({ token }: { token?: string }) {
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-xl border border-base-600 bg-base-700/30 p-2.5 transition hover:bg-base-700/50"
           >
-            {game.iconUrl ? (
-              <img src={game.iconUrl} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+            {game.logo ? (
+              <img src={game.logo} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
             ) : (
               <div className="h-10 w-10 shrink-0 rounded-lg bg-base-600" aria-hidden="true" />
             )}

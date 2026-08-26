@@ -17,6 +17,7 @@ import { useProfileQuery } from "@/hooks/useProfile";
 import type { DailyChallengeAnswerResponse } from "@/lib/types";
 import { topicConfig } from "@/lib/topic.config";
 import { TranslationKey } from "@/lib/i18n";
+import { MoreGamesSection } from "./MoreGamesSection";
 
 function toErrorMessage(cause: unknown, fallback: string): string {
   if (cause instanceof Error) return cause.message;
@@ -184,6 +185,8 @@ export function DailyChallengePageContent() {
           </div>
         ) : null}
       </CardSection>
+
+      <MoreGamesSection />
     </section>
   );
 }

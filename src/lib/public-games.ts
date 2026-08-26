@@ -3,6 +3,7 @@ export interface PublicGame {
   name: string;
   description: string;
   tgBotLink: string | null;
-  iconUrl: string | null;
+  logo: string | null;
+  bannerImage: string | null;
   tagline: string | null;
 }
