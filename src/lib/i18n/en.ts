@@ -212,6 +212,8 @@ export const en = {
   stats_detail_description: 'Per-difficulty performance and resource breakdown.',
   stats_detail_close: 'Close',
 
+  more_games_title: 'More games',
+
   admin_page_label: '{appName} - Admin',
   admin_back_to_quiz: 'Back to quiz',
 
@@ -261,6 +263,29 @@ export const en = {
   admin_daily_streak_day7: 'Day 7 bonus',
   admin_daily_streak_day30: 'Day 30 bonus',
   admin_reset_defaults: 'Reset to defaults',
+
+  admin_games_title: 'Games registry',
+  admin_games_desc: 'Manage cross-promoted games',
+  admin_games_field_slug: 'Slug',
+  admin_games_field_name: 'Name',
+  admin_games_field_tagline: 'Tagline',
+  admin_games_field_bot_link: 'Telegram bot link',
+  admin_games_field_logo: 'Logo URL',
+  admin_games_field_banner: 'Banner URL',
+  admin_games_field_description: 'Description',
+  admin_games_field_sort: 'Sort order',
+  admin_games_field_active: 'Active',
+  admin_games_create: 'Create game',
+  admin_games_update: 'Update game',
+  admin_games_saved: 'Game saved',
+  admin_games_deleted: 'Game deleted',
+  admin_games_empty: 'No games yet',
+  admin_games_edit: 'Edit',
+  admin_games_delete: 'Delete',
+  admin_games_col_name: 'Name',
+  admin_games_col_slug: 'Slug',
+  admin_games_col_active: 'Active',
+  admin_games_col_actions: 'Actions',
 
   pagination_page_of: 'Page {page} of {total}',
   pagination_prev: 'Prev',

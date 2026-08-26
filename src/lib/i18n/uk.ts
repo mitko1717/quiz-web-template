@@ -214,6 +214,8 @@ export const uk: Record<keyof typeof en, string> = {
   stats_detail_description: 'Розподіл результатів та ресурсів за рівнем складності.',
   stats_detail_close: 'Закрити',
 
+  more_games_title: 'Більше ігор',
+
   admin_page_label: '{appName} — Адмін',
   admin_back_to_quiz: 'Назад до вікторини',
 
@@ -263,6 +265,29 @@ export const uk: Record<keyof typeof en, string> = {
   admin_daily_streak_day7: 'Бонус за 7-й день',
   admin_daily_streak_day30: 'Бонус за 30-й день',
   admin_reset_defaults: 'Скинути до замовчуваних',
+
+  admin_games_title: 'Реєстр ігор',
+  admin_games_desc: 'Керуйте іграми для крос-промо',
+  admin_games_field_slug: 'Slug',
+  admin_games_field_name: 'Назва',
+  admin_games_field_tagline: 'Слоган',
+  admin_games_field_bot_link: 'Посилання на Telegram-бота',
+  admin_games_field_logo: 'URL логотипа',
+  admin_games_field_banner: 'URL банера',
+  admin_games_field_description: 'Опис',
+  admin_games_field_sort: 'Порядок',
+  admin_games_field_active: 'Активна',
+  admin_games_create: 'Створити гру',
+  admin_games_update: 'Оновити гру',
+  admin_games_saved: 'Гру збережено',
+  admin_games_deleted: 'Гру видалено',
+  admin_games_empty: 'Ігор ще немає',
+  admin_games_edit: 'Редагувати',
+  admin_games_delete: 'Видалити',
+  admin_games_col_name: 'Назва',
+  admin_games_col_slug: 'Slug',
+  admin_games_col_active: 'Активна',
+  admin_games_col_actions: 'Дії',
 
   pagination_page_of: 'Сторінка {page} з {total}',
   pagination_prev: 'Назад',

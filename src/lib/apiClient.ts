@@ -5,6 +5,8 @@ import { progressApi } from "./api/progress";
 import { adminApi } from "./api/admin";
 import { profileApi } from "./api/profile";
 import { dailyChallengeApi } from "./api/daily-challenge";
+import { gamesApi } from "./api/games";
+import { adminGamesApi } from "./api/admin-games";
 
 export const apiClient = {
   // auth
@@ -41,6 +43,15 @@ export const apiClient = {
   getAdminGameplayConfigSchema: adminApi.getGameplayConfigSchema.bind(adminApi),
   updateAdminGameplayConfig: adminApi.updateGameplayConfig.bind(adminApi),
   resetAdminGameplayConfig: adminApi.resetGameplayConfig.bind(adminApi),
+
+  // games
+  getOtherGames: gamesApi.listOthers.bind(gamesApi),
+
+  // admin games
+  getAdminGames: adminGamesApi.list.bind(adminGamesApi),
+  createAdminGame: adminGamesApi.create.bind(adminGamesApi),
+  updateAdminGame: adminGamesApi.update.bind(adminGamesApi),
+  removeAdminGame: adminGamesApi.remove.bind(adminGamesApi),
 };
 
 

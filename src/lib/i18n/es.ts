@@ -214,6 +214,8 @@ export const es: Record<keyof typeof en, string> = {
   stats_detail_description: 'Desglose de rendimiento y recursos por nivel de dificultad.',
   stats_detail_close: 'Cerrar',
 
+  more_games_title: 'Más juegos',
+
   admin_page_label: '{appName} — Admin',
   admin_back_to_quiz: 'Volver al quiz',
 
@@ -263,6 +265,29 @@ export const es: Record<keyof typeof en, string> = {
   admin_daily_streak_day7: 'Bonificación del día 7',
   admin_daily_streak_day30: 'Bonificación del día 30',
   admin_reset_defaults: 'Restablecer valores por defecto',
+
+  admin_games_title: 'Registro de juegos',
+  admin_games_desc: 'Gestiona los juegos promocionados',
+  admin_games_field_slug: 'Slug',
+  admin_games_field_name: 'Nombre',
+  admin_games_field_tagline: 'Eslogan',
+  admin_games_field_bot_link: 'Enlace al bot de Telegram',
+  admin_games_field_logo: 'URL del logotipo',
+  admin_games_field_banner: 'URL del banner',
+  admin_games_field_description: 'Descripción',
+  admin_games_field_sort: 'Orden',
+  admin_games_field_active: 'Activo',
+  admin_games_create: 'Crear juego',
+  admin_games_update: 'Actualizar juego',
+  admin_games_saved: 'Juego guardado',
+  admin_games_deleted: 'Juego eliminado',
+  admin_games_empty: 'Aún no hay juegos',
+  admin_games_edit: 'Editar',
+  admin_games_delete: 'Eliminar',
+  admin_games_col_name: 'Nombre',
+  admin_games_col_slug: 'Slug',
+  admin_games_col_active: 'Activo',
+  admin_games_col_actions: 'Acciones',
 
   pagination_page_of: 'Página {page} de {total}',
   pagination_prev: 'Anterior',

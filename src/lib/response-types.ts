@@ -259,3 +259,30 @@ export interface DailyChallengeAnswerResponse {
   completed: boolean;
   completedAt: string | null;
 }
+
+export interface AdminGame {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  tgBotLink: string | null;
+  logo: string | null;
+  bannerImage: string | null;
+  tagline: string | null;
+  active: boolean;
+  sortOrder: number;
+}
+
+export interface CreateGamePayload {
+  slug: string;
+  name: string;
+  description?: string;
+  tgBotLink?: string;
+  logo?: string;
+  bannerImage?: string;
+  tagline?: string;
+  active?: boolean;
+  sortOrder?: number;
+}
+
+export type UpdateGamePayload = Partial<Omit<CreateGamePayload, "slug">>;

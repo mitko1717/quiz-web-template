@@ -9,6 +9,7 @@ import { useAuthContext } from "@/components/AuthGate";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTelegram } from "@/providers/TelegramProvider";
+import { AdminGamesPanel } from "./AdminGamesPanel";
 
 export function AdminPageContent() {
   const { t } = useI18n();
@@ -46,6 +47,7 @@ export function AdminPageContent() {
         </div>
 
         <AdminPanel token={token} authMode={authMode} pageSize={5} />
+        <AdminGamesPanel token={token} enabled={Boolean(token)} />
       </section>
 
       <ConfirmModal
