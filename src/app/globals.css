@@ -5,14 +5,14 @@
   --color-base-800: #161D19;
   --color-base-700: #1E2620;
   --color-base-600: #2A342C;
-
+ 
   --color-ink-100: #E9EDE9;
   --color-ink-300: #B7C0B8;
   --color-ink-500: #7C887E;
-
+ 
   --color-accent-green: #7FBF9E;
   --color-accent-greenDim: #4C6B58;
-
+ 
   --color-pastel-mint: #A8E6B0;
   --color-pastel-coral: #F2A7A0;
   --color-pastel-amber: #F3D19E;
@@ -138,7 +138,7 @@ html {
   inset: -1px;
   border-radius: 0.75rem;
   padding: 1px;
-  background: linear-gradient(100deg, #a8e6b0, #a9c9e3, #f3d19e, #a8e6b0);
+  background: linear-gradient(100deg, var(--color-pastel-mint), var(--color-pastel-sky), var(--color-pastel-amber), var(--color-pastel-mint));
   background-size: 220% 220%;
   animation: difficulty-border-flow 1.7s linear infinite;
   pointer-events: none;
@@ -195,7 +195,7 @@ html {
   content: "";
   position: absolute;
   inset: -20% -30%;
-  background: linear-gradient(110deg, transparent 40%, rgba(233, 237, 233, 0.4) 50%, transparent 60%);
+  background: linear-gradient(110deg, transparent 40%, color-mix(in srgb, var(--color-ink-100) 40%, transparent) 50%, transparent 60%);
   animation: answer-correct-sheen 0.75s ease-out;
   pointer-events: none;
 }
