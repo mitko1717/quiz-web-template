@@ -188,7 +188,7 @@ export function AuthGate({ children, adminOnly = false }: AuthGateProps) {
       <div className="auth-page flex items-start justify-center overflow-y-auto bg-base-900 px-4 sm:px-6">
         <div className="w-full max-w-4xl rounded-2xl border border-base-600 bg-base-800 p-4 sm:p-6">
           <div className="grid gap-4 sm:gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,rgba(20,184,166,0.16),rgba(10,14,18,0.25))] p-5 sm:p-6">
+            <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_16%,transparent),color-mix(in_srgb,var(--color-base-900)_25%,transparent))] p-5 sm:p-6">
               <div className="mb-2 flex items-center justify-between gap-3">
                 <SectionLabel>{t('auth_tool_label', { appName: topicConfig.appName })}</SectionLabel>
                 <LanguageSwitcher compact />

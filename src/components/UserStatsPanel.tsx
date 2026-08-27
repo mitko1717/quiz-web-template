@@ -111,7 +111,7 @@ function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
   const nextUnlockStatus = nextUnlock ? stats.progression.levels.find((row) => row.difficultyLevel === nextUnlock) ?? null : null;
 
   return (
-    <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,rgba(20,184,166,0.18),rgba(10,14,18,0.3))] p-5">
+    <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-5">
       <div className="flex items-center justify-between gap-2">
         <SectionLabel>{t('stats_label')}</SectionLabel>
         <Button
