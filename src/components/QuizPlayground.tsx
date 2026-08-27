@@ -11,6 +11,7 @@ import { useProfileQuery, useUpdateProfileDifficultyMutation } from "@/hooks/use
 import { DashboardHeader } from "./DashboardHeader";
 import { useI18n } from "@/components/I18nProvider";
 import { type DifficultyLevel } from "@/lib/types";
+import { MoreGamesSection } from "./MoreGamesSection";
 
 const HIGHER_LEVEL_SUGGESTION_STREAKS: Partial<Record<DifficultyLevel, number>> = {
   1: 3,
@@ -153,30 +154,33 @@ export function QuizPlayground() {
         title={t("difficulty_label")}
         description={t("question_suggestion_up")}
         footer={
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            <Button
-              type="button"
-              variant="suggestionNeutral"
-              size="sm"
-              onClick={closeSuggestionModal}
-              className="w-full rounded-lg uppercase tracking-[0.1em] sm:w-auto"
-            >
-              {t("common_dismiss")}
-            </Button>
-            {suggestedDifficulty !== null ? (
+          <div className="space-y-4">
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 type="button"
-                variant="suggestionAccent"
+                variant="suggestionNeutral"
                 size="sm"
-                onClick={() => {
-                  handleDifficultyChange(suggestedDifficulty);
-                  closeSuggestionModal();
-                }}
+                onClick={closeSuggestionModal}
                 className="w-full rounded-lg uppercase tracking-[0.1em] sm:w-auto"
               >
-                {t("question_suggestion_try_level", { level: suggestedDifficulty })}
+                {t("common_dismiss")}
               </Button>
-            ) : null}
+              {suggestedDifficulty !== null ? (
+                <Button
+                  type="button"
+                  variant="suggestionAccent"
+                  size="sm"
+                  onClick={() => {
+                    handleDifficultyChange(suggestedDifficulty);
+                    closeSuggestionModal();
+                  }}
+                  className="w-full rounded-lg uppercase tracking-[0.1em] sm:w-auto"
+                >
+                  {t("question_suggestion_try_level", { level: suggestedDifficulty })}
+                </Button>
+              ) : null}
+            </div>
+            <MoreGamesSection token={token} />
           </div>
         }
       />

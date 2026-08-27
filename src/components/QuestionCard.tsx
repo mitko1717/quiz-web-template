@@ -104,10 +104,8 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
 
 function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   const { t } = useI18n();
-  const displayName = question.publicFields[topicConfig.publicFields.displayName] as string;
-  const badge = topicConfig.publicFields.badge
-    ? (question.publicFields[topicConfig.publicFields.badge] as string)
-    : null;
+  const displayName = (question.publicFields?.[topicConfig.publicFields.displayName] as string) ?? '';
+  const badge = topicConfig.publicFields.badge ? ((question.publicFields?.[topicConfig.publicFields.badge] as string) ?? null) : null;
 
   const answerNoun = t(`${topicConfig.slug}_answer_noun` as TranslationKey);
   const promptNoun = t(`${topicConfig.slug}_prompt_noun` as TranslationKey);
