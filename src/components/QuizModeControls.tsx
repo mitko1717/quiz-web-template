@@ -5,6 +5,7 @@ import { topicConfig } from "@/lib/topic.config";
 import { QuestionDirection, QuizScope, QuizInputMode } from "@/lib/types";
 import { useI18n } from "@/components/I18nProvider";
 import { TranslationKey } from "@/lib/i18n";
+import { ReactNode } from "react";
 
 type QuizModeControlsProps = {
   inputMode: QuizInputMode;
@@ -27,8 +28,8 @@ export function QuizModeControls(props: QuizModeControlsProps) {
 
   return (
     <div className="space-y-3">
-      <div className="mb-3 rounded-xl border border-base-600 bg-base-700/30 p-1.5">
-        <p className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-[0.1em] text-ink-500">{t("question_input_mode_label")}</p>
+      <Wrapper className="mb-3">
+        <Title>{t("question_input_mode_label")}</Title>
         <div className="grid grid-cols-2 gap-1.5">
           <Button
             type="button"
@@ -51,10 +52,10 @@ export function QuizModeControls(props: QuizModeControlsProps) {
             {t("question_input_mode_free_text")}
           </Button>
         </div>
-      </div>
+      </Wrapper>
 
-      <div className="mb-3 rounded-xl border border-base-600 bg-base-700/30 p-1.5">
-        <p className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-[0.1em] text-ink-500">{t("question_direction_label")}</p>
+      <Wrapper className="mb-3">
+        <Title>{t("question_direction_label")}</Title>
         <div className="grid grid-cols-2 gap-1.5">
           <Button
             type="button"
@@ -77,10 +78,10 @@ export function QuizModeControls(props: QuizModeControlsProps) {
             {t("question_direction_reverse", { answerNoun, promptNoun })}
           </Button>
         </div>
-      </div>
+      </Wrapper>
 
       {hasScopes ? (
-        <div className="rounded-xl border border-base-600 bg-base-700/30 p-1.5">
+        <Wrapper>
           <p className="px-2 text-[11px] font-medium uppercase tracking-[0.1em] text-ink-500">{t("question_scope_label")}</p>
           <p className="mb-1.5 px-2 text-[11px] text-ink-400">{t("question_scope_desc")}</p>
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
@@ -98,8 +99,20 @@ export function QuizModeControls(props: QuizModeControlsProps) {
               </Button>
             ))}
           </div>
-        </div>
+        </Wrapper>
       ) : null}
     </div>
   );
 }
+
+const Wrapper = (props: { children: ReactNode, className?: string }) => (
+  <div className={`rounded-xl border border-base-600 bg-base-700/30 p-1.5 ${props.className ?? ""}`}>
+    {props.children}
+  </div>
+);
+
+const Title = (props: { children: ReactNode }) => (
+  <p className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-[0.1em] text-ink-500">
+    {props.children}
+  </p>
+);
