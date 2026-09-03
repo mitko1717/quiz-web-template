@@ -119,7 +119,22 @@ npm run build       # production build (env inlined here)
 npm run start       # serve production build
 npm run typecheck   # tsc --noEmit
 npm run lint        # eslint
+npm run sync        # sync shared template code to configured clones
 ```
+
+### Syncing clones
+
+Run `npm run sync` from this repository to propagate shared frontend changes to every
+clone listed in `scripts/clones.json`. To sync one clone instead, pass its path:
+
+```bash
+npm run sync -- /path/to/quiz-clone
+```
+
+The script syncs `src/app`, `src/components`, `src/hooks`, `src/lib`, and `src/providers`.
+It also removes files deleted from the template, but preserves each clone's topic config,
+translations, styling, favicon, layout, and other excluded branding files. Review each
+clone with `git status` and `git diff`, then run `npm run typecheck` and `npm run build` there.
 
 ## Notes / known gaps
 
