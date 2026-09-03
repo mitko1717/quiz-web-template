@@ -30,6 +30,7 @@ import type {
 } from "./QuestionCard.types";
 import { topicConfig } from "@/lib/topic.config";
 import { TranslationKey } from "@/lib/i18n";
+import { parsePromptToken } from "@/lib/prompt-token";
 
 function LoadingState({ inputMode }: { inputMode: QuizInputMode }) {
   const optionRowTones = inputMode === QuizInputMode.FREE_TEXT ? ["bg-base-700/70", "bg-base-700/35", "bg-base-700/25"] : Array(4).fill("bg-base-700/70");
@@ -118,16 +119,24 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
 
   let prompt: string;
   if (question.questionDirection === QuestionDirection.REVERSE) {
-    // Reverse prompt may be "labelKey|answerValue" (variant topics) or a plain value.
-    const [maybeLabel, maybeValue] = String(question.prompt).split('|');
-    const value = maybeValue !== undefined ? `${localizeToken(maybeLabel)}: ${maybeValue}` : question.prompt;
-    prompt = t('question_prompt_reverse', { value, answerNoun, promptNoun });
+    const reverseToken = parsePromptToken(String(question.prompt));
+    if (reverseToken) {
+      prompt = t(reverseToken.key as TranslationKey, reverseToken.params);
+    } else {
+      // Reverse prompt may be "labelKey|answerValue" (legacy variant topics) or a plain value.
+      const [maybeLabel, maybeValue] = String(question.prompt).split('|');
+      const value = maybeValue !== undefined ? `${localizeToken(maybeLabel)}: ${maybeValue}` : question.prompt;
+      prompt = t('question_prompt_reverse', { value, answerNoun, promptNoun });
+    }
   } else {
-    const localizedLabel = localizeToken(String(question.prompt));
-    const promptValue = localizedLabel !== String(question.prompt)
-      ? `${displayName} · ${localizedLabel}`
-      : displayName;
-    prompt = t('question_prompt', { value: promptValue, promptNoun });
+    const forwardToken = parsePromptToken(String(question.prompt));
+    if (forwardToken) {
+      prompt = t(forwardToken.key as TranslationKey, forwardToken.params);
+    } else {
+      const localizedLabel = localizeToken(String(question.prompt));
+      const promptValue = localizedLabel !== String(question.prompt) ? `${displayName} · ${localizedLabel}` : displayName;
+      prompt = t('question_prompt', { value: promptValue, promptNoun });
+    }
   }
 
   return (
