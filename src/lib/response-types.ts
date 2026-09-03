@@ -31,6 +31,7 @@ export interface ProfileDifficultyResponse {
 }
 
 export interface QuestionResponse {
+  questionId: string;
   itemId: string;
   prompt: string;
   publicFields: Record<string, unknown>;
@@ -41,6 +42,10 @@ export interface QuestionResponse {
 }
 
 export interface AnswerResponse {
+  questionId: string;
+  topicId: string;
+  itemId: string;
+  difficultyLevel: DifficultyLevel;
   correct: boolean;
   correctAnswer: string | null;
   answerRevealed: boolean;

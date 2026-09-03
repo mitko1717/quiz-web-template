@@ -121,17 +121,17 @@ export function useQuiz(token: string): UseQuizResult {
   const fetchQuestionRef = useRef(fetchQuestionMutation.mutateAsync);
 
   const submitAnswerMutation = useMutation({
-    mutationFn: (payload: { itemId: string; difficulty: DifficultyLevel; selectedOption: string }) => apiClient.submitAnswer(payload, token),
+    mutationFn: (payload: { questionId: string; selectedOption: string }) => apiClient.submitAnswer(payload, token),
     onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) }); },
   });
 
   const skipQuestionMutation = useMutation({
-    mutationFn: (payload: { itemId: string; difficulty: DifficultyLevel }) => apiClient.skipQuestion(payload, token),
+    mutationFn: (payload: { questionId: string }) => apiClient.skipQuestion(payload, token),
     onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) }); },
   });
 
   const hintMutation = useMutation({
-    mutationFn: (payload: { itemId: string; difficulty: DifficultyLevel }) => apiClient.useHint(payload, token),
+    mutationFn: (payload: { questionId: string }) => apiClient.useHint(payload, token),
     onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) }); },
   });
 
@@ -283,70 +283,70 @@ export function useQuiz(token: string): UseQuizResult {
     [answerResult, question?.inputMode, skipResult, wrongSelections],
   );
 
-  const submitAnswer = useCallback(async () => {
-    if (!question || !selectedOption || skipResult) return;
-    if (answerResult?.answerRevealed) return;
+const submitAnswer = useCallback(async () => {
+  if (!question || !selectedOption || skipResult) return;
+  if (answerResult?.answerRevealed) return;
 
-    setError(null);
+  setError(null);
 
-    try {
-      const res = await submitAnswerMutation.mutateAsync({ itemId: question.itemId, difficulty, selectedOption });
-      setAnswerResult(res);
-      setLiveInsightPoints(res.updatedInsightPoints);
-      setDifficultySuggestion(res.difficultySuggestion);
+  try {
+    const res = await submitAnswerMutation.mutateAsync({ questionId: question.questionId, selectedOption });
+    setAnswerResult(res);
+    setLiveInsightPoints(res.updatedInsightPoints);
+    setDifficultySuggestion(res.difficultySuggestion);
 
-      if (res.canRetry) {
-        setWrongSelections(res.wrongSelections);
-        setSelectedOptionState(null);
-      }
-    } catch (cause) {
-      if (isMissingActiveQuestionError(cause)) {
-        await loadQuestion(difficulty, inputModeRef.current, questionDirectionRef.current, questionScopeRef.current);
-        return;
-      }
-      setError(toErrorMessage(cause, t('common_unexpected_error')));
+    if (res.canRetry) {
+      setWrongSelections(res.wrongSelections);
+      setSelectedOptionState(null);
     }
-  }, [answerResult?.answerRevealed, difficulty, loadQuestion, question, selectedOption, skipResult, submitAnswerMutation, t]);
-
-  const skipQuestion = useCallback(async () => {
-    if (!question) return;
-
-    setError(null);
-
-    try {
-      const res = await skipQuestionMutation.mutateAsync({ itemId: question.itemId, difficulty });
-      setSkipResult(res);
-      setLiveInsightPoints(res.updatedInsightPoints);
-    } catch (cause) {
-      if (isMissingActiveQuestionError(cause)) {
-        await loadQuestion(difficulty, inputModeRef.current, questionDirectionRef.current, questionScopeRef.current);
-        return;
-      }
-      setError(toErrorMessage(cause, t('common_unexpected_error')));
+  } catch (cause) {
+    if (isMissingActiveQuestionError(cause)) {
+      await loadQuestion(difficulty, inputModeRef.current, questionDirectionRef.current, questionScopeRef.current);
+      return;
     }
-  }, [difficulty, loadQuestion, question, skipQuestionMutation, t]);
+    setError(toErrorMessage(cause, t('common_unexpected_error')));
+  }
+}, [answerResult?.answerRevealed, difficulty, loadQuestion, question, selectedOption, skipResult, submitAnswerMutation, t]);
 
-  const useHint = useCallback(async () => {
-    if (!question || skipResult || answerResult?.answerRevealed) return;
+const skipQuestion = useCallback(async () => {
+  if (!question) return;
 
-    setError(null);
+  setError(null);
 
-    try {
-      const res = await hintMutation.mutateAsync({ itemId: question.itemId, difficulty });
-      setHintResult(res);
-      setLiveInsightPoints(res.updatedInsightPoints);
-      if (res.type === HintType.REMOVE_OPTION) {
-        setQuestion({ ...question, options: res.remainingOptions });
-        if (selectedOption && !res.remainingOptions.includes(selectedOption)) setSelectedOptionState(null);
-      }
-    } catch (cause) {
-      if (isMissingActiveQuestionError(cause)) {
-        await loadQuestion(difficulty, inputModeRef.current, questionDirectionRef.current, questionScopeRef.current);
-        return;
-      }
-      setError(toErrorMessage(cause, t('common_unexpected_error')));
+  try {
+    const res = await skipQuestionMutation.mutateAsync({ questionId: question.questionId });
+    setSkipResult(res);
+    setLiveInsightPoints(res.updatedInsightPoints);
+  } catch (cause) {
+    if (isMissingActiveQuestionError(cause)) {
+      await loadQuestion(difficulty, inputModeRef.current, questionDirectionRef.current, questionScopeRef.current);
+      return;
     }
-  }, [answerResult?.answerRevealed, difficulty, hintMutation, loadQuestion, question, selectedOption, skipResult, t]);
+    setError(toErrorMessage(cause, t('common_unexpected_error')));
+  }
+}, [difficulty, loadQuestion, question, skipQuestionMutation, t]);
+
+const useHint = useCallback(async () => {
+  if (!question || skipResult || answerResult?.answerRevealed) return;
+
+  setError(null);
+
+  try {
+    const res = await hintMutation.mutateAsync({ questionId: question.questionId });
+    setHintResult(res);
+    setLiveInsightPoints(res.updatedInsightPoints);
+    if (res.type === HintType.REMOVE_OPTION) {
+      setQuestion({ ...question, options: res.remainingOptions });
+      if (selectedOption && !res.remainingOptions.includes(selectedOption)) setSelectedOptionState(null);
+    }
+  } catch (cause) {
+    if (isMissingActiveQuestionError(cause)) {
+      await loadQuestion(difficulty, inputModeRef.current, questionDirectionRef.current, questionScopeRef.current);
+      return;
+    }
+    setError(toErrorMessage(cause, t('common_unexpected_error')));
+  }
+}, [answerResult?.answerRevealed, difficulty, hintMutation, loadQuestion, question, selectedOption, skipResult, t]);
 
   const nextQuestion = useCallback(async () => {
     await loadQuestion(difficulty, inputMode, questionDirection, questionScope);

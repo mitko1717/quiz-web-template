@@ -7,18 +7,18 @@ export const quizApi = {
     const params = new URLSearchParams({ difficulty: String(difficulty), inputMode, questionDirection });
     if (scope !== topicConfig.worldScopeValue) params.set(topicConfig.scopeParam, scope);
 
-    return request<QuestionResponse>(`/quiz/question?${params.toString()}`, { token } );
+    return request<QuestionResponse>(`/quiz/question?${params.toString()}`, { token });
   },
 
-  submitAnswer(payload: { itemId: string; difficulty: DifficultyLevel; selectedOption: string }, token: string) {
+  submitAnswer(payload: { questionId: string; selectedOption: string }, token: string) {
     return request<AnswerResponse>("/quiz/answer", { method: "POST", body: payload, token });
   },
 
-  skipQuestion(payload: { itemId: string; difficulty: DifficultyLevel }, token: string) {
+  skipQuestion(payload: { questionId: string }, token: string) {
     return request<SkipResponse>("/quiz/skip", { method: "POST", body: payload, token });
   },
 
-  useHint(payload: { itemId: string; difficulty: DifficultyLevel }, token: string) {
+  useHint(payload: { questionId: string }, token: string) {
     return request<HintResponse>("/quiz/hint", { method: "POST", body: payload, token });
   },
 };
