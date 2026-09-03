@@ -12,6 +12,7 @@ type QuizModeControlsProps = {
   questionDirection: QuestionDirection;
   questionScope: QuizScope;
   disabled?: boolean;
+  allowReverseMode?: boolean;
   onInputModeChange: (mode: QuizInputMode) => void;
   onQuestionDirectionChange: (direction: QuestionDirection) => void;
   onQuestionScopeChange: (scope: QuizScope) => void;
@@ -21,7 +22,7 @@ export function QuizModeControls(props: QuizModeControlsProps) {
   const { t } = useI18n();
   const answerNoun = t(`${topicConfig.slug}_answer_noun` as TranslationKey);
   const promptNoun = t(`${topicConfig.slug}_prompt_noun` as TranslationKey);
-  const { inputMode, questionDirection, questionScope, disabled, onInputModeChange, onQuestionDirectionChange, onQuestionScopeChange } = props;
+  const { inputMode, questionDirection, questionScope, disabled, onInputModeChange, onQuestionDirectionChange, onQuestionScopeChange, allowReverseMode } = props;
 
   const scopes = topicConfig.scopes;
   const hasScopes = scopes.length > 0;
@@ -54,31 +55,33 @@ export function QuizModeControls(props: QuizModeControlsProps) {
         </div>
       </Wrapper>
 
-      <Wrapper className="mb-3">
-        <Title>{t("question_direction_label")}</Title>
-        <div className="grid grid-cols-2 gap-1.5">
-          <Button
-            type="button"
-            variant={questionDirection === QuestionDirection.FORWARD ? "inputModeActive" : "inputModeIdle"}
-            size="md"
-            disabled={disabled}
-            onClick={() => onQuestionDirectionChange(QuestionDirection.FORWARD)}
-            className="min-h-11 rounded-lg px-2 py-2 text-xs leading-tight"
-          >
-            {t("question_direction_forward", { answerNoun, promptNoun })}
-          </Button>
-          <Button
-            type="button"
-            variant={questionDirection === QuestionDirection.REVERSE ? "inputModeActive" : "inputModeIdle"}
-            size="md"
-            disabled={disabled}
-            onClick={() => onQuestionDirectionChange(QuestionDirection.REVERSE)}
-            className="min-h-11 rounded-lg px-2 py-2 text-xs leading-tight"
-          >
-            {t("question_direction_reverse", { answerNoun, promptNoun })}
-          </Button>
-        </div>
-      </Wrapper>
+      {allowReverseMode !== false ? (
+        <Wrapper className="mb-3">
+          <Title>{t("question_direction_label")}</Title>
+          <div className="grid grid-cols-2 gap-1.5">
+            <Button
+              type="button"
+              variant={questionDirection === QuestionDirection.FORWARD ? "inputModeActive" : "inputModeIdle"}
+              size="md"
+              disabled={disabled}
+              onClick={() => onQuestionDirectionChange(QuestionDirection.FORWARD)}
+              className="min-h-11 rounded-lg px-2 py-2 text-xs leading-tight"
+            >
+              {t("question_direction_forward", { answerNoun, promptNoun })}
+            </Button>
+            <Button
+              type="button"
+              variant={questionDirection === QuestionDirection.REVERSE ? "inputModeActive" : "inputModeIdle"}
+              size="md"
+              disabled={disabled}
+              onClick={() => onQuestionDirectionChange(QuestionDirection.REVERSE)}
+              className="min-h-11 rounded-lg px-2 py-2 text-xs leading-tight"
+            >
+              {t("question_direction_reverse", { answerNoun, promptNoun })}
+            </Button>
+          </div>
+        </Wrapper>
+      ) : null}
 
       {hasScopes ? (
         <Wrapper>

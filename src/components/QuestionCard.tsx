@@ -295,6 +295,7 @@ function ModeModal({
   questionScope,
   loadingQuestion,
   submittingAnswer,
+  allowReverseMode,
   onInputModeChange,
   onQuestionDirectionChange,
   onQuestionScopeChange
@@ -320,6 +321,7 @@ function ModeModal({
         questionDirection={questionDirection}
         questionScope={questionScope}
         disabled={loadingQuestion || submittingAnswer}
+        allowReverseMode={allowReverseMode}
         onInputModeChange={onInputModeChange}
         onQuestionDirectionChange={onQuestionDirectionChange}
         onQuestionScopeChange={onQuestionScopeChange}
@@ -382,6 +384,7 @@ export function QuestionCard({
   onQuestionDirectionChange,
   questionScope,
   onQuestionScopeChange,
+  allowReverseMode,
 }: QuestionCardProps) {
   const { t } = useI18n();
   const { isOnline } = useNetworkStatus();
@@ -493,6 +496,7 @@ export function QuestionCard({
         questionScope={questionScope}
         loadingQuestion={loadingQuestion}
         submittingAnswer={submittingAnswer}
+        allowReverseMode={allowReverseMode}
         onInputModeChange={onInputModeChange}
         onQuestionDirectionChange={onQuestionDirectionChange}
         onQuestionScopeChange={onQuestionScopeChange}

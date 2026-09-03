@@ -288,6 +288,10 @@ export const es: Record<keyof typeof en, string> = {
   admin_games_col_slug: 'Slug',
   admin_games_col_active: 'Activo',
   admin_games_col_actions: 'Acciones',
+  admin_allow_reverse_mode_title: 'Modo inverso',
+  admin_allow_reverse_mode_desc: 'Permitir a los jugadores cambiar a preguntas en dirección inversa para este tema.',
+  common_enabled: 'Activado',
+  common_disabled: 'Desactivado',
 
   pagination_page_of: 'Página {page} de {total}',
   pagination_prev: 'Anterior',

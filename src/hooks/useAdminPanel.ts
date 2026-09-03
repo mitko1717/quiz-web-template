@@ -94,12 +94,8 @@ export function useAdminPanel(token: string, enabled: boolean, pageSize = 5) {
     (gameplayConfigQuery.isLoading || gameplayConfigQuery.isFetching || Boolean(gameplayConfigQuery.error));
 
   const usersError = usersOfflineFallback ? null : (usersQuery.error ? toErrorMessage(usersQuery.error, t('common_unexpected_error')) : null);
-  const selectedUserError = selectedUserOfflineFallback
-    ? null
-    : (selectedUserQuery.error ? toErrorMessage(selectedUserQuery.error, t('common_unexpected_error')) : null);
-  const gameplayConfigError = gameplayConfigOfflineFallback
-    ? null
-    : (gameplayConfigQuery.error ? toErrorMessage(gameplayConfigQuery.error, t('common_unexpected_error')) : null);
+  const selectedUserError = selectedUserOfflineFallback ? null : (selectedUserQuery.error ? toErrorMessage(selectedUserQuery.error, t('common_unexpected_error')) : null);
+  const gameplayConfigError = gameplayConfigOfflineFallback ? null : (gameplayConfigQuery.error ? toErrorMessage(gameplayConfigQuery.error, t('common_unexpected_error')) : null);
 
   const reloadUsers = useCallback(() => {
     void usersQuery.refetch();

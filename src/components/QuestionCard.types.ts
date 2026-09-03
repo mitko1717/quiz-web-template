@@ -14,6 +14,7 @@ export interface QuestionCardProps {
   loadingStats: boolean;
   usingHint: boolean;
   error: string | null;
+  allowReverseMode: boolean;
   onSelectOption: (option: string) => void;
   onSubmitAnswer: () => Promise<void>;
   onSkipQuestion: () => Promise<void>;
@@ -119,6 +120,7 @@ export interface ModeModalProps {
   questionScope: QuizScope;
   loadingQuestion: boolean;
   submittingAnswer: boolean;
+  allowReverseMode: boolean;
   onInputModeChange: (mode: QuizInputMode) => void;
   onQuestionDirectionChange: (direction: QuestionDirection) => void;
   onQuestionScopeChange: (scope: QuizScope) => void;

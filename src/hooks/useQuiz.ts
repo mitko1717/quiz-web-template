@@ -74,7 +74,7 @@ function isMissingActiveQuestionError(cause: unknown): boolean {
   return cause.message.includes('No active question found') || cause.message.includes('Fetch a new question first');
 }
 
-export function useQuiz(token: string): UseQuizResult {
+export function useQuiz(token: string, allowReverseMode: boolean = true): UseQuizResult {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const initialSession = queryClient.getQueryData<CachedQuizSessionState>(queryKeys.quizSession(token));
@@ -83,7 +83,9 @@ export function useQuiz(token: string): UseQuizResult {
   const storedQuestionScope = readStoredQuestionScope();
   const [difficulty, setDifficultyState] = useState<DifficultyLevel>(() => initialSession?.difficulty ?? 1);
   const [inputMode, setInputModeState] = useState<QuizInputMode>(() => storedInputMode);
-  const [questionDirection, setQuestionDirectionState] = useState<QuestionDirection>(() => storedQuestionDirection);
+  const [questionDirection, setQuestionDirectionState] = useState<QuestionDirection>(() =>
+    !allowReverseMode && storedQuestionDirection === QuestionDirection.REVERSE ? QuestionDirection.FORWARD : storedQuestionDirection
+  );
   const [questionScope, setQuestionScopeState] = useState<QuizScope>(() => storedQuestionScope);
   const [question, setQuestion] = useState<QuestionResponse | null>(() => initialSession?.question ?? null);
   const [selectedOption, setSelectedOptionState] = useState<string | null>(() => initialSession?.selectedOption ?? null);
@@ -265,9 +267,10 @@ export function useQuiz(token: string): UseQuizResult {
   }, []);
 
   const setQuestionDirection = useCallback((direction: QuestionDirection) => {
-    setQuestionDirectionState(direction);
-    writeStoredQuestionDirection(direction);
-  }, []);
+    const safeDirection = !allowReverseMode && direction === QuestionDirection.REVERSE ? QuestionDirection.FORWARD : direction;
+    setQuestionDirectionState(safeDirection);
+    writeStoredQuestionDirection(safeDirection);
+  }, [allowReverseMode]);
 
   const setQuestionScope = useCallback((scope: QuizScope) => {
     setQuestionScopeState(scope);

@@ -25,6 +25,8 @@ export function QuizPlayground() {
   const { token, authMode, username, setPreferredLanguage } = useAuthContext();
   const profileQuery = useProfileQuery(token);
   const updateDifficultyMutation = useUpdateProfileDifficultyMutation(token);
+  const allowReverseMode = profileQuery.data?.allowReverseMode ?? true;
+
   const {
     difficulty,
     setDifficulty,
@@ -53,7 +55,7 @@ export function QuizPlayground() {
     skipQuestion,
     useHint,
     nextQuestion,
-  } = useQuiz(token);
+  } = useQuiz(token, allowReverseMode);
 
   const highestUnlockedDifficulty = stats?.progression.highestUnlockedDifficulty ?? 1;
   const sessionCorrectStreakRef = useRef(0);
@@ -209,6 +211,7 @@ export function QuizPlayground() {
         onQuestionDirectionChange={setQuestionDirection}
         questionScope={questionScope}
         onQuestionScopeChange={setQuestionScope}
+        allowReverseMode={allowReverseMode}
       />
     </section>
   );

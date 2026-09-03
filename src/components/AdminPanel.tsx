@@ -328,6 +328,31 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
   return (
     <VerticalStack>
       <div>
+        <ConfigFieldTitle label={t("admin_allow_reverse_mode_title")} />
+        <p className="mb-2 text-xs text-ink-500">{t("admin_allow_reverse_mode_desc")}</p>
+        <div className="grid grid-cols-2 gap-1.5 max-w-[220px]">
+          <Button
+            type="button"
+            variant={draft.allowReverseMode ? "inputModeActive" : "inputModeIdle"}
+            size="md"
+            onClick={() => setDraft((d) => ({ ...d, allowReverseMode: true }))}
+            className="min-h-11 rounded-lg px-2.5 py-2 text-sm"
+          >
+            {t("common_enabled")}
+          </Button>
+          <Button
+            type="button"
+            variant={!draft.allowReverseMode ? "inputModeActive" : "inputModeIdle"}
+            size="md"
+            onClick={() => setDraft((d) => ({ ...d, allowReverseMode: false }))}
+            className="min-h-11 rounded-lg px-2.5 py-2 text-sm"
+          >
+            {t("common_disabled")}
+          </Button>
+        </div>
+      </div>
+
+      <div>
         <ConfigFieldTitle label={t("admin_no_repeat_title")} />
         <p className="mb-2 text-xs text-ink-500">{t("admin_no_repeat_desc", { max: topicConfig.maxItemCount })}</p>
         <div className="w-full max-w-[220px]">
@@ -537,6 +562,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
           disabled={saving}
           onClick={() =>
             onSave({
+              allowReverseMode: draft.allowReverseMode,
               noRepeatWindow: draft.noRepeatWindow,
               repeatWindowPoolFraction: draft.repeatWindowPoolFraction,
               mistakeWeightBoostMultiplier: draft.mistakeWeightBoostMultiplier,

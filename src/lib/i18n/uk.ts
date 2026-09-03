@@ -288,6 +288,10 @@ export const uk: Record<keyof typeof en, string> = {
   admin_games_col_slug: 'Slug',
   admin_games_col_active: 'Активна',
   admin_games_col_actions: 'Дії',
+  admin_allow_reverse_mode_title: 'Реверс-режим',
+  admin_allow_reverse_mode_desc: 'Дозволити гравцям перемикатись на питання у зворотному напрямку для цього топіка.',
+  common_enabled: 'Увімкнено',
+  common_disabled: 'Вимкнено',
 
   pagination_page_of: 'Сторінка {page} з {total}',
   pagination_prev: 'Назад',

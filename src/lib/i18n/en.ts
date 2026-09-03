@@ -286,6 +286,10 @@ export const en = {
   admin_games_col_slug: 'Slug',
   admin_games_col_active: 'Active',
   admin_games_col_actions: 'Actions',
+  admin_allow_reverse_mode_title: 'Reverse mode',
+  admin_allow_reverse_mode_desc: 'Allow players to switch to reverse-direction questions for this topic.',
+  common_enabled: 'Enabled',
+  common_disabled: 'Disabled',
 
   pagination_page_of: 'Page {page} of {total}',
   pagination_prev: 'Prev',

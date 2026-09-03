@@ -20,6 +20,7 @@ export interface ProfileResponse {
   bestDailyStreak: number;
   refCode: string;
   referralLink: string | null;
+  allowReverseMode: boolean;
 }
 
 export interface ProfileLanguageResponse {
@@ -134,6 +135,7 @@ export interface UserAnswerStatsResponse {
 }
 
 export interface AdminQuizConfigResponse {
+  allowReverseMode: boolean;
   noRepeatWindow: number;
   repeatWindowPoolFraction: number;
   mistakeWeightBoostMultiplier: number;
