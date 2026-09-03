@@ -32,7 +32,8 @@ export function AnswerOption({ label, selected, locked, triedWrong, isCorrectAns
       disabled={locked}
       className={[
         "min-h-10 w-full px-2.5 py-1.5 text-left text-[0.95rem] leading-5 font-semibold transition-colors duration-200 sm:min-h-11 sm:px-3.5 sm:py-2 sm:text-[1.02rem]",
-        isNoneOfAbove ? "border-dashed border-[1.5px] bg-base-700/85 text-ink-200" : "",
+        isNoneOfAbove && !selected && !isCorrectAnswer && !isWrongSelection ? "border-dashed border-[1.5px] bg-base-700/85 text-ink-200" : "",
+        isNoneOfAbove && selected ? "border-solid border-[1.5px] bg-accent-green/10 text-accent-green" : "",
         isCorrectAnswer ? "answer-correct-vivid" : "",
       ].join(" ")}
     >
