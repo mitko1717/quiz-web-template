@@ -110,9 +110,25 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   const answerNoun = t(`${topicConfig.slug}_answer_noun` as TranslationKey);
   const promptNoun = t(`${topicConfig.slug}_prompt_noun` as TranslationKey);
 
-  const prompt = question.questionDirection === QuestionDirection.REVERSE
-    ? t('question_prompt_reverse', { value: question.prompt, answerNoun, promptNoun })
-    : t('question_prompt', { value: displayName, promptNoun });
+  // Localize a prompt token that may be an i18n key. Returns the raw token if no key matches.
+  const localizeToken = (token: string): string => {
+    const resolved = t(token as TranslationKey);
+    return resolved && resolved !== token ? resolved : token;
+  };
+
+  let prompt: string;
+  if (question.questionDirection === QuestionDirection.REVERSE) {
+    // Reverse prompt may be "labelKey|answerValue" (variant topics) or a plain value.
+    const [maybeLabel, maybeValue] = String(question.prompt).split('|');
+    const value = maybeValue !== undefined ? `${localizeToken(maybeLabel)}: ${maybeValue}` : question.prompt;
+    prompt = t('question_prompt_reverse', { value, answerNoun, promptNoun });
+  } else {
+    const localizedLabel = localizeToken(String(question.prompt));
+    const promptValue = localizedLabel !== String(question.prompt)
+      ? `${displayName} · ${localizedLabel}`
+      : displayName;
+    prompt = t('question_prompt', { value: promptValue, promptNoun });
+  }
 
   return (
     <div className="mb-2 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-2 sm:mb-4 sm:gap-3">
@@ -150,6 +166,13 @@ function AnswerOptionsList({ question, selectedOption, hasAnswered, submittingAn
   const { t } = useI18n();
   const noneOfAboveLabel = t('question_none_of_the_above');
 
+  // Localize an option value that may be an i18n key (e.g. mapper-emitted enum values
+  // like planets_value_type_terrestrial). Returns the raw value if no key matches.
+  const localizeOption = (value: string): string => {
+    const resolved = t(value as TranslationKey);
+    return resolved && resolved !== value ? resolved : value;
+  };
+
   const sortedOptions = [...question.options].sort((a, b) => {
     if (a === noneOfAboveLabel) return 1;
     if (b === noneOfAboveLabel) return -1;
@@ -168,7 +191,7 @@ function AnswerOptionsList({ question, selectedOption, hasAnswered, submittingAn
         return (
           <AnswerOption
             key={option}
-            label={option}
+            label={localizeOption(option)}
             selected={isSelected}
             locked={hasAnswered || submittingAnswer || triedWrong}
             triedWrong={triedWrong}
