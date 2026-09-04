@@ -12,6 +12,7 @@ import type {
   ActiveDifficultyPanelProps,
   DifficultyStatsTableProps,
   ErrorStateProps,
+  GlobalStatsPanelProps,
   HeroPanelProps,
   PanelShellProps,
   ProgressBarProps,
@@ -105,6 +106,44 @@ function SummaryMetricCard({ label, value, valueClassName }: SummaryMetricCardPr
   );
 }
 
+function StatPair({ label, value }: StatPairProps) {
+  return (
+    <div>
+      <p className="text-xs text-ink-500">{label}</p>
+      <p className="text-lg font-semibold text-ink-100">{value}</p>
+    </div>
+  );
+}
+
+function GlobalStatsPanel({ stats }: GlobalStatsPanelProps) {
+  const { t } = useI18n();
+
+  return (
+    <div className="mb-4 rounded-2xl border border-base-600 bg-base-700/40 p-4">
+      <SectionLabel>{t('global_stats_label')}</SectionLabel>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatPair label={t('global_stats_insight_points')} value={stats.totalInsightPoints} />
+        <StatPair label={t('global_stats_best_streak')} value={stats.bestStreakOverall} />
+        <StatPair label={t('global_stats_answers')} value={stats.totalAttempts} />
+        <StatPair label={t('global_stats_accuracy')} value={formatPercent(stats.accuracy)} />
+      </div>
+
+      {stats.byTopic.length > 0 ? (
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {stats.byTopic.map((topic) => (
+            <div key={topic.topicId} className="rounded-xl border border-base-600 bg-base-900/30 p-3 text-xs text-ink-300">
+              <p className="text-ink-500">{topic.topicId}</p>
+              <p className="mt-1 text-ink-100">
+                {topic.correctAttempts}/{topic.totalAttempts} · {formatPercent(topic.accuracy)}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
   const { t } = useI18n();
   const nextUnlock = stats.progression.nextDifficultyToUnlock;
@@ -185,15 +224,6 @@ function ActiveDifficultyPanel({ activeLevel }: ActiveDifficultyPanelProps) {
         <StatPair label={t('stats_accuracy')} value={formatPercent(activeLevel.accuracy)} />
         <StatPair label={t('stats_streak')} value={`${activeLevel.currentStreak} / ${t('stats_best_streak').toLowerCase()} ${activeLevel.bestStreak}`} />
       </div>
-    </div>
-  );
-}
-
-function StatPair({ label, value }: StatPairProps) {
-  return (
-    <div>
-      <p className="text-xs text-ink-500">{label}</p>
-      <p className="text-lg font-semibold text-ink-100">{value}</p>
     </div>
   );
 }
@@ -358,7 +388,7 @@ function UnlockLevelsGrid({ stats }: UnlockLevelsGridProps) {
   );
 }
 
-export function UserStatsPanel({ stats, loading, error, offline = false, activeDifficulty, refreshing, onRefresh }: UserStatsPanelProps) {
+export function UserStatsPanel({ stats, globalStats, loading, error, offline = false, activeDifficulty, refreshing, onRefresh }: UserStatsPanelProps) {
   const { t } = useI18n();
 
   const [detailDifficulty, setDetailDifficulty] = useState<DifficultyLevel | null>(null);
@@ -378,6 +408,8 @@ export function UserStatsPanel({ stats, loading, error, offline = false, activeD
 
   return (
     <PanelShell>
+      {globalStats ? <GlobalStatsPanel stats={globalStats} /> : null}
+
       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
         <HeroPanel stats={stats} refreshing={refreshing} onRefresh={onRefresh} />
         <SummaryGrid stats={stats} />

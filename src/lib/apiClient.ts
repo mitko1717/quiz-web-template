@@ -32,6 +32,7 @@ export const apiClient = {
   getProgressForLevel: progressApi.getProgressForLevel.bind(progressApi),
   getAnswerStats: progressApi.getAnswerStats.bind(progressApi),
   getProfile: profileApi.getProfile.bind(profileApi),
+  getGlobalStats: profileApi.getGlobalStats.bind(profileApi),
   updateProfileLanguage: profileApi.updateLanguage.bind(profileApi),
   updateProfileDifficulty: profileApi.updateDifficulty.bind(profileApi),
   resetProfile: profileApi.resetProfile.bind(profileApi),
@@ -53,5 +54,3 @@ export const apiClient = {
   updateAdminGame: adminGamesApi.update.bind(adminGamesApi),
   removeAdminGame: adminGamesApi.remove.bind(adminGamesApi),
 };
-
-

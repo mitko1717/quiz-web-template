@@ -14,6 +14,14 @@ export function useProfileQuery(token: string) {
   });
 }
 
+export function useGlobalStatsQuery(token: string) {
+  return useQuery({
+    queryKey: queryKeys.globalStats(token),
+    queryFn: () => apiClient.getGlobalStats(token),
+    enabled: Boolean(token),
+  });
+}
+
 export function useUpdateProfileLanguageMutation(token: string) {
   const queryClient = useQueryClient();
   return useMutation({

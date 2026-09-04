@@ -214,6 +214,12 @@ export const es: Record<keyof typeof en, string> = {
   stats_detail_description: 'Desglose de rendimiento y recursos por nivel de dificultad.',
   stats_detail_close: 'Cerrar',
 
+  global_stats_label: 'Estadísticas globales',
+  global_stats_insight_points: 'Puntos de perspicacia',
+  global_stats_best_streak: 'Mejor racha',
+  global_stats_answers: 'Respuestas',
+  global_stats_accuracy: 'Precisión',
+
   more_games_title: 'Más juegos',
 
   admin_page_label: '{appName} — Admin',

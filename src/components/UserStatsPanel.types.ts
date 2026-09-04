@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
-import type { DifficultyLevel, UserAnswerStatsResponse } from '@/lib/types';
+import type { DifficultyLevel, GlobalStatsResponse, UserAnswerStatsResponse } from '@/lib/types';
 
 export interface UserStatsPanelProps {
   stats: UserAnswerStatsResponse | null;
+  globalStats?: GlobalStatsResponse | null;
   loading: boolean;
   error: string | null;
   offline?: boolean;
@@ -62,4 +63,8 @@ export type UnlockLevelCardProps = {
 
 export type UnlockLevelsGridProps = {
   stats: UserAnswerStatsResponse;
+};
+
+export type GlobalStatsPanelProps = {
+  stats: GlobalStatsResponse;
 };

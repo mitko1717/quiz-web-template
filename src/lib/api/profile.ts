@@ -1,9 +1,22 @@
 import { request } from "../http";
-import type { ProfileDifficultyRequest, ProfileDifficultyResponse, ProfileLanguageRequest, ProfileLanguageResponse, ProfileResetRequest, ProfileResetResponse, ProfileResponse } from "../types";
+import type {
+  GlobalStatsResponse,
+  ProfileDifficultyRequest,
+  ProfileDifficultyResponse,
+  ProfileLanguageRequest,
+  ProfileLanguageResponse,
+  ProfileResetRequest,
+  ProfileResetResponse,
+  ProfileResponse
+} from "../types";
 
 export const profileApi = {
   getProfile(token: string) {
     return request<ProfileResponse>("/profile", { token });
+  },
+
+  getGlobalStats(token: string) {
+    return request<GlobalStatsResponse>("/profile/global-stats", { token });
   },
 
   updateLanguage(body: ProfileLanguageRequest, token: string) {

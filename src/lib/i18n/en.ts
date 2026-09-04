@@ -212,6 +212,12 @@ export const en = {
   stats_detail_description: 'Per-difficulty performance and resource breakdown.',
   stats_detail_close: 'Close',
 
+  global_stats_label: 'Global stats',
+  global_stats_insight_points: 'Insight points',
+  global_stats_best_streak: 'Best streak',
+  global_stats_answers: 'Answers',
+  global_stats_accuracy: 'Accuracy',
+
   more_games_title: 'More games',
 
   admin_page_label: '{appName} - Admin',

@@ -214,6 +214,12 @@ export const uk: Record<keyof typeof en, string> = {
   stats_detail_description: 'Розподіл результатів та ресурсів за рівнем складності.',
   stats_detail_close: 'Закрити',
 
+  global_stats_label: 'Загальна статистика',
+  global_stats_insight_points: 'Очки прозорливості',
+  global_stats_best_streak: 'Найкраща серія',
+  global_stats_answers: 'Відповіді',
+  global_stats_accuracy: 'Точність',
+
   more_games_title: 'Більше ігор',
 
   admin_page_label: '{appName} — Адмін',

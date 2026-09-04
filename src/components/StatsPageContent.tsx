@@ -5,7 +5,7 @@ import { useAuthContext } from "@/components/AuthGate";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { UserStatsPanel } from "@/components/UserStatsPanel";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
-import { useProfileQuery } from "@/hooks/useProfile";
+import { useGlobalStatsQuery, useProfileQuery } from "@/hooks/useProfile";
 import { useAnswerStatsQuery } from "@/hooks/useProgress";
 import type { DifficultyLevel } from "@/lib/types";
 
@@ -14,9 +14,11 @@ export function StatsPageContent() {
   const { isOnline } = useNetworkStatus();
   const profileQuery = useProfileQuery(token);
   const statsQuery = useAnswerStatsQuery(token);
+  const globalStatsQuery = useGlobalStatsQuery(token);
   const [refreshing, setRefreshing] = useState(false);
   const loading = statsQuery.isLoading || statsQuery.isFetching;
   const stats = statsQuery.data ?? null;
+  const globalStats = globalStatsQuery.data ?? null;
   const showOfflineFallback = !isOnline && !stats && (loading || Boolean(statsQuery.error));
   const error = showOfflineFallback ? null : (statsQuery.error instanceof Error ? statsQuery.error.message : null);
   const activeDifficulty = (profileQuery.data?.preferredDifficultyLevel ?? 1) as DifficultyLevel;
@@ -24,11 +26,11 @@ export function StatsPageContent() {
   const refreshStatsPage = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.allSettled([profileQuery.refetch(), statsQuery.refetch()]);
+      await Promise.allSettled([profileQuery.refetch(), statsQuery.refetch(), globalStatsQuery.refetch()]);
     } finally {
       setRefreshing(false);
     }
-  }, [profileQuery, statsQuery]);
+  }, [profileQuery, statsQuery, globalStatsQuery]);
 
   return (
     <section className="w-full space-y-4 sm:space-y-5">
@@ -42,6 +44,7 @@ export function StatsPageContent() {
 
       <UserStatsPanel
         stats={stats}
+        globalStats={globalStats}
         loading={loading}
         error={error}
         offline={showOfflineFallback}
