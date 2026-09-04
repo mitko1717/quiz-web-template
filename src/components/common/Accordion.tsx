@@ -22,7 +22,7 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
   if (!items.length) return null;
 
   return (
-    <div className={["flex h-[100dvh] flex-col overflow-hidden", "md:h-[420px]", className].join(" ")}>
+    <div className={["flex flex-col overflow-hidden", className].join(" ")}>
       {items.map((item) => {
         const isActive = activeId === item.id;
         const triggerId = `${generatedId}-${item.id}-trigger`;
@@ -48,7 +48,7 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
               }}
               className={[
                 "flex w-full shrink-0 items-center justify-between gap-4",
-                "px-4 py-4 text-left",
+                "px-3 py-2.5 text-left",
                 "transition-colors duration-200",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-greenDim",
                 isActive
@@ -78,7 +78,7 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
               ].join(" ")}
             >
               <div className="min-h-0 overflow-hidden">
-                <div className={["h-full overflow-y-auto p-4", contentClassName].join(" ")}>
+                <div className={["h-full overflow-y-auto p-3", contentClassName].join(" ")}>
                   {item.content}
                 </div>
               </div>
