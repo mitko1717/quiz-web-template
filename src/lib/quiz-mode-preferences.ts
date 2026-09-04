@@ -26,10 +26,10 @@ export function writeStoredQuestionDirection(direction: QuestionDirection): void
 }
 
 export function readStoredQuestionScope(): QuizScope {
-  if (typeof window === "undefined") return topicConfig.worldScopeValue;
+  if (typeof window === "undefined") return topicConfig.scopeValue;
   const stored = window.localStorage.getItem(QUESTION_SCOPE_KEY);
   const isValid = stored != null && topicConfig.scopes.some((s) => s.value === stored);
-  return isValid ? (stored as QuizScope) : topicConfig.worldScopeValue;
+  return isValid ? (stored as QuizScope) : topicConfig.scopeValue;
 }
 
 export function writeStoredQuestionScope(scope: QuizScope): void {

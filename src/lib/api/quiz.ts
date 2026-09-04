@@ -5,7 +5,7 @@ import { QuestionDirection, QuizScope, QuizInputMode, type AnswerResponse, type 
 export const quizApi = {
   getQuestion(difficulty: DifficultyLevel, inputMode: QuizInputMode, questionDirection: QuestionDirection, scope: QuizScope, token: string) {
     const params = new URLSearchParams({ difficulty: String(difficulty), inputMode, questionDirection });
-    if (scope !== topicConfig.worldScopeValue) params.set(topicConfig.scopeParam, scope);
+    if (scope !== topicConfig.scopeValue) params.set(topicConfig.scopeParam, scope);
 
     return request<QuestionResponse>(`/quiz/question?${params.toString()}`, { token });
   },

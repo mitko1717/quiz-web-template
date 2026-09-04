@@ -25,7 +25,7 @@ export const topicConfig = {
   },
 
   scopeParam: process.env.NEXT_PUBLIC_SCOPE_PARAM || 'continent',
-  worldScopeValue: process.env.NEXT_PUBLIC_SCOPE_WORLD || 'WORLD',
+  scopeValue: process.env.NEXT_PUBLIC_SCOPE_WORLD || 'WORLD',
   scopes: parseScopes(process.env.NEXT_PUBLIC_SCOPES),
   maxItemCount: Number(process.env.NEXT_PUBLIC_MAX_ITEM_COUNT) || 9999,
   // Public bot username (no @, no token) used to build t.me referral deep-links.
