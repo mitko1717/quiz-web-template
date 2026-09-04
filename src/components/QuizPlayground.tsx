@@ -5,7 +5,7 @@ import { useAuthContext } from "@/components/AuthGate";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { QuestionCard } from "@/components/QuestionCard";
 import { Button } from "@/components/button";
-import { Modal } from "@/components/Modal";
+import { Modal } from "@/components/common/Modal";
 import { useQuiz } from "@/hooks/useQuiz";
 import { useProfileQuery, useUpdateProfileDifficultyMutation } from "@/hooks/useProfile";
 import { DashboardHeader } from "./DashboardHeader";

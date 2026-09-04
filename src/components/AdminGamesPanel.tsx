@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
-import { SectionLabel, BodyText } from "@/components/SectionLabel";
+import { SectionLabel, BodyText } from "@/components/common/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
 import { useI18n } from "@/components/I18nProvider";
 import { useAdminGames } from "@/hooks/useAdminGames";

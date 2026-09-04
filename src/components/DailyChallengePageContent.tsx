@@ -9,7 +9,7 @@ import { CardSection } from "@/components/CardSection";
 import { Button } from "@/components/button";
 import { RefreshIcon } from "@/components/icons/RefreshIcon";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/Skeleton";
+import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
 import { apiClient } from "@/lib/apiClient";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queryKeys } from "@/lib/queryKeys";

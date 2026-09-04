@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/button";
-import { Modal } from "@/components/Modal";
+import { Modal } from "@/components/common/Modal";
 import { useI18n } from "@/components/I18nProvider";
 import type { UnlockedAchievement } from "@/lib/types";
 

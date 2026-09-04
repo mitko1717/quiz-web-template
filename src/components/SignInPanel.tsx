@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { useAuthContext } from "@/components/AuthGate";
 import { Button } from "@/components/button";
-import { BodyText, SectionLabel } from "@/components/SectionLabel";
+import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
 import { useI18n } from "@/components/I18nProvider";
 import { useTelegram } from "@/providers/TelegramProvider";
 

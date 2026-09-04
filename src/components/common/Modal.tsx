@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/button";
-import type { ModalProps } from "@/components/Modal.types";
+import type { ModalProps } from "@/components/common/Modal.types";
 
 export function Modal({ isOpen, onClose, closeLabel, showTopRightCloseButton = false, title, description, children, footer, maxWidthClassName = "max-w-md" }: ModalProps) {
   useEffect(() => {

@@ -3,12 +3,12 @@
 import { type ReactNode, useDeferredValue, useState } from "react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
-import { BodyText, SectionLabel } from "@/components/SectionLabel";
+import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
 import { useAdminPanel } from "@/hooks/useAdminPanel";
-import { Pagination } from "@/components/Pagination";
+import { Pagination } from "@/components/common/Pagination";
 import { useI18n } from "@/components/I18nProvider";
-import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/Skeleton";
+import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
 import type { AdminQuizConfigResponse, DifficultyLevel } from "@/lib/types";
 import type {
   AdminPanelProps,

@@ -1,11 +1,11 @@
 "use client";
 import { useState, type KeyboardEvent } from "react";
-import { BodyText, SectionLabel } from "@/components/SectionLabel";
+import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
 import { useI18n } from "@/components/I18nProvider";
-import { Modal } from "@/components/Modal";
+import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/button";
-import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/Skeleton";
+import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
 import { RefreshIcon } from "@/components/icons/RefreshIcon";
 import type { AchievementProgressResponse, DifficultyLevel, UserAnswerStatsByDifficulty } from "@/lib/types";
 import type {
@@ -24,6 +24,7 @@ import type {
   UserStatsPanelProps
 } from "./UserStatsPanel.types";
 import { formatPercent } from "@/lib/utils";
+import { Accordion } from "./common/Accordion";
 
 function PanelShell({ children, variant = "default" }: PanelShellProps) {
   return (
@@ -163,26 +164,42 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
             {unlocked ? t('achievements_unlocked') : `${a.currentValue}/${a.threshold}`}
           </p>
         </div>
+
         {a.description ? <p className="mt-1 text-xs text-ink-400">{a.description}</p> : null}
         <ProgressBar progress={progress} tone={unlocked ? "accent" : "muted"} />
       </div>
     );
   }
 
+  const items = [];
+
+  if (globalAchievements.length > 0) {
+    items.push({
+      id: 'global',
+      title: t('achievements_label'),
+      content: (
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {globalAchievements.map(renderAchievement)}
+        </div>
+      )
+    });
+  }
+
+  if (topicAchievements.length > 0) {
+    items.push({
+      id: 'topic',
+      title: t('achievements_topic_label'),
+      content: (
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {topicAchievements.map(renderAchievement)}
+        </div>
+      )
+    });
+  }
+
   return (
-    <div className="mb-4 rounded-2xl border border-base-600 bg-base-700/40 p-4">
-      <SectionLabel>{t('achievements_label')}</SectionLabel>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {globalAchievements.map(renderAchievement)}
-      </div>
-      {topicAchievements.length > 0 ? (
-        <>
-          <p className="mt-4 text-xs uppercase tracking-[0.12em] text-ink-500">{t('achievements_topic_label')}</p>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {topicAchievements.map(renderAchievement)}
-          </div>
-        </>
-      ) : null}
+    <div className="mb-4 overflow-hidden rounded-2xl border border-base-600 bg-base-700/40">
+      <Accordion items={items} defaultActiveId={items[0]?.id} className="h-[100dvh] md:h-[460px]" />
     </div>
   );
 }

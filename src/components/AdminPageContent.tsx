@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AdminPanel } from "@/components/AdminPanel";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { Button } from "@/components/button";
-import { SectionLabel } from "@/components/SectionLabel";
+import { SectionLabel } from "@/components/common/SectionLabel";
 import { useAuthContext } from "@/components/AuthGate";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";

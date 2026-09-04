@@ -3,7 +3,7 @@ import { createContext, ChangeEvent, useContext, useState, useSyncExternalStore 
 import { useEffect } from "react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
-import { BodyText, SectionLabel } from "@/components/SectionLabel";
+import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
 import { useAuth } from "@/hooks/useAuth";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LoadingSpinner } from "@/components/LoadingSpinner";

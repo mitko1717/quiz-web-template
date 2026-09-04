@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/button";
-import { Modal } from "@/components/Modal";
+import { Modal } from "@/components/common/Modal";
 import type { ConfirmModalProps } from "@/components/ConfirmModal.types";
 
 export function ConfirmModal({
