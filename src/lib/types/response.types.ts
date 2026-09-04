@@ -245,6 +245,7 @@ export interface DailyChallengeQuestionResponse {
   publicFields: Record<string, unknown>;
   difficulty: DifficultyLevel;
   options: string[];
+  prompt: string;
 }
 
 export interface DailyChallengeStateResponse {
@@ -257,6 +258,7 @@ export interface DailyChallengeStateResponse {
   questions: DailyChallengeQuestionResponse[];
   currentQuestionIndex: number | null;
   currentQuestion: DailyChallengeQuestionResponse | null;
+  prompt: string;
 }
 
 export interface DailyChallengeAnswerResponse {

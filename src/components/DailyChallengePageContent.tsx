@@ -17,6 +17,7 @@ import { useProfileQuery } from "@/hooks/useProfile";
 import type { DailyChallengeAnswerResponse, UnlockedAchievement } from "@/lib/types";
 import { topicConfig } from "@/lib/topic.config";
 import { TranslationKey } from "@/lib/i18n";
+import { parsePromptToken } from "@/lib/prompt-token";
 import { MoreGamesSection } from "./MoreGamesSection";
 import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
 
@@ -34,6 +35,7 @@ export function DailyChallengePageContent() {
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [answerResult, setAnswerResult] = useState<DailyChallengeAnswerResponse | null>(null);
+  const [answeredItemId, setAnsweredItemId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
 
@@ -72,6 +74,7 @@ export function DailyChallengePageContent() {
     try {
       const res = await submitMutation.mutateAsync({ itemId: question.itemId, selectedOption });
       setAnswerResult(res);
+      setAnsweredItemId(question.itemId);
       if (res.unlockedAchievements?.length) setUnlockedAchievements((prev) => [...prev, ...res.unlockedAchievements]);
       await dailyChallengeQuery.refetch();
       setSelectedOption(null);
@@ -79,6 +82,9 @@ export function DailyChallengePageContent() {
       setSubmitError(toErrorMessage(cause, t("common_unexpected_error")));
     }
   };
+
+
+  const visibleAnswerResult = answerResult && question && answeredItemId === question.itemId ? answerResult : null;
 
   const dismissUnlockedAchievement = () => {
     setUnlockedAchievements((prev) => prev.slice(1));
@@ -112,14 +118,18 @@ export function DailyChallengePageContent() {
           <div className="mt-5">
             <QuestionProgress current={currentQuestionNumber} total={totalQuestions} />
             <h2 className="mt-2 text-xl font-semibold text-ink-100 sm:text-2xl">
-              {t("question_prompt", { 
-                value: question.publicFields[topicConfig.publicFields.displayName] as string, 
-                promptNoun: t(`${topicConfig.slug}_prompt_noun` as TranslationKey) 
-              })}
+              {(() => {
+                const token = parsePromptToken(String(question.prompt));
+                if (token) return t(token.key as TranslationKey, token.params);
+                return t("question_prompt", {
+                  value: question.publicFields[topicConfig.publicFields.displayName] as string,
+                  promptNoun: t(`${topicConfig.slug}_prompt_noun` as TranslationKey)
+                });
+              })()}
             </h2>
             <p className="mt-1 text-xs text-ink-400">{t("difficulty_level", { level: question.difficulty })}</p>
             <QuestionOptions options={question.options} selectedOption={selectedOption} submitting={submitting} onSelect={setSelectedOption} />
-            <AnswerFeedback answerResult={answerResult} />
+            <AnswerFeedback answerResult={visibleAnswerResult} />
             <div className="mt-5">
               <Button type="button" variant="primary" disabled={!selectedOption || submitting} onClick={() => void submit()}>
                 {submitting ? <LoadingSpinner size="sm" /> : t("question_submit")}
