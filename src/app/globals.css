@@ -77,6 +77,16 @@ html {
   padding-right: var(--app-horizontal-safe-right);
 }
 
+/* Hide scrollbar for all elements */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 @keyframes difficulty-border-flow {
   0% {
     background-position: 0% 50%;

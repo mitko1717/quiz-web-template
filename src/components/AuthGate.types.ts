@@ -10,6 +10,7 @@ export interface AuthContextValue {
   linkWithGoogle: (idToken: string) => Promise<void>;
   linkWithApple: (identityToken: string) => Promise<void>;
   logout: () => void;
+  isAdmin: boolean;
 }
 
 export type AuthGateProps = {

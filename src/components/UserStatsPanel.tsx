@@ -33,6 +33,24 @@ function PanelShell({ children, variant = "default" }: PanelShellProps) {
   );
 }
 
+function RefreshButton({ refreshing, onRefresh }: { refreshing: boolean; onRefresh: () => void }) {
+  const { t } = useI18n();
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      onClick={onRefresh}
+      disabled={refreshing}
+      aria-label={t('common_refresh')}
+      title={t('common_refresh')}
+      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-accent-greenDim/45 bg-accent-green/10 p-0 leading-none text-accent-green"
+    >
+      <RefreshIcon spinning={refreshing} />
+    </Button>
+  );
+}
+
 function LoadingState() {
   return (
     <PanelShell>
@@ -121,7 +139,7 @@ function GlobalStatsPanel({ stats }: GlobalStatsPanelProps) {
   return (
     <div className="mb-4 rounded-2xl border border-base-600 bg-base-700/40 p-4">
       <SectionLabel>{t('global_stats_label')}</SectionLabel>
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <StatPair label={t('global_stats_insight_points')} value={stats.totalInsightPoints} />
         <StatPair label={t('global_stats_best_streak')} value={stats.bestStreakOverall} />
         <StatPair label={t('global_stats_answers')} value={stats.totalAttempts} />
@@ -212,7 +230,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
             id: topicId,
             title: group.name,
             content: (
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 scrollbar-hide">
                 {group.achievements.map(renderAchievement)}
               </div>
             )
@@ -224,7 +242,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
 
   return (
     <div className="mb-4 overflow-hidden rounded-2xl border border-base-600 bg-base-700/40">
-      <Accordion items={items} className="max-h-[460px] min-h-[52px]" />
+      <Accordion items={items} className="max-h-[460px] min-h-[52px] scrollbar-hide" />
     </div>
   );
 }
@@ -238,21 +256,12 @@ function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
     <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-3">
       <div className="flex items-center justify-between gap-2">
         <SectionLabel>{t('stats_label')}</SectionLabel>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onRefresh}
-          disabled={refreshing}
-          aria-label={t('common_refresh')}
-          title={t('common_refresh')}
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-accent-greenDim/45 bg-accent-green/10 p-0 leading-none text-accent-green"
-        >
-          <RefreshIcon spinning={refreshing} />
-        </Button>
+        <RefreshButton refreshing={refreshing} onRefresh={onRefresh} />
       </div>
-      <h2 className="mt-2 text-3xl font-semibold text-ink-100 sm:text-5xl">{stats.totalInsightPoints}</h2>
-      <p className="mt-2 text-sm font-medium uppercase tracking-[0.12em] text-accent-green">{t('stats_points_suffix')}</p>
+      <div className="mt-2 flex items-center gap-2">
+        <h2 className="text-3xl font-semibold text-ink-100 sm:text-5xl">{stats.totalInsightPoints}</h2>
+        <p className="text-sm font-medium uppercase tracking-[0.12em] text-accent-green">{t('stats_points_suffix')}</p>
+      </div>
       <BodyText>{t('stats_summary', { answers: stats.totalAttempts, accuracy: formatPercent(stats.accuracy), streak: stats.bestStreakOverall })}</BodyText>
 
       <div className="mt-4 rounded-xl border border-base-600/80 bg-base-900/30 p-3">
@@ -493,19 +502,8 @@ export function UserStatsPanel({ stats, globalStats, achievements, loading, erro
 
   return (
     <PanelShell>
-      <div className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onRefresh}
-          disabled={refreshing}
-          aria-label={t('common_refresh')}
-          title={t('common_refresh')}
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-accent-greenDim/45 bg-accent-green/10 p-0 leading-none text-accent-green"
-        >
-          <RefreshIcon spinning={refreshing} />
-        </Button>
+      <div className="absolute right-6 top-6 z-10 sm:right-8 sm:top-8">
+        <RefreshButton refreshing={refreshing} onRefresh={onRefresh} />
       </div>
       {globalStats ? <GlobalStatsPanel stats={globalStats} /> : null}
       {achievements ? <AchievementsPanel achievements={achievements} /> : null}

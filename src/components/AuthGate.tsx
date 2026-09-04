@@ -229,9 +229,11 @@ export function AuthGate({ children, adminOnly = false }: AuthGateProps) {
     );
   }
 
+  const isAdmin = authMode === "localAdmin" || profileQuery.data?.role === "admin";
+
   return (
     <AuthContext.Provider
-      value={{ token, authMode: authMode ?? "guest", username, setPreferredLanguage, linkWithGoogle, linkWithApple, logout }}
+      value={{ token, authMode: authMode ?? "guest", username, setPreferredLanguage, linkWithGoogle, linkWithApple, logout, isAdmin }}
     >
       {adminOnly && authMode !== "localAdmin" ? (
         <div className="auth-page flex flex-col items-center justify-center bg-base-900 px-4 text-center text-ink-300 sm:px-6">

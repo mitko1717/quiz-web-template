@@ -65,7 +65,7 @@ const APPLE_REDIRECT_URI = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI?.trim() ??
 
 export function SignInPanel() {
   const { t } = useI18n();
-  const { authMode, linkWithGoogle, linkWithApple } = useAuthContext();
+  const { authMode, linkWithGoogle, linkWithApple, isAdmin } = useAuthContext();
   const { isTelegram } = useTelegram();
   const [googleScriptReady, setGoogleScriptReady] = useState(false);
   const [googleScriptError, setGoogleScriptError] = useState(false);
@@ -213,7 +213,7 @@ export function SignInPanel() {
             {isGoogleConfigured ? (
               <div ref={googleButtonRef} className="min-h-[40px]" />
             ) : (
-              <p className="text-sm text-pastel-amber">{t("auth_google_not_configured")}</p>
+              isAdmin && <p className="text-sm text-pastel-amber">{t("auth_google_not_configured")}</p>
             )}
             {googleScriptError || (googleScriptReady && !googleApi) ? <p className="mt-2 text-sm text-pastel-coral">{t("auth_google_sdk_failed")}</p> : null}
           </div>
@@ -228,7 +228,7 @@ export function SignInPanel() {
             >
               {linkingProvider === "apple" ? t("auth_apple_linking") : t("auth_apple_link")}
             </Button>
-            {!isAppleConfigured ? <p className="mt-2 text-sm text-pastel-amber">{t("auth_apple_not_configured")}</p> : null}
+            {!isAppleConfigured && isAdmin ? <p className="mt-2 text-sm text-pastel-amber">{t("auth_apple_not_configured")}</p> : null}
             {appleScriptError ? <p className="mt-2 text-sm text-pastel-coral">{t("auth_apple_sdk_failed")}</p> : null}
           </div>
         </div>
