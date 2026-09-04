@@ -15,7 +15,6 @@ import type {
   GlobalStatsPanelProps,
   HeroPanelProps,
   PanelShellProps,
-  ProgressBarProps,
   StatPairProps,
   SummaryGridProps,
   SummaryMetricCardProps,
@@ -154,7 +153,9 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
 
   function renderAchievement(a: AchievementProgressResponse) {
     const unlocked = a.unlockedAt !== null;
-    const progress = a.threshold === 0 ? 1 : Math.min(1, a.currentValue / a.threshold);
+    const currentValue = Number(a.currentValue);
+    const threshold = Number(a.threshold);
+    const progress = threshold === 0 ? 1 : Math.min(1, currentValue / threshold);
 
     return (
       <div
@@ -164,12 +165,17 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm font-semibold text-ink-100">{a.name ? `${a.name.charAt(0).toUpperCase()}${a.name.slice(1)}` : a.name}</p>
           <p className={unlocked ? "text-xs text-accent-green" : "text-xs text-ink-500"}>
-            {unlocked ? t('achievements_unlocked') : `${a.currentValue}/${a.threshold}`}
+            {unlocked ? t('achievements_unlocked') : `${currentValue}/${threshold}`}
           </p>
         </div>
 
         {a.description ? <p className="mt-1 text-xs text-ink-400">{a.description}</p> : null}
-        <ProgressBar progress={progress} tone={unlocked ? "accent" : "muted"} />
+        <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-base-600">
+          <div 
+            className={["h-full rounded-full transition-all duration-300", unlocked ? "bg-accent-green" : "bg-base-400"].join(" ")} 
+            style={{ width: `${Math.min(100, Math.max(0, progress * 100))}%` }}
+          />
+        </div>
       </div>
     );
   }
@@ -487,6 +493,20 @@ export function UserStatsPanel({ stats, globalStats, achievements, loading, erro
 
   return (
     <PanelShell>
+      <div className="mb-4 flex justify-end">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onRefresh}
+          disabled={refreshing}
+          aria-label={t('common_refresh')}
+          title={t('common_refresh')}
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-accent-greenDim/45 bg-accent-green/10 p-0 leading-none text-accent-green"
+        >
+          <RefreshIcon spinning={refreshing} />
+        </Button>
+      </div>
       {globalStats ? <GlobalStatsPanel stats={globalStats} /> : null}
       {achievements ? <AchievementsPanel achievements={achievements} /> : null}
 
