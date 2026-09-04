@@ -55,6 +55,8 @@ export function QuizPlayground() {
     skipQuestion,
     useHint,
     nextQuestion,
+    unlockedAchievements,
+    dismissUnlockedAchievement,
   } = useQuiz(token, allowReverseMode);
 
   const highestUnlockedDifficulty = stats?.progression.highestUnlockedDifficulty ?? 1;
@@ -212,6 +214,8 @@ export function QuizPlayground() {
         questionScope={questionScope}
         onQuestionScopeChange={setQuestionScope}
         allowReverseMode={allowReverseMode}
+        unlockedAchievements={unlockedAchievements}
+        onDismissAchievement={dismissUnlockedAchievement}
       />
     </section>
   );

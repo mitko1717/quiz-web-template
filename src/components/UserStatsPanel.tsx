@@ -23,9 +23,7 @@ import type {
   UnlockLevelsGridProps,
   UserStatsPanelProps
 } from "./UserStatsPanel.types";
-function formatPercent(value: number): string {
-  return `${Math.round(value * 100)}%`;
-}
+import { formatPercent } from "@/lib/utils";
 
 function PanelShell({ children, variant = "default" }: PanelShellProps) {
   return (

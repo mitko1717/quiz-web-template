@@ -22,12 +22,9 @@ import type {
   UserListPanelProps
 } from "./AdminPanel.types";
 import { topicConfig } from "@/lib/topic.config";
+import { formatPercent } from "@/lib/utils";
 
 const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
-
-function formatPercent(v: number) {
-  return `${Math.round(v * 100)}%`;
-}
 
 function Surface({ children, title, subtitle, action }: SurfaceProps) {
   return (

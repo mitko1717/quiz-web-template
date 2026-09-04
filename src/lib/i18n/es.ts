@@ -116,8 +116,6 @@ export const es: Record<keyof typeof en, string> = {
   question_free_text_bonus: '¡+{points} punto(s) de bonificación por escribirla!',
   question_retry_notice: 'Opción incorrecta. Intenta de nuevo. Penalización: -{penalty} punto(s). Intentos restantes: {attempts}.',
   question_result_skipped: 'Omitida. Respuesta correcta: {answer}',
-  question_result_correct: '¡Correcto! Respuesta correcta: {answer}',
-  question_result_wrong: 'Incorrecto. Respuesta correcta: {answer}',
   question_none_of_the_above: 'Ninguna de las anteriores',
   question_submit: 'Enviar',
   question_submitting: 'Enviando...',
@@ -213,6 +211,8 @@ export const es: Record<keyof typeof en, string> = {
   stats_detail_title: 'Detalles del nivel {level}',
   stats_detail_description: 'Desglose de rendimiento y recursos por nivel de dificultad.',
   stats_detail_close: 'Cerrar',
+  achievement_unlocked_title: '¡Logro Desbloqueado!',
+  achievement_unlocked_close: '¡Genial!',
 
   global_stats_label: 'Estadísticas globales',
   global_stats_insight_points: 'Puntos de perspicacia',

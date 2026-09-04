@@ -11,9 +11,10 @@ import { OfflineStateHint } from "@/components/Skeleton";
 import { AnswerOption } from "./AnswerOption";
 import { CardSection } from "./CardSection";
 import { useI18n } from "@/components/I18nProvider";
-import { HintType, QuestionDirection, QuizInputMode } from "@/lib/types";
+import { HintType, QuestionDirection, QuizInputMode, type UnlockedAchievement } from "@/lib/types";
 import { QuizModeControls } from "@/components/QuizModeControls";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
 import type {
   ActionRowProps,
   AnswerOptionsListProps,
@@ -385,6 +386,8 @@ export function QuestionCard({
   questionScope,
   onQuestionScopeChange,
   allowReverseMode,
+  unlockedAchievements,
+  onDismissAchievement,
 }: QuestionCardProps) {
   const { t } = useI18n();
   const { isOnline } = useNetworkStatus();
@@ -501,6 +504,7 @@ export function QuestionCard({
         onQuestionDirectionChange={onQuestionDirectionChange}
         onQuestionScopeChange={onQuestionScopeChange}
       />
+      <AchievementUnlockedModal achievement={unlockedAchievements[0] ?? null} onClose={onDismissAchievement} />
     </CardSection>
   );
 }

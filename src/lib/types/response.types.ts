@@ -1,4 +1,5 @@
 import { Language, AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizInputMode, type DifficultyLevel } from './types-core';
+import type { UnlockedAchievement } from './achievement.types';
 
 export interface AuthResponse {
   accessToken: string;
@@ -58,16 +59,18 @@ export interface AnswerResponse {
   updatedStreak: number;
   updatedInsightPoints: number;
   difficultySuggestion: Exclude<AdaptiveDifficultySuggestion, AdaptiveDifficultySuggestion.STAY> | null;
+  unlockedAchievements: UnlockedAchievement[];
 }
-
+ 
 export interface SkipResponse {
   skipped: true;
   correctAnswer: string;
   insightPointsPenalty: number;
   updatedStreak: number;
   updatedInsightPoints: number;
+  unlockedAchievements: UnlockedAchievement[];
 }
-
+ 
 export type HintResponse =
   | {
       type: HintType.REMOVE_OPTION;

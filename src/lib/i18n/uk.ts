@@ -116,8 +116,6 @@ export const uk: Record<keyof typeof en, string> = {
   question_free_text_bonus: '+{points} бонусних балів за введення вручну!',
   question_retry_notice: 'Неправильна відповідь. Спробуйте ще раз. Штраф: -{penalty} балів. Залишилось спроб: {attempts}.',
   question_result_skipped: 'Пропущено. Правильна відповідь: {answer}',
-  question_result_correct: 'Правильно. Правильна відповідь: {answer}',
-  question_result_wrong: 'Неправильно. Правильна відповідь: {answer}',
   question_none_of_the_above: 'Жоден з варіантів',
   question_submit: 'Відповісти',
   question_submitting: 'Надсилання...',
@@ -213,6 +211,8 @@ export const uk: Record<keyof typeof en, string> = {
   stats_detail_title: 'Деталі рівня {level}',
   stats_detail_description: 'Розподіл результатів та ресурсів за рівнем складності.',
   stats_detail_close: 'Закрити',
+  achievement_unlocked_title: 'Досягнення розблоковано!',
+  achievement_unlocked_close: 'Круто!',
 
   global_stats_label: 'Загальна статистика',
   global_stats_insight_points: 'Очки прозорливості',

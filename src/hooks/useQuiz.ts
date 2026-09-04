@@ -6,7 +6,7 @@ import { apiClient } from "@/lib/apiClient";
 import { queryKeys } from "@/lib/queryKeys";
 import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope } from "@/lib/quiz-mode-preferences";
 import { useAnswerStatsQuery, useProgressForLevelQuery } from "@/hooks/useProgress";
-import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizScope, QuizInputMode, type AnswerResponse, type DifficultyLevel, type HintResponse, type ProgressResponse, type QuestionResponse, type SkipResponse, type UserAnswerStatsResponse } from "@/lib/types";
+import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizScope, QuizInputMode, type AnswerResponse, type DifficultyLevel, type HintResponse, type ProgressResponse, type QuestionResponse, type SkipResponse, type UnlockedAchievement, type UserAnswerStatsResponse } from "@/lib/types";
 import { useI18n } from "@/components/I18nProvider";
 
 type QuizError = string | null;
@@ -39,6 +39,8 @@ interface UseQuizResult {
   difficultySuggestion: Exclude<AdaptiveDifficultySuggestion, AdaptiveDifficultySuggestion.STAY> | null;
   dismissDifficultySuggestion: () => void;
   hasAnswered: boolean;
+  unlockedAchievements: UnlockedAchievement[];
+  dismissUnlockedAchievement: () => void;
   submitAnswer: () => Promise<void>;
   skipQuestion: () => Promise<void>;
   useHint: () => Promise<void>;
@@ -96,6 +98,7 @@ export function useQuiz(token: string, allowReverseMode: boolean = true): UseQui
   const [error, setError] = useState<QuizError>(null);
   const [difficultySuggestion, setDifficultySuggestion] = useState<Exclude<AdaptiveDifficultySuggestion, AdaptiveDifficultySuggestion.STAY> | null>(() => initialSession?.difficultySuggestion ?? null);
   const [liveInsightPoints, setLiveInsightPoints] = useState<number | null>(() => initialSession?.liveInsightPoints ?? null);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
   const inputModeRef = useRef<QuizInputMode>(inputMode);
   const questionDirectionRef = useRef<QuestionDirection>(questionDirection);
   const questionScopeRef = useRef<QuizScope>(questionScope);
@@ -297,6 +300,7 @@ const submitAnswer = useCallback(async () => {
     setAnswerResult(res);
     setLiveInsightPoints(res.updatedInsightPoints);
     setDifficultySuggestion(res.difficultySuggestion);
+    if (res.unlockedAchievements?.length) setUnlockedAchievements((prev) => [...prev, ...res.unlockedAchievements]);
 
     if (res.canRetry) {
       setWrongSelections(res.wrongSelections);
@@ -320,6 +324,7 @@ const skipQuestion = useCallback(async () => {
     const res = await skipQuestionMutation.mutateAsync({ questionId: question.questionId });
     setSkipResult(res);
     setLiveInsightPoints(res.updatedInsightPoints);
+    if (res.unlockedAchievements?.length) setUnlockedAchievements((prev) => [...prev, ...res.unlockedAchievements]);
   } catch (cause) {
     if (isMissingActiveQuestionError(cause)) {
       await loadQuestion(difficulty, inputModeRef.current, questionDirectionRef.current, questionScopeRef.current);
@@ -369,6 +374,10 @@ const useHint = useCallback(async () => {
     setDifficultySuggestion(null);
   }, []);
 
+  const dismissUnlockedAchievement = useCallback(() => {
+    setUnlockedAchievements((prev) => prev.slice(1));
+  }, []);
+
   const submittingAnswer = submitAnswerMutation.isPending || skipQuestionMutation.isPending || hintMutation.isPending;
   const statsError = statsQuery.error instanceof Error ? statsQuery.error.message : null;
   const totalInsightPoints =
@@ -402,6 +411,8 @@ const useHint = useCallback(async () => {
     difficultySuggestion,
     dismissDifficultySuggestion,
     hasAnswered: Boolean(skipResult) || Boolean(answerResult?.answerRevealed),
+    unlockedAchievements,
+    dismissUnlockedAchievement,
     submitAnswer,
     skipQuestion,
     useHint,

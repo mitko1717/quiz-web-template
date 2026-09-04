@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { type AnswerResponse, type HintResponse, type ProgressResponse, type QuestionDirection, type QuestionResponse, type QuizScope, type QuizInputMode, type SkipResponse } from '@/lib/types';
+import { type AnswerResponse, type HintResponse, type ProgressResponse, type QuestionDirection, type QuestionResponse, type QuizScope, type QuizInputMode, type SkipResponse, UnlockedAchievement } from '@/lib/types';
 
 export interface QuestionCardProps {
   question: QuestionResponse | null;
@@ -26,6 +26,8 @@ export interface QuestionCardProps {
   onQuestionDirectionChange: (direction: QuestionDirection) => void;
   questionScope: QuizScope;
   onQuestionScopeChange: (scope: QuizScope) => void;
+  unlockedAchievements: UnlockedAchievement[];
+  onDismissAchievement: () => void;
 }
 
 export type InputModeToggleProps = {

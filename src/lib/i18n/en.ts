@@ -114,8 +114,6 @@ export const en = {
   question_free_text_bonus: '+{points} bonus insight point{plural} for typing it!',
   question_retry_notice: 'Wrong option. Try again. Penalty: -{penalty} insight point{plural}. Attempts left: {attempts}.',
   question_result_skipped: 'Skipped. Correct answer: {answer}',
-  question_result_correct: 'Correct. Correct answer: {answer}',
-  question_result_wrong: 'Wrong. Correct answer: {answer}',
   question_none_of_the_above: 'None of the above',
   question_submit: 'Submit',
   question_submitting: 'Submitting...',
@@ -211,6 +209,8 @@ export const en = {
   stats_detail_title: 'Level {level} details',
   stats_detail_description: 'Per-difficulty performance and resource breakdown.',
   stats_detail_close: 'Close',
+  achievement_unlocked_title: 'Achievement Unlocked!',
+  achievement_unlocked_close: 'Nice!',
 
   global_stats_label: 'Global stats',
   global_stats_insight_points: 'Insight points',

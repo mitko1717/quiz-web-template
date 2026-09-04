@@ -9,3 +9,9 @@ export interface AchievementProgressResponse {
   currentValue: number;
   unlockedAt: string | null;
 }
+
+export interface UnlockedAchievement {
+  achievementId: string;
+  key: string;
+  name: string;
+}
