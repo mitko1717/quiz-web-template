@@ -1,5 +1,6 @@
 export interface TopicStatsResponse {
   topicId: string;
+  name: string;
   totalAttempts: number;
   correctAttempts: number;
   accuracy: number;

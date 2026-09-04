@@ -129,7 +129,7 @@ function GlobalStatsPanel({ stats }: GlobalStatsPanelProps) {
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {stats.byTopic.map((topic) => (
             <div key={topic.topicId} className="rounded-xl border border-base-600 bg-base-900/30 p-3 text-xs text-ink-300">
-              <p className="text-ink-500">{topic.topicId}</p>
+              <p className="text-ink-500">{topic.name}</p>
               <p className="mt-1 text-ink-100">
                 {topic.correctAttempts}/{topic.totalAttempts} · {formatPercent(topic.accuracy)}
               </p>
@@ -158,7 +158,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
         className={["rounded-xl border p-3", unlocked ? "border-accent-greenDim/40 bg-accent-green/10" : "border-base-600 bg-base-700/35"].join(" ")}
       >
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-ink-100">{a.name}</p>
+          <p className="text-sm font-semibold text-ink-100">{a.name ? `${a.name.charAt(0).toUpperCase()}${a.name.slice(1)}` : a.name}</p>
           <p className={unlocked ? "text-xs text-accent-green" : "text-xs text-ink-500"}>
             {unlocked ? t('achievements_unlocked') : `${a.currentValue}/${a.threshold}`}
           </p>
@@ -190,7 +190,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
 function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
   const { t } = useI18n();
   const nextUnlock = stats.progression.nextDifficultyToUnlock;
-  const nextUnlockStatus = nextUnlock ? stats.progression.levels.find((row) => row.difficultyLevel === nextUnlock) ?? null : null;
+  const nextUnlockStatus = nextUnlock ? stats.progression.levels.find((row) => row.difficultyLevel === nextUnlock) ?? null : null;;
 
   return (
     <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-5">
