@@ -28,6 +28,9 @@ export const topicConfig = {
   worldScopeValue: process.env.NEXT_PUBLIC_SCOPE_WORLD || 'WORLD',
   scopes: parseScopes(process.env.NEXT_PUBLIC_SCOPES),
   maxItemCount: Number(process.env.NEXT_PUBLIC_MAX_ITEM_COUNT) || 9999,
+  // Public bot username (no @, no token) used to build t.me referral deep-links.
+  // Falls back to web-origin referral links when unset (e.g. a topic without a bot yet).
+  telegramBotUsername: process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || null,
 } as const;
 
 export type TopicConfig = typeof topicConfig;

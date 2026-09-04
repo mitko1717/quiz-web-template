@@ -51,6 +51,9 @@ export function SettingsPageContent() {
   const referralLink = useMemo(() => {
     if (profileQuery.data?.referralLink) return profileQuery.data.referralLink;
     if (!profileQuery.data?.refCode) return null;
+    if (topicConfig.telegramBotUsername) {
+      return `https://t.me/${topicConfig.telegramBotUsername}?start=ref_${encodeURIComponent(profileQuery.data.refCode)}`;
+    }
     if (typeof window === "undefined") return null;
     return `${window.location.origin}/?ref=${encodeURIComponent(profileQuery.data.refCode)}`;
   }, [profileQuery.data?.refCode, profileQuery.data?.referralLink]);
