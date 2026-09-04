@@ -288,19 +288,8 @@ function HintModal({ isOpen, onClose, difficulty, currentProgress, loadingStats,
   );
 }
 
-function ModeModal({
-  isOpen,
-  onClose,
-  inputMode,
-  questionDirection,
-  questionScope,
-  loadingQuestion,
-  submittingAnswer,
-  allowReverseMode,
-  onInputModeChange,
-  onQuestionDirectionChange,
-  onQuestionScopeChange
-}: ModeModalProps) {
+function ModeModal(props: ModeModalProps) {
+  const { isOpen, onClose, inputMode, questionDirection, questionScope, loadingQuestion, submittingAnswer, allowReverseMode, onInputModeChange, onQuestionDirectionChange, onQuestionScopeChange } = props;
   const { t } = useI18n();
 
   return (
@@ -404,7 +393,7 @@ export function QuestionCard({
 
   const submitDisabled = loadingQuestion || submittingAnswer || usingHint || !question || !selectedOption || hasAnswered;
   const skipDisabled = loadingQuestion || submittingAnswer || usingHint || !question;
-  const hintDisabled = loadingQuestion || submittingAnswer || usingHint || !question || hasAnswered;
+  const hintDisabled = loadingQuestion || submittingAnswer || usingHint || !question || hasAnswered || question.options.length <= 2;
   const nextDisabled = loadingQuestion || submittingAnswer || usingHint;
   const showOfflineFallback = !isOnline && !question && (loadingQuestion || Boolean(error));
   const questionActions = (
