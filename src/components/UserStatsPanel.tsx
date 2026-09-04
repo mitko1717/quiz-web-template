@@ -7,7 +7,7 @@ import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/button";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
 import { RefreshIcon } from "@/components/icons/RefreshIcon";
-import type { AchievementProgressResponse, DifficultyLevel, UserAnswerStatsByDifficulty } from "@/lib/types";
+import { AchievementScope, type AchievementProgressResponse, type DifficultyLevel, type UserAnswerStatsByDifficulty } from "@/lib/types";
 import type {
   ActiveDifficultyPanelProps,
   DifficultyStatsTableProps,
@@ -146,8 +146,8 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
   const { t } = useI18n();
   if (achievements.length === 0) return null;
 
-  const globalAchievements = achievements.filter((a) => a.scope === 'global');
-  const topicAchievements = achievements.filter((a) => a.scope === 'topic');
+  const globalAchievements = achievements.filter((a) => a.scope === AchievementScope.GLOBAL);
+  const topicAchievements = achievements.filter((a) => a.scope === AchievementScope.TOPIC);
 
   function renderAchievement(a: AchievementProgressResponse) {
     const unlocked = a.unlockedAt !== null;
@@ -175,7 +175,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
 
   if (globalAchievements.length > 0) {
     items.push({
-      id: 'global',
+      id: AchievementScope.GLOBAL,
       title: t('achievements_label'),
       content: (
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -186,13 +186,29 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
   }
 
   if (topicAchievements.length > 0) {
+    const topicGroups = new Map<string, AchievementProgressResponse[]>();
+    
+    for (const achievement of topicAchievements) {
+      const key = achievement.topicId ?? "unknown";
+      if (!topicGroups.has(key)) topicGroups.set(key, []);
+      topicGroups.get(key)!.push(achievement);
+    }
+
     items.push({
-      id: 'topic',
+      id: AchievementScope.TOPIC,
       title: t('achievements_topic_label'),
       content: (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {topicAchievements.map(renderAchievement)}
-        </div>
+        <Accordion
+          items={Array.from(topicGroups.entries()).map(([topicId, achievements]) => ({
+            id: topicId,
+            title: topicId === "unknown" ? "Unknown Topic" : (topicId.charAt(0).toUpperCase() + topicId.slice(1)),
+            content: (
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {achievements.map(renderAchievement)}
+              </div>
+            )
+          }))}
+        />
       )
     });
   }

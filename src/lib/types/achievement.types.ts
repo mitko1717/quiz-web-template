@@ -1,7 +1,11 @@
+export enum AchievementScope {
+  GLOBAL = 'global',
+  TOPIC = 'topic'
+}
 export interface AchievementProgressResponse {
   achievementId: string;
   key: string;
-  scope: 'global' | 'topic';
+  scope: AchievementScope;
   topicId: string | null;
   name: string;
   description: string;

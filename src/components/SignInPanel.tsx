@@ -104,11 +104,7 @@ export function SignInPanel() {
     };
 
     if (!googleInitializedRef.current) {
-      googleApi.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleCredential,
-        ux_mode: "popup",
-      });
+      googleApi.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential, ux_mode: "popup" });
       googleInitializedRef.current = true;
     }
 

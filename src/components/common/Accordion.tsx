@@ -17,8 +17,8 @@ interface AccordionProps {
 
 export function Accordion({ items, defaultActiveId, className = "", contentClassName = "" }: AccordionProps) {
   const generatedId = useId();
+  const [activeId, setActiveId] = useState<string | null>(defaultActiveId ?? items[0]?.id ?? null);
 
-  const [activeId, setActiveId] = useState(defaultActiveId ?? items[0]?.id ?? "",);
   if (!items.length) return null;
 
   return (
@@ -44,7 +44,7 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
               aria-expanded={isActive}
               aria-controls={panelId}
               onClick={() => {
-                if (!isActive) setActiveId(item.id);
+                setActiveId(isActive ? null : item.id);
               }}
               className={[
                 "flex w-full shrink-0 items-center justify-between gap-4",
@@ -60,8 +60,8 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
                 {item.title}
               </span>
 
-              <span aria-hidden="true" className={["text-lg leading-none transition-transform duration-300", isActive ? "rotate-45 text-accent-green" : "rotate-0"].join(" ")}>
-                +
+              <span className="text-lg leading-none">
+                {isActive ? "×" : "+"}
               </span>
             </button>
 
@@ -69,7 +69,7 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
               id={panelId}
               role="region"
               aria-labelledby={triggerId}
-              inert={!isActive ? true : undefined}
+              inert={!isActive}
               className={[
                 "grid min-h-0 transition-[grid-template-rows,opacity] duration-500 ease-in-out",
                 isActive

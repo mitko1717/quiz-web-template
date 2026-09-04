@@ -30,9 +30,7 @@ export function LanguageSwitcher({ onChange, disabled = false, compact = false, 
     const onPointerDown = (event: MouseEvent | TouchEvent) => {
       if (!popoverRef.current || !rootRef.current) return;
       const target = event.target as Node;
-      if (!popoverRef.current.contains(target) && !rootRef.current.contains(target)) {
-        setIsOpen(false);
-      }
+      if (!popoverRef.current.contains(target) && !rootRef.current.contains(target)) setIsOpen(false);
     };
 
     const updatePopoverPosition = () => {
