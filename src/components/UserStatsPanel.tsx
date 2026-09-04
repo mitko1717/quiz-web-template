@@ -235,7 +235,7 @@ function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
   const nextUnlockStatus = nextUnlock ? stats.progression.levels.find((row) => row.difficultyLevel === nextUnlock) ?? null : null;;
 
   return (
-    <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-4">
+    <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-3">
       <div className="flex items-center justify-between gap-2">
         <SectionLabel>{t('stats_label')}</SectionLabel>
         <Button
@@ -255,7 +255,7 @@ function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
       <p className="mt-2 text-sm font-medium uppercase tracking-[0.12em] text-accent-green">{t('stats_points_suffix')}</p>
       <BodyText>{t('stats_summary', { answers: stats.totalAttempts, accuracy: formatPercent(stats.accuracy), streak: stats.bestStreakOverall })}</BodyText>
 
-      <div className="mt-4 rounded-xl border border-base-600/80 bg-base-900/30 p-4">
+      <div className="mt-4 rounded-xl border border-base-600/80 bg-base-900/30 p-3">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.12em] text-ink-500">{t('stats_progress_next')}</p>
