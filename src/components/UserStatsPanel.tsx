@@ -27,7 +27,7 @@ import { Accordion } from "./common/Accordion";
 
 function PanelShell({ children, variant = "default" }: PanelShellProps) {
   return (
-    <section className={["w-full rounded-2xl border bg-base-800 p-5 sm:p-6", variant === "error" ? "border-pastel-coral/50" : "border-base-600"].join(" ")}>
+    <section className={["relative w-full rounded-2xl border bg-base-800 p-4 sm:p-5", variant === "error" ? "border-pastel-coral/50" : "border-base-600"].join(" ")}>
       {children}
     </section>
   );
@@ -37,13 +37,13 @@ function LoadingState() {
   return (
     <PanelShell>
       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-2xl border border-accent-greenDim/25 bg-base-700/30 p-5">
+        <div className="rounded-2xl border border-accent-greenDim/25 bg-base-700/30 p-4">
           <SkeletonText className="w-28" />
           <SkeletonBlock className="mt-3 h-12 w-28" />
           <SkeletonText className="mt-3 w-36" />
           <SkeletonText className="mt-4 w-full" />
           <SkeletonText className="mt-2 w-3/4" />
-          <div className="mt-5 rounded-xl border border-base-600/80 bg-base-900/30 p-4">
+          <div className="mt-4 rounded-xl border border-base-600/80 bg-base-900/30 p-4">
             <SkeletonText className="w-40" />
             <SkeletonText className="mt-3 w-3/4" />
             <SkeletonBlock className="mt-4 h-3 w-full rounded-full" />
@@ -58,16 +58,16 @@ function LoadingState() {
           ))}
         </div>
       </div>
-      <div className="mt-5 rounded-2xl border border-accent-greenDim/25 bg-accent-green/5 p-4">
+      <div className="mt-4 rounded-2xl border border-accent-greenDim/25 bg-accent-green/5 p-4">
         <SkeletonText className="w-40" />
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => <SkeletonBlock key={i} className="h-12" />)}
         </div>
       </div>
-      <div className="mt-5 grid gap-2 md:hidden">
+      <div className="mt-4 grid gap-2 md:hidden">
         {Array.from({ length: 5 }).map((_, i) => <SkeletonBlock key={i} className="h-28 rounded-xl" />)}
       </div>
-      <div className="mt-5 hidden space-y-2 md:block">
+      <div className="mt-4 hidden space-y-2 md:block">
         {Array.from({ length: 6 }).map((_, i) => <SkeletonBlock key={i} className="h-11 rounded-xl" />)}
       </div>
     </PanelShell>
@@ -235,7 +235,7 @@ function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
   const nextUnlockStatus = nextUnlock ? stats.progression.levels.find((row) => row.difficultyLevel === nextUnlock) ?? null : null;;
 
   return (
-    <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-5">
+    <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-4">
       <div className="flex items-center justify-between gap-2">
         <SectionLabel>{t('stats_label')}</SectionLabel>
         <Button
@@ -255,7 +255,7 @@ function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
       <p className="mt-2 text-sm font-medium uppercase tracking-[0.12em] text-accent-green">{t('stats_points_suffix')}</p>
       <BodyText>{t('stats_summary', { answers: stats.totalAttempts, accuracy: formatPercent(stats.accuracy), streak: stats.bestStreakOverall })}</BodyText>
 
-      <div className="mt-5 rounded-xl border border-base-600/80 bg-base-900/30 p-4">
+      <div className="mt-4 rounded-xl border border-base-600/80 bg-base-900/30 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.12em] text-ink-500">{t('stats_progress_next')}</p>
@@ -299,7 +299,7 @@ function ActiveDifficultyPanel({ activeLevel }: ActiveDifficultyPanelProps) {
   const { t } = useI18n();
 
   return (
-    <div className="mt-5 rounded-2xl border border-accent-greenDim/40 bg-accent-green/10 p-4">
+    <div className="mt-4 rounded-2xl border border-accent-greenDim/40 bg-accent-green/10 p-4">
       <p className="text-xs uppercase tracking-[0.12em] text-accent-green">{t('stats_current_focus')}</p>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatPair label={t('stats_level')} value={activeLevel.difficultyLevel} />
@@ -324,7 +324,7 @@ function DifficultyStatsTable({ stats, activeDifficulty, onOpenDetails }: Diffic
   }
 
   return (
-    <div className="mt-5">
+    <div className="mt-4">
       <p className="mb-2 text-xs text-ink-400">{t('stats_details_hint')}</p>
       <div className="grid gap-2 md:hidden">
         {stats.byDifficulty.map((row) => (
@@ -465,7 +465,7 @@ function UnlockLevelCard({ level }: UnlockLevelCardProps) {
 
 function UnlockLevelsGrid({ stats }: UnlockLevelsGridProps) {
   return (
-    <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
       {stats.progression.levels.map((level) => (
         <UnlockLevelCard key={level.difficultyLevel} level={level} />
       ))}
@@ -493,7 +493,7 @@ export function UserStatsPanel({ stats, globalStats, achievements, loading, erro
 
   return (
     <PanelShell>
-      <div className="mb-4 flex justify-end">
+      <div className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4">
         <Button
           type="button"
           variant="ghost"
