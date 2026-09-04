@@ -9,7 +9,7 @@ import { CardSection } from "@/components/CardSection";
 import { Button } from "@/components/button";
 import { RefreshIcon } from "@/components/icons/RefreshIcon";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
+import { OfflineStateHint, SkeletonBlock, SkeletonText } from "./common/Skeleton";
 import { apiClient } from "@/lib/apiClient";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queryKeys } from "@/lib/queryKeys";
@@ -214,6 +214,13 @@ function QuestionOptions({ options, selectedOption, submitting, onSelect }: {
 }) {
   const { t } = useI18n();
   const noneOfAboveLabel = t("question_none_of_the_above");
+
+  // Localize an option value that may be an i18n key (e.g. mapper-emitted enum values
+  // like planets_value_color_brown_white). Returns the raw value if no key matches.
+  const localizeOption = (value: string): string => {
+    const resolved = t(value as TranslationKey);
+    return resolved && resolved !== value ? resolved : value;
+  };
   
   return (
     <div className="mt-4 space-y-2">
@@ -235,7 +242,7 @@ function QuestionOptions({ options, selectedOption, submitting, onSelect }: {
               isNoneOfAbove && selected ? "border-solid border-[1.5px] bg-accent-green/10 text-accent-green" : ""
             ].join(" ")}
           >
-            {option}
+            {localizeOption(option)}
           </Button>
         );
       })}
@@ -247,9 +254,14 @@ function AnswerFeedback({ answerResult }: { answerResult: DailyChallengeAnswerRe
   const { t } = useI18n();
   if (!answerResult) return null;
 
+  const localizeOption = (value: string): string => {
+    const resolved = t(value as TranslationKey);
+    return resolved && resolved !== value ? resolved : value;
+  };
+
   return (
     <p className={["mt-4 text-sm", answerResult.correct ? "text-pastel-mint" : "text-pastel-coral"].join(" ")}>
-      {answerResult.correct ? t("daily_challenge_answer_correct") : t("daily_challenge_answer_wrong", { answer: answerResult.correctAnswer })}
+      {answerResult.correct ? t("daily_challenge_answer_correct") : t("daily_challenge_answer_wrong", { answer: localizeOption(answerResult.correctAnswer) })}
     </p>
   );
 }

@@ -9,6 +9,7 @@ export interface AchievementProgressResponse {
   scope: AchievementScope;
   topicId: string | null;
   topicName: string | null;
+  gameLink: string | null;
   name: string;
   description: string;
   threshold: number;

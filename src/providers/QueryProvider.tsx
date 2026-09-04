@@ -1,29 +1,13 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { isLikelyNetworkError, useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { isLikelyNetworkError } from '@/hooks/useNetworkStatus';
 
 const DEFAULT_STALE_TIME_MS = 60_000;
 const MAX_NETWORK_RETRIES = 4;
 const MAX_RETRY_DELAY_MS = 15_000;
-
-function OfflineRefetchOnReconnect({ queryClient }: { queryClient: QueryClient }) {
-  const { isOnline } = useNetworkStatus();
-  const wasOnlineRef = useRef(isOnline);
-
-  useEffect(() => {
-    const wasOnline = wasOnlineRef.current;
-    wasOnlineRef.current = isOnline;
-
-    if (!wasOnline && isOnline) {
-      void queryClient.refetchQueries({ type: 'active' });
-    }
-  }, [isOnline, queryClient]);
-
-  return null;
-}
 
 export function QueryProvider({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -46,7 +30,6 @@ export function QueryProvider({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <OfflineRefetchOnReconnect queryClient={queryClient} />
       {children}
       {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools initialIsOpen={false} /> : null}
     </QueryClientProvider>

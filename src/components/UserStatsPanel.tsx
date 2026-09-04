@@ -24,6 +24,7 @@ import type {
 } from "./UserStatsPanel.types";
 import { formatPercent } from "@/lib/utils";
 import { Accordion } from "./common/Accordion";
+import { topicConfig } from "@/lib/topic.config";
 
 function PanelShell({ children, variant = "default" }: PanelShellProps) {
   return (
@@ -169,6 +170,34 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
   const globalAchievements = achievements.filter((a) => a.scope === AchievementScope.GLOBAL);
   const topicAchievements = achievements.filter((a) => a.scope === AchievementScope.TOPIC);
 
+  // Don't link to the game the user is already in. gameLink values come from the
+  // Game registry's tgBotLink (e.g. "https://t.me/planetz_quiz_bot"); the current
+  // app's own bot is topicConfig.telegramBotUsername — compare host+path, ignoring
+  // any query string (referral links append ?start=ref_XXX).
+  const currentBotLink = topicConfig.telegramBotUsername ? `https://t.me/${topicConfig.telegramBotUsername}` : null;
+
+  function isCurrentGameLink(gameLink: string): boolean {
+    if (!currentBotLink) return false;
+    const normalize = (url: string) => url.split('?')[0].replace(/\/$/, '').toLowerCase();
+    return normalize(gameLink) === normalize(currentBotLink);
+  }
+
+  function GameLinkButton({ href }: { href: string }) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={t('achievements_play_game')}
+        title={t('achievements_play_game')}
+        onClick={(event) => event.stopPropagation()}
+        className="group inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-accent-greenDim/50 bg-accent-green/10 text-sm text-accent-green transition-all duration-200 hover:scale-110 hover:border-accent-greenDim hover:bg-accent-green/20 hover:shadow-[0_0_10px_rgba(34,197,94,0.45)]"
+      >
+        <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5">🚀</span>
+      </a>
+    );
+  }
+
   function renderAchievement(a: AchievementProgressResponse) {
     const unlocked = a.unlockedAt !== null;
     const currentValue = Number(a.currentValue);
@@ -181,8 +210,11 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
         className={["rounded-xl border p-2", unlocked ? "border-accent-greenDim/40 bg-accent-green/10" : "border-base-600 bg-base-700/35"].join(" ")}
       >
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-ink-100">{a.name ? `${a.name.charAt(0).toUpperCase()}${a.name.slice(1)}` : a.name}</p>
-          <p className={unlocked ? "text-xs text-accent-green" : "text-xs text-ink-500"}>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <p className="truncate text-sm font-semibold text-ink-100">{a.name ? `${a.name.charAt(0).toUpperCase()}${a.name.slice(1)}` : a.name}</p>
+            {a.gameLink && !isCurrentGameLink(a.gameLink) ? <GameLinkButton href={a.gameLink} /> : null}
+          </div>
+          <p className={["shrink-0", unlocked ? "text-xs text-accent-green" : "text-xs text-ink-500"].join(" ")}>
             {unlocked ? t('achievements_unlocked') : `${currentValue}/${threshold}`}
           </p>
         </div>

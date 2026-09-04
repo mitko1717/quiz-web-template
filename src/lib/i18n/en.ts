@@ -221,6 +221,7 @@ export const en = {
   achievements_label: 'Achievements',
   achievements_topic_label: 'Topic achievements',
   achievements_unlocked: 'Unlocked',
+  achievements_play_game: 'Play this game',
 
   more_games_title: 'More games',
 

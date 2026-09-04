@@ -223,6 +223,7 @@ export const es: Record<keyof typeof en, string> = {
   achievements_label: 'Logros',
   achievements_topic_label: 'Logros por tema',
   achievements_unlocked: 'Desbloqueado',
+  achievements_play_game: 'Jugar este juego',
 
   more_games_title: 'Más juegos',
 

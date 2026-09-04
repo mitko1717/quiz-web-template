@@ -223,6 +223,7 @@ export const uk: Record<keyof typeof en, string> = {
   achievements_label: 'Досягнення',
   achievements_topic_label: 'Досягнення по темах',
   achievements_unlocked: 'Розблоковано',
+  achievements_play_game: 'Грати в цю гру',
 
   more_games_title: 'Більше ігор',
 
