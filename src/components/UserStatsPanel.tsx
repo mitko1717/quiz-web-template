@@ -189,7 +189,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
     const topicGroups = new Map<string, AchievementProgressResponse[]>();
     
     for (const achievement of topicAchievements) {
-      const key = achievement.topicId ?? "unknown";
+      const key = achievement.name;
       if (!topicGroups.has(key)) topicGroups.set(key, []);
       topicGroups.get(key)!.push(achievement);
     }
@@ -199,9 +199,9 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
       title: t('achievements_topic_label'),
       content: (
         <Accordion
-          items={Array.from(topicGroups.entries()).map(([topicId, achievements]) => ({
-            id: topicId,
-            title: topicId === "unknown" ? "Unknown Topic" : (topicId.charAt(0).toUpperCase() + topicId.slice(1)),
+          items={Array.from(topicGroups.entries()).map(([name, achievements]) => ({
+            id: name,
+            title: name,
             content: (
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {achievements.map(renderAchievement)}
