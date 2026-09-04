@@ -7,6 +7,7 @@ import { profileApi } from "./api/profile";
 import { dailyChallengeApi } from "./api/daily-challenge";
 import { gamesApi } from "./api/games";
 import { adminGamesApi } from "./api/admin-games";
+import { achievementsApi } from "./api/achievements";
 
 export const apiClient = {
   // auth
@@ -36,6 +37,9 @@ export const apiClient = {
   updateProfileLanguage: profileApi.updateLanguage.bind(profileApi),
   updateProfileDifficulty: profileApi.updateDifficulty.bind(profileApi),
   resetProfile: profileApi.resetProfile.bind(profileApi),
+
+  // achievements
+  getAchievements: achievementsApi.getMine.bind(achievementsApi),
 
   // admin
   getAdminUsersStats: adminApi.getUsersStats.bind(adminApi),

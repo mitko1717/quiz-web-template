@@ -7,7 +7,7 @@ import { Modal } from "@/components/Modal";
 import { Button } from "@/components/button";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/Skeleton";
 import { RefreshIcon } from "@/components/icons/RefreshIcon";
-import type { DifficultyLevel, UserAnswerStatsByDifficulty } from "@/lib/types";
+import type { AchievementProgressResponse, DifficultyLevel, UserAnswerStatsByDifficulty } from "@/lib/types";
 import type {
   ActiveDifficultyPanelProps,
   DifficultyStatsTableProps,
@@ -23,7 +23,6 @@ import type {
   UnlockLevelsGridProps,
   UserStatsPanelProps
 } from "./UserStatsPanel.types";
-
 function formatPercent(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
@@ -139,6 +138,52 @@ function GlobalStatsPanel({ stats }: GlobalStatsPanelProps) {
             </div>
           ))}
         </div>
+      ) : null}
+    </div>
+  );
+}
+
+function AchievementsPanel({ achievements }: { achievements: AchievementProgressResponse[] }) {
+  const { t } = useI18n();
+  if (achievements.length === 0) return null;
+
+  const globalAchievements = achievements.filter((a) => a.scope === 'global');
+  const topicAchievements = achievements.filter((a) => a.scope === 'topic');
+
+  function renderAchievement(a: AchievementProgressResponse) {
+    const unlocked = a.unlockedAt !== null;
+    const progress = a.threshold === 0 ? 1 : Math.min(1, a.currentValue / a.threshold);
+
+    return (
+      <div
+        key={a.achievementId}
+        className={["rounded-xl border p-3", unlocked ? "border-accent-greenDim/40 bg-accent-green/10" : "border-base-600 bg-base-700/35"].join(" ")}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-ink-100">{a.name}</p>
+          <p className={unlocked ? "text-xs text-accent-green" : "text-xs text-ink-500"}>
+            {unlocked ? t('achievements_unlocked') : `${a.currentValue}/${a.threshold}`}
+          </p>
+        </div>
+        {a.description ? <p className="mt-1 text-xs text-ink-400">{a.description}</p> : null}
+        <ProgressBar progress={progress} tone={unlocked ? "accent" : "muted"} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-4 rounded-2xl border border-base-600 bg-base-700/40 p-4">
+      <SectionLabel>{t('achievements_label')}</SectionLabel>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {globalAchievements.map(renderAchievement)}
+      </div>
+      {topicAchievements.length > 0 ? (
+        <>
+          <p className="mt-4 text-xs uppercase tracking-[0.12em] text-ink-500">{t('achievements_topic_label')}</p>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {topicAchievements.map(renderAchievement)}
+          </div>
+        </>
       ) : null}
     </div>
   );
@@ -388,7 +433,7 @@ function UnlockLevelsGrid({ stats }: UnlockLevelsGridProps) {
   );
 }
 
-export function UserStatsPanel({ stats, globalStats, loading, error, offline = false, activeDifficulty, refreshing, onRefresh }: UserStatsPanelProps) {
+export function UserStatsPanel({ stats, globalStats, achievements, loading, error, offline = false, activeDifficulty, refreshing, onRefresh }: UserStatsPanelProps) {
   const { t } = useI18n();
 
   const [detailDifficulty, setDetailDifficulty] = useState<DifficultyLevel | null>(null);
@@ -409,6 +454,7 @@ export function UserStatsPanel({ stats, globalStats, loading, error, offline = f
   return (
     <PanelShell>
       {globalStats ? <GlobalStatsPanel stats={globalStats} /> : null}
+      {achievements ? <AchievementsPanel achievements={achievements} /> : null}
 
       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
         <HeroPanel stats={stats} refreshing={refreshing} onRefresh={onRefresh} />

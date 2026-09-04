@@ -1,4 +1,4 @@
-import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizInputMode, type DifficultyLevel, type Language } from './types-core';
+import { Language, AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizInputMode, type DifficultyLevel } from './types-core';
 
 export interface AuthResponse {
   accessToken: string;

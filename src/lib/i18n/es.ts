@@ -220,6 +220,10 @@ export const es: Record<keyof typeof en, string> = {
   global_stats_answers: 'Respuestas',
   global_stats_accuracy: 'Precisión',
 
+  achievements_label: 'Logros',
+  achievements_topic_label: 'Logros por tema',
+  achievements_unlocked: 'Desbloqueado',
+
   more_games_title: 'Más juegos',
 
   admin_page_label: '{appName} — Admin',

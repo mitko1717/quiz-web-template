@@ -3,6 +3,7 @@ import type { DifficultyLevel, QuestionDirection, QuizScope, QuizInputMode } fro
 export const queryKeys = {
   profile: (token: string) => ['profile', token] as const,
   globalStats: (token: string) => ['profile', token, 'global-stats'] as const,
+  achievements: (token: string) => ['achievements', token] as const,
   progressRoot: (token: string) => ['progress', token] as const,
   allProgress: (token: string) => ['progress', token, 'all'] as const,
   progressByDifficulty: (token: string, difficulty: DifficultyLevel) => ['progress', token, 'difficulty', difficulty] as const,

@@ -218,6 +218,10 @@ export const en = {
   global_stats_answers: 'Answers',
   global_stats_accuracy: 'Accuracy',
 
+  achievements_label: 'Achievements',
+  achievements_topic_label: 'Topic achievements',
+  achievements_unlocked: 'Unlocked',
+
   more_games_title: 'More games',
 
   admin_page_label: '{appName} - Admin',

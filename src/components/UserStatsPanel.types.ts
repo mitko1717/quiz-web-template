@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
-import type { DifficultyLevel, GlobalStatsResponse, UserAnswerStatsResponse } from '@/lib/types';
+import type { AchievementProgressResponse, DifficultyLevel, GlobalStatsResponse, UserAnswerStatsResponse } from '@/lib/types';
 
 export interface UserStatsPanelProps {
   stats: UserAnswerStatsResponse | null;
   globalStats?: GlobalStatsResponse | null;
+  achievements?: AchievementProgressResponse[] | null;
   loading: boolean;
   error: string | null;
   offline?: boolean;

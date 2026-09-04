@@ -220,6 +220,10 @@ export const uk: Record<keyof typeof en, string> = {
   global_stats_answers: 'Відповіді',
   global_stats_accuracy: 'Точність',
 
+  achievements_label: 'Досягнення',
+  achievements_topic_label: 'Досягнення по темах',
+  achievements_unlocked: 'Розблоковано',
+
   more_games_title: 'Більше ігор',
 
   admin_page_label: '{appName} — Адмін',
