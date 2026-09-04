@@ -14,10 +14,11 @@ import { apiClient } from "@/lib/apiClient";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queryKeys } from "@/lib/queryKeys";
 import { useProfileQuery } from "@/hooks/useProfile";
-import type { DailyChallengeAnswerResponse } from "@/lib/types";
+import type { DailyChallengeAnswerResponse, UnlockedAchievement } from "@/lib/types";
 import { topicConfig } from "@/lib/topic.config";
 import { TranslationKey } from "@/lib/i18n";
 import { MoreGamesSection } from "./MoreGamesSection";
+import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
 
 function toErrorMessage(cause: unknown, fallback: string): string {
   if (cause instanceof Error) return cause.message;
@@ -34,6 +35,7 @@ export function DailyChallengePageContent() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [answerResult, setAnswerResult] = useState<DailyChallengeAnswerResponse | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
 
   const dailyChallengeQuery = useQuery({
     queryKey: queryKeys.dailyChallenge(token),
@@ -70,11 +72,16 @@ export function DailyChallengePageContent() {
     try {
       const res = await submitMutation.mutateAsync({ itemId: question.itemId, selectedOption });
       setAnswerResult(res);
+      if (res.unlockedAchievements?.length) setUnlockedAchievements((prev) => [...prev, ...res.unlockedAchievements]);
       await dailyChallengeQuery.refetch();
       setSelectedOption(null);
     } catch (cause) {
       setSubmitError(toErrorMessage(cause, t("common_unexpected_error")));
     }
+  };
+
+  const dismissUnlockedAchievement = () => {
+    setUnlockedAchievements((prev) => prev.slice(1));
   };
 
   const submitting = submitMutation.isPending;
@@ -123,6 +130,8 @@ export function DailyChallengePageContent() {
       </CardSection>
 
       <MoreGamesSection />
+
+      <AchievementUnlockedModal achievement={unlockedAchievements[0] ?? null} onClose={dismissUnlockedAchievement} />
     </section>
   );
 }

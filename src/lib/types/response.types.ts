@@ -268,6 +268,7 @@ export interface DailyChallengeAnswerResponse {
   remainingQuestions: number;
   completed: boolean;
   completedAt: string | null;
+  unlockedAchievements: UnlockedAchievement[];
 }
 
 export interface AdminGame {
