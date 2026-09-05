@@ -38,6 +38,7 @@ export function DailyChallengePageContent() {
   const [answeredItemId, setAnsweredItemId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
+  const [advancing, setAdvancing] = useState(false);
 
   const dailyChallengeQuery = useQuery({
     queryKey: queryKeys.dailyChallenge(token),
@@ -48,10 +49,7 @@ export function DailyChallengePageContent() {
   const submitMutation = useMutation({
     mutationFn: (payload: { itemId: string; selectedOption: string }) => apiClient.submitDailyChallengeAnswer(payload, token),
     onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: queryKeys.dailyChallenge(token) }),
-        queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) }),
-      ]);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) });
     },
   });
 
@@ -68,23 +66,38 @@ export function DailyChallengePageContent() {
     return `${state.correctCount}/${state.questionCount}`;
   }, [state]);
 
+  // Only valid for the item it was generated from — prevents a stale banner (e.g.
+  // "Correct answer: X" from a previous question) from bleeding onto the next one.
+  const visibleAnswerResult = answerResult && question && answeredItemId === question.itemId ? answerResult : null;
+  const hasAnswered = visibleAnswerResult !== null;
+
   const submit = async () => {
     if (!question || !selectedOption) return;
     setSubmitError(null);
     try {
       const res = await submitMutation.mutateAsync({ itemId: question.itemId, selectedOption });
+      // Don't advance yet — hold on this question so the person can actually read the
+      // feedback (correct/wrong + correct answer) before moving on, same as the regular
+      // quiz screen's "Next question" step.
       setAnswerResult(res);
       setAnsweredItemId(question.itemId);
       if (res.unlockedAchievements?.length) setUnlockedAchievements((prev) => [...prev, ...res.unlockedAchievements]);
-      await dailyChallengeQuery.refetch();
-      setSelectedOption(null);
     } catch (cause) {
       setSubmitError(toErrorMessage(cause, t("common_unexpected_error")));
     }
   };
 
-
-  const visibleAnswerResult = answerResult && question && answeredItemId === question.itemId ? answerResult : null;
+  const advanceToNext = async () => {
+    setAdvancing(true);
+    try {
+      await dailyChallengeQuery.refetch();
+      setSelectedOption(null);
+      setAnswerResult(null);
+      setAnsweredItemId(null);
+    } finally {
+      setAdvancing(false);
+    }
+  };
 
   const dismissUnlockedAchievement = () => {
     setUnlockedAchievements((prev) => prev.slice(1));
@@ -103,7 +116,7 @@ export function DailyChallengePageContent() {
             <ScoreBadge scoreLabel={scoreLabel} />
           </div>
           <div className="flex gap-2">
-            <RefreshButton loading={loading} submitting={submitting} onRefresh={() => void dailyChallengeQuery.refetch()} />
+            <RefreshButton loading={loading} submitting={submitting || advancing} onRefresh={() => void dailyChallengeQuery.refetch()} />
           </div>
         </div>
 
@@ -119,8 +132,8 @@ export function DailyChallengePageContent() {
             <QuestionProgress current={currentQuestionNumber} total={totalQuestions} />
             <h2 className="mt-2 text-xl font-semibold text-ink-100 sm:text-2xl">
               {(() => {
-                const token = parsePromptToken(String(question.prompt));
-                if (token) return t(token.key as TranslationKey, token.params);
+                const promptToken = parsePromptToken(String(question.prompt));
+                if (promptToken) return t(promptToken.key as TranslationKey, promptToken.params);
                 return t("question_prompt", {
                   value: question.publicFields[topicConfig.publicFields.displayName] as string,
                   promptNoun: t(`${topicConfig.slug}_prompt_noun` as TranslationKey)
@@ -128,12 +141,25 @@ export function DailyChallengePageContent() {
               })()}
             </h2>
             <p className="mt-1 text-xs text-ink-400">{t("difficulty_level", { level: question.difficulty })}</p>
-            <QuestionOptions options={question.options} selectedOption={selectedOption} submitting={submitting} onSelect={setSelectedOption} />
+            <QuestionOptions
+              options={question.options}
+              selectedOption={selectedOption}
+              submitting={submitting}
+              hasAnswered={hasAnswered}
+              answerResult={visibleAnswerResult}
+              onSelect={setSelectedOption}
+            />
             <AnswerFeedback answerResult={visibleAnswerResult} />
             <div className="mt-5">
-              <Button type="button" variant="primary" disabled={!selectedOption || submitting} onClick={() => void submit()}>
-                {submitting ? <LoadingSpinner size="sm" /> : t("question_submit")}
-              </Button>
+              {hasAnswered ? (
+                <Button type="button" variant="primary" disabled={advancing} onClick={() => void advanceToNext()}>
+                  {advancing ? <LoadingSpinner size="sm" /> : t("question_next")}
+                </Button>
+              ) : (
+                <Button type="button" variant="primary" disabled={!selectedOption || submitting} onClick={() => void submit()}>
+                  {submitting ? <LoadingSpinner size="sm" /> : t("question_submit")}
+                </Button>
+              )}
             </div>
           </div>
         ) : null}
@@ -216,10 +242,12 @@ function QuestionProgress({ current, total }: { current: number; total: number }
   );
 }
 
-function QuestionOptions({ options, selectedOption, submitting, onSelect }: { 
+function QuestionOptions({ options, selectedOption, submitting, hasAnswered, answerResult, onSelect }: { 
   options: string[]; 
   selectedOption: string | null; 
   submitting: boolean; 
+  hasAnswered: boolean;
+  answerResult: DailyChallengeAnswerResponse | null;
   onSelect: (option: string) => void;
 }) {
   const { t } = useI18n();
@@ -237,6 +265,8 @@ function QuestionOptions({ options, selectedOption, submitting, onSelect }: {
       {options.map((option) => {
         const selected = selectedOption === option;
         const isNoneOfAbove = option === noneOfAboveLabel;
+        const isCorrectAnswer = hasAnswered && option === answerResult?.correctAnswer;
+        const isWrongSelection = hasAnswered && selected && answerResult ? !answerResult.correct : false;
 
         return (
           <Button
@@ -245,11 +275,13 @@ function QuestionOptions({ options, selectedOption, submitting, onSelect }: {
             variant={selected ? "dailyOptionSelected" : "dailyOptionIdle"}
             size="lg"
             onClick={() => onSelect(option)}
-            disabled={submitting}
+            disabled={submitting || hasAnswered}
             className={[
               "w-full text-left font-normal",
               isNoneOfAbove && !selected ? "border-dashed border-[1.5px] bg-base-700/85 text-ink-200" : "",
-              isNoneOfAbove && selected ? "border-solid border-[1.5px] bg-accent-green/10 text-accent-green" : ""
+              isNoneOfAbove && selected ? "border-solid border-[1.5px] bg-accent-green/10 text-accent-green" : "",
+              isCorrectAnswer ? "border-solid border-[1.5px] border-pastel-mint bg-pastel-mint/10 text-pastel-mint" : "",
+              isWrongSelection ? "border-solid border-[1.5px] border-pastel-coral bg-pastel-coral/10 text-pastel-coral" : ""
             ].join(" ")}
           >
             {localizeOption(option)}

@@ -11,7 +11,7 @@ import { OfflineStateHint } from "@/components/common/Skeleton";
 import { AnswerOption } from "./AnswerOption";
 import { CardSection } from "./CardSection";
 import { useI18n } from "@/components/I18nProvider";
-import { HintType, QuestionDirection, QuizInputMode, type UnlockedAchievement } from "@/lib/types";
+import { HintType, QuestionDirection, QuizInputMode } from "@/lib/types";
 import { QuizModeControls } from "@/components/QuizModeControls";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
@@ -221,11 +221,16 @@ function ResultNotice({ answerResult, skipResult, hasAnswered }: ResultNoticePro
   if (!hasAnswered || (!answerResult && !skipResult)) return null;
   if (!skipResult && !answerResult?.freeTextBonusInsightPointsAwarded) return null;
 
+  const localizeOption = (value: string): string => {
+    const resolved = t(value as TranslationKey);
+    return resolved && resolved !== value ? resolved : value;
+  };
+
   const statusTone = skipResult ? "border-pastel-coral/40 bg-pastel-coral/10 text-pastel-coral" : "border-pastel-mint/40 bg-pastel-mint/10 text-pastel-mint";
 
   return (
     <div className={["mt-3 rounded-xl border p-1.5 text-sm sm:mt-5", statusTone].join(" ")}>
-      {skipResult ? t('question_result_skipped', { answer: skipResult.correctAnswer }) : null}
+      {skipResult ? t('question_result_skipped', { answer: localizeOption(skipResult.correctAnswer) }) : null}
       {answerResult?.correct && answerResult.freeTextBonusInsightPointsAwarded > 0 ? (
         <p className="mt-1 text-xs text-ink-100">
           {t('question_free_text_bonus', {
@@ -288,8 +293,19 @@ function HintModal({ isOpen, onClose, difficulty, currentProgress, loadingStats,
   );
 }
 
-function ModeModal(props: ModeModalProps) {
-  const { isOpen, onClose, inputMode, questionDirection, questionScope, loadingQuestion, submittingAnswer, allowReverseMode, onInputModeChange, onQuestionDirectionChange, onQuestionScopeChange } = props;
+function ModeModal({
+  isOpen,
+  onClose,
+  inputMode,
+  questionDirection,
+  questionScope,
+  loadingQuestion,
+  submittingAnswer,
+  allowReverseMode,
+  onInputModeChange,
+  onQuestionDirectionChange,
+  onQuestionScopeChange
+}: ModeModalProps) {
   const { t } = useI18n();
 
   return (
