@@ -6,6 +6,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { TelegramProvider } from "@/providers/TelegramProvider";
 import { topicConfig } from "@/lib/topic.config";
 import { I18nProvider } from "@/components/I18nProvider";
+import { AuthGate } from "@/components/AuthGate";
 
 export const metadata: Metadata = {
   title: topicConfig.appName,
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <QueryProvider>
           <I18nProvider>
             <TelegramProvider>
-              {children}
+              <AuthGate>{children}</AuthGate>
               <Toaster />
             </TelegramProvider>
           </I18nProvider>
