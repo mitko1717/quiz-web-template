@@ -66,6 +66,9 @@ export function DailyChallengePageContent() {
     return `${state.correctCount}/${state.questionCount}`;
   }, [state]);
 
+  const isFlagsTopic = topicConfig.slug === 'flags';
+  const badge = question && topicConfig.publicFields.badge ? ((question.publicFields?.[topicConfig.publicFields.badge] as string) ?? null) : null;
+
   // Only valid for the item it was generated from — prevents a stale banner (e.g.
   // "Correct answer: X" from a previous question) from bleeding onto the next one.
   const visibleAnswerResult = answerResult && question && answeredItemId === question.itemId ? answerResult : null;
@@ -110,14 +113,8 @@ export function DailyChallengePageContent() {
       <DashboardHeader authMode={authMode} username={username} dailyStreak={profileQuery.data?.dailyStreak ?? 0} onLanguageChange={setPreferredLanguage} />
 
       <CardSection>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-500">{t("daily_challenge_title")}</p>
-            <ScoreBadge scoreLabel={scoreLabel} />
-          </div>
-          <div className="flex gap-2">
-            <RefreshButton loading={loading} submitting={submitting || advancing} onRefresh={() => void dailyChallengeQuery.refetch()} />
-          </div>
+        <div className="flex justify-end">
+          <RefreshButton loading={loading} submitting={submitting || advancing} onRefresh={() => void dailyChallengeQuery.refetch()} />
         </div>
 
         {loading && !state && <DailyChallengeSkeleton />}
@@ -128,8 +125,16 @@ export function DailyChallengePageContent() {
         {state?.completed ? (
           <CompletionMessage correct={state.correctCount} total={state.questionCount} />
         ) : question ? (
-          <div className="mt-5">
-            <QuestionProgress current={currentQuestionNumber} total={totalQuestions} />
+          <div className="mt-2">
+            <div className="flex items-center justify-between gap-3">
+              <QuestionProgress current={currentQuestionNumber} total={totalQuestions} />
+              <ScoreBadge scoreLabel={scoreLabel} />
+            </div>
+            {isFlagsTopic && badge ? (
+              <div className="mt-3 text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">
+                {badge}
+              </div>
+            ) : null}
             <h2 className="mt-2 text-xl font-semibold text-ink-100 sm:text-2xl">
               {(() => {
                 const promptToken = parsePromptToken(String(question.prompt));
@@ -189,7 +194,7 @@ function DailyChallengeSkeleton() {
 function ScoreBadge({ scoreLabel }: { scoreLabel: string }) {
   const { t } = useI18n();
   return (
-    <p className="mt-2 inline-flex rounded-lg border border-accent-greenDim/50 bg-accent-green/10 px-2.5 py-1 text-xs font-medium text-accent-green">
+    <p className="inline-flex shrink-0 rounded-lg border border-accent-greenDim/50 bg-accent-green/10 px-2.5 py-1 text-xs font-medium text-accent-green">
       {t("daily_challenge_score", { score: scoreLabel })}
     </p>
   );
