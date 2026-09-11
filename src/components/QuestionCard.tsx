@@ -144,13 +144,15 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   if (isEnlargedForwardBadge) {
     return (
       <div className="mb-2.5 sm:mb-4">
-        {actions ? <div className="mb-2 flex justify-end gap-1">{actions}</div> : null}
-        {badge ? (
-          <div className="flex justify-center text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">
-            {badge}
-          </div>
-        ) : null}
-        <h2 className="mt-2 break-words text-center text-lg font-semibold leading-snug text-ink-100 sm:text-2xl">
+        <div className="flex items-center justify-between gap-2">
+          {badge ? (
+            <div className="text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">
+              {badge}
+            </div>
+          ) : <div />}
+          {actions ? <div className="flex shrink-0 gap-1">{actions}</div> : null}
+        </div>
+        <h2 className="mt-2 break-words text-left text-lg font-semibold leading-snug text-ink-100 sm:text-2xl">
           {prompt}
         </h2>
       </div>
