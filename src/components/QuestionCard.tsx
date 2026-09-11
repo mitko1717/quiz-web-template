@@ -142,7 +142,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   }
 
   return (
-    <div className="mb-2 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-2 sm:mb-4 sm:gap-3">
+    <div className="mb-2.5 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-1.5 sm:mb-4 sm:gap-2">
       <div className="min-w-0">
         {isEnlargedForwardBadge && badge ? (
           <div className="flex justify-center text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">
@@ -156,7 +156,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
           ) : null}
         </h2>
       </div>
-      {actions ? <div className="flex shrink-0 justify-end gap-2">{actions}</div> : null}
+      {actions ? <div className="flex shrink-0 justify-end gap-1">{actions}</div> : null}
     </div>
   );
 }

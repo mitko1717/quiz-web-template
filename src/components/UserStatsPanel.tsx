@@ -108,10 +108,7 @@ function ProgressBar({ progress, tone }: { progress: number; tone: "accent" | "m
   
   return (
     <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-base-600">
-      <div 
-        className={["h-full rounded-full transition-all duration-300", tone === "accent" ? "bg-accent-green" : "bg-base-400"].join(" ")} 
-        style={{ width: `${percentage}%` }}
-      />
+      <div className={["h-full rounded-full transition-all duration-300", tone === "accent" ? "bg-accent-green" : "bg-base-400"].join(" ")}  style={{ width: `${percentage}%` }} />
     </div>
   );
 }
@@ -205,10 +202,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
     const progress = threshold === 0 ? 1 : Math.min(1, currentValue / threshold);
 
     return (
-      <div
-        key={a.achievementId}
-        className={["rounded-xl border p-2", unlocked ? "border-accent-greenDim/40 bg-accent-green/10" : "border-base-600 bg-base-700/35"].join(" ")}
-      >
+      <div key={a.achievementId} className={["rounded-xl border p-2", unlocked ? "border-accent-greenDim/40 bg-accent-green/10" : "border-base-600 bg-base-700/35"].join(" ")}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5">
             <p className="truncate text-sm font-semibold text-ink-100">{a.name ? `${a.name.charAt(0).toUpperCase()}${a.name.slice(1)}` : a.name}</p>
@@ -552,9 +546,7 @@ export function UserStatsPanel({ stats, globalStats, achievements, loading, erro
         onOpenDetails={(difficultyLevel) => setDetailDifficulty(difficultyLevel)}
       />
       <UnlockLevelsGrid stats={stats} />
-      {detailRow ? (
-        <DifficultyStatsDetailModal row={detailRow} isOpen={detailRow !== null} onClose={() => setDetailDifficulty(null)} />
-      ) : null}
+      {detailRow ? <DifficultyStatsDetailModal row={detailRow} isOpen={detailRow !== null} onClose={() => setDetailDifficulty(null)} /> : null}
 
       {error ? <p className="mt-4 text-xs text-pastel-coral">{t('stats_refresh_warning', { error })}</p> : null}
     </PanelShell>
