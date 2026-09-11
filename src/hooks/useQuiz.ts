@@ -77,7 +77,7 @@ function isMissingActiveQuestionError(cause: unknown): boolean {
 }
 
 export function useQuiz(token: string, allowReverseMode: boolean = true): UseQuizResult {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const queryClient = useQueryClient();
   const initialSession = queryClient.getQueryData<CachedQuizSessionState>(queryKeys.quizSession(token));
   const storedInputMode = readStoredInputMode();
@@ -121,7 +121,7 @@ export function useQuiz(token: string, allowReverseMode: boolean = true): UseQui
 
   const fetchQuestionMutation = useMutation({
     mutationFn: ({ difficultyLevel, mode, direction, scope }: { difficultyLevel: DifficultyLevel; mode: QuizInputMode; direction: QuestionDirection; scope: QuizScope }) =>
-      apiClient.getQuestion(difficultyLevel, mode, direction, scope, token),
+      apiClient.getQuestion(difficultyLevel, mode, direction, scope, token, language),
   });
   const fetchQuestionRef = useRef(fetchQuestionMutation.mutateAsync);
 
