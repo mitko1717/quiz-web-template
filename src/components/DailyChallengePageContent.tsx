@@ -113,10 +113,6 @@ export function DailyChallengePageContent() {
       <DashboardHeader authMode={authMode} username={username} dailyStreak={profileQuery.data?.dailyStreak ?? 0} onLanguageChange={setPreferredLanguage} />
 
       <CardSection>
-        <div className="flex justify-end">
-          <RefreshButton loading={loading} submitting={submitting || advancing} onRefresh={() => void dailyChallengeQuery.refetch()} />
-        </div>
-
         {loading && !state && <DailyChallengeSkeleton />}
         {!loading && showOfflineFallback && <DailyChallengeSkeleton />}
         {showOfflineFallback && <OfflineStateHint className="mt-4" />}
@@ -131,11 +127,11 @@ export function DailyChallengePageContent() {
               <ScoreBadge scoreLabel={scoreLabel} />
             </div>
             {isFlagsTopic && badge ? (
-              <div className="mt-3 text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">
+              <div className="mt-2 text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">
                 {badge}
               </div>
             ) : null}
-            <h2 className="mt-2 text-xl font-semibold text-ink-100 sm:text-2xl">
+            <h2 className="mt-1 text-xl font-semibold text-ink-100 sm:text-2xl">
               {(() => {
                 const promptToken = parsePromptToken(String(question.prompt));
                 if (promptToken) return t(promptToken.key as TranslationKey, promptToken.params);
@@ -145,7 +141,7 @@ export function DailyChallengePageContent() {
                 });
               })()}
             </h2>
-            <p className="mt-1 text-xs text-ink-400">{t("difficulty_level", { level: question.difficulty })}</p>
+            <p className="text-xs text-ink-400">{t("difficulty_level", { level: question.difficulty })}</p>
             <QuestionOptions
               options={question.options}
               selectedOption={selectedOption}
@@ -183,7 +179,7 @@ function DailyChallengeSkeleton() {
       <SkeletonText className="w-32" />
       <SkeletonBlock className="mt-3 h-7 w-11/12" />
       <SkeletonText className="mt-2 w-24" />
-      <div className="mt-4 space-y-2">
+      <div className="mt-3 space-y-2">
         {Array.from({ length: 4 }).map((_, i) => <SkeletonBlock key={i} className="h-12 rounded-xl" />)}
       </div>
       <SkeletonBlock className="mt-5 h-11 w-32" />
