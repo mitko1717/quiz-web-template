@@ -141,19 +141,28 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
     }
   }
 
-  return (
-    <div className="mb-2.5 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-1.5 sm:mb-4 sm:gap-2">
-      <div className="min-w-0">
-        {isEnlargedForwardBadge && badge ? (
+  if (isEnlargedForwardBadge) {
+    return (
+      <div className="mb-2.5 sm:mb-4">
+        {actions ? <div className="mb-2 flex justify-end gap-1">{actions}</div> : null}
+        {badge ? (
           <div className="flex justify-center text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">
             {badge}
           </div>
         ) : null}
+        <h2 className="mt-2 break-words text-center text-lg font-semibold leading-snug text-ink-100 sm:text-2xl">
+          {prompt}
+        </h2>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-2.5 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-1.5 sm:mb-4 sm:gap-2">
+      <div className="min-w-0">
         <h2 className="break-words text-lg font-semibold leading-snug text-ink-100 sm:mt-1 sm:text-2xl">
           {prompt}
-          {badge && !isEnlargedForwardBadge ? (
-            <span className="ml-2 inline-block align-middle" aria-hidden="true">{badge}</span>
-          ) : null}
+          {badge ? <span className="ml-2 inline-block align-middle" aria-hidden="true">{badge}</span> : null}
         </h2>
       </div>
       {actions ? <div className="flex shrink-0 justify-end gap-1">{actions}</div> : null}
