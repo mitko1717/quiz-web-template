@@ -145,7 +145,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
     <div className="mb-2 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-2 sm:mb-4 sm:gap-3">
       <div className="min-w-0">
         {isEnlargedForwardBadge && badge ? (
-          <div className="flex translate-y-[-10px] justify-center text-6xl sm:text-7xl" aria-hidden="true">
+          <div className="flex translate-y-[-10px] justify-center text-6xl leading-none sm:text-7xl" aria-hidden="true">
             {badge}
           </div>
         ) : null}
