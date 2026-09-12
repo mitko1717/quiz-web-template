@@ -273,27 +273,33 @@ export interface DailyChallengeAnswerResponse {
   unlockedAchievements: UnlockedAchievement[];
 }
 
+export interface LocalizedText {
+  en: string;
+  es?: string;
+  uk?: string;
+}
+
 export interface AdminGame {
   id: string;
   slug: string;
-  name: string;
-  description: string;
+  name: LocalizedText;
+  description: LocalizedText;
   tgBotLink: string | null;
   logo: string | null;
   bannerImage: string | null;
-  tagline: string | null;
+  tagline: LocalizedText | null;
   active: boolean;
   sortOrder: number;
 }
 
 export interface CreateGamePayload {
   slug: string;
-  name: string;
-  description?: string;
+  name: LocalizedText;
+  description?: LocalizedText;
   tgBotLink?: string;
   logo?: string;
   bannerImage?: string;
-  tagline?: string;
+  tagline?: LocalizedText;
   active?: boolean;
   sortOrder?: number;
 }

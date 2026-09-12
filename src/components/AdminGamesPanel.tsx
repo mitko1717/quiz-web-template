@@ -7,50 +7,86 @@ import { SectionLabel, BodyText } from "@/components/common/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
 import { useI18n } from "@/components/I18nProvider";
 import { useAdminGames } from "@/hooks/useAdminGames";
-import type { AdminGame, CreateGamePayload } from "@/lib/types";
+import type { AdminGame, CreateGamePayload, LocalizedText } from "@/lib/types";
+
+type LocalizedDraft = { en: string; es: string; uk: string };
 
 type Draft = {
   slug: string;
-  name: string;
-  description: string;
+  name: LocalizedDraft;
+  description: LocalizedDraft;
   tgBotLink: string;
   logo: string;
   bannerImage: string;
-  tagline: string;
+  tagline: LocalizedDraft;
   active: boolean;
   sortOrder: number;
 };
 
+const EMPTY_LOCALIZED: LocalizedDraft = { en: "", es: "", uk: "" };
+
 const EMPTY_DRAFT: Draft = {
-  slug: "", name: "", description: "", tgBotLink: "", logo: "", bannerImage: "", tagline: "", active: true, sortOrder: 0
+  slug: "", name: { ...EMPTY_LOCALIZED }, description: { ...EMPTY_LOCALIZED }, tgBotLink: "", logo: "", bannerImage: "",
+  tagline: { ...EMPTY_LOCALIZED }, active: true, sortOrder: 0
 };
+
+function toLocalizedDraft(value: LocalizedText | null | undefined): LocalizedDraft {
+  return { en: value?.en ?? "", es: value?.es ?? "", uk: value?.uk ?? "" };
+}
 
 function toDraft(g: AdminGame): Draft {
   return {
     slug: g.slug,
-    name: g.name,
-    description: g.description ?? "",
+    name: toLocalizedDraft(g.name),
+    description: toLocalizedDraft(g.description),
     tgBotLink: g.tgBotLink ?? "",
     logo: g.logo ?? "",
     bannerImage: g.bannerImage ?? "",
-    tagline: g.tagline ?? "",
+    tagline: toLocalizedDraft(g.tagline),
     active: g.active,
     sortOrder: g.sortOrder,
   };
 }
 
+function localizedDraftToPayload(d: LocalizedDraft): LocalizedText | undefined {
+  const en = d.en.trim();
+  if (!en) return undefined;
+  const payload: LocalizedText = { en };
+  if (d.es.trim()) payload.es = d.es.trim();
+  if (d.uk.trim()) payload.uk = d.uk.trim();
+  return payload;
+}
+
 function draftToPayload(d: Draft): CreateGamePayload {
+  const name = localizedDraftToPayload(d.name);
   return {
     slug: d.slug.trim(),
-    name: d.name.trim(),
-    description: d.description.trim() || undefined,
+    name: name ?? { en: "" },
+    description: localizedDraftToPayload(d.description),
     tgBotLink: d.tgBotLink.trim() || undefined,
     logo: d.logo.trim() || undefined,
     bannerImage: d.bannerImage.trim() || undefined,
-    tagline: d.tagline.trim() || undefined,
+    tagline: localizedDraftToPayload(d.tagline),
     active: d.active,
     sortOrder: Number(d.sortOrder) || 0,
   };
+}
+
+function LocalizedFieldGroup({ label, value, onChange }: {
+  label: string;
+  value: LocalizedDraft;
+  onChange: (next: LocalizedDraft) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <p className="text-xs font-medium uppercase tracking-[0.1em] text-ink-500">{label}</p>
+      <div className="grid gap-1.5 sm:grid-cols-3">
+        <Input placeholder="EN" value={value.en} onChange={(e) => onChange({ ...value, en: e.target.value })} />
+        <Input placeholder="ES" value={value.es} onChange={(e) => onChange({ ...value, es: e.target.value })} />
+        <Input placeholder="UK" value={value.uk} onChange={(e) => onChange({ ...value, uk: e.target.value })} />
+      </div>
+    </div>
+  );
 }
 
 export function AdminGamesPanel({ token, enabled }: { token: string; enabled: boolean }) {
@@ -74,7 +110,7 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
   };
 
   const submit = async () => {
-    if (!draft.slug.trim() || !draft.name.trim()) return;
+    if (!draft.slug.trim() || !draft.name.en.trim()) return;
     if (isEditing) {
       const { slug, ...rest } = draftToPayload(draft);
       await updateGame(editingSlug!, rest);
@@ -93,15 +129,17 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
 
       {gamesError ? <p className="mb-2 text-sm text-pastel-coral">{gamesError}</p> : null}
 
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="space-y-3">
         <Input placeholder={t("admin_games_field_slug")} value={draft.slug} disabled={isEditing} onChange={(e) => set("slug", e.target.value)} />
-        <Input placeholder={t("admin_games_field_name")} value={draft.name} onChange={(e) => set("name", e.target.value)} />
-        <Input placeholder={t("admin_games_field_tagline")} value={draft.tagline} onChange={(e) => set("tagline", e.target.value)} />
-        <Input placeholder={t("admin_games_field_bot_link")} value={draft.tgBotLink} onChange={(e) => set("tgBotLink", e.target.value)} />
-        <Input placeholder={t("admin_games_field_logo")} value={draft.logo} onChange={(e) => set("logo", e.target.value)} />
-        <Input placeholder={t("admin_games_field_banner")} value={draft.bannerImage} onChange={(e) => set("bannerImage", e.target.value)} />
-        <Input placeholder={t("admin_games_field_description")} value={draft.description} onChange={(e) => set("description", e.target.value)} />
-        <Input placeholder={t("admin_games_field_sort")} type="number" value={String(draft.sortOrder)} onChange={(e) => set("sortOrder", Number(e.target.value))} />
+        <LocalizedFieldGroup label={t("admin_games_field_name")} value={draft.name} onChange={(v) => set("name", v)} />
+        <LocalizedFieldGroup label={t("admin_games_field_tagline")} value={draft.tagline} onChange={(v) => set("tagline", v)} />
+        <LocalizedFieldGroup label={t("admin_games_field_description")} value={draft.description} onChange={(v) => set("description", v)} />
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Input placeholder={t("admin_games_field_bot_link")} value={draft.tgBotLink} onChange={(e) => set("tgBotLink", e.target.value)} />
+          <Input placeholder={t("admin_games_field_logo")} value={draft.logo} onChange={(e) => set("logo", e.target.value)} />
+          <Input placeholder={t("admin_games_field_banner")} value={draft.bannerImage} onChange={(e) => set("bannerImage", e.target.value)} />
+          <Input placeholder={t("admin_games_field_sort")} type="number" value={String(draft.sortOrder)} onChange={(e) => set("sortOrder", Number(e.target.value))} />
+        </div>
       </div>
 
       <label className="mt-2 flex items-center gap-2 text-sm text-ink-200">
@@ -110,7 +148,7 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
       </label>
 
       <div className="mt-3 flex gap-2">
-        <Button type="button" variant="primary" disabled={savingGame || !draft.slug.trim() || !draft.name.trim()} onClick={() => void submit()}>
+        <Button type="button" variant="primary" disabled={savingGame || !draft.slug.trim() || !draft.name.en.trim()} onClick={() => void submit()}>
           {isEditing ? t("admin_games_update") : t("admin_games_create")}
         </Button>
         {isEditing ? <Button type="button" variant="ghost" onClick={cancel}>{t("common_dismiss")}</Button> : null}
@@ -134,7 +172,7 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
             <TableBody>
               {games.map((g) => (
                 <TableRow key={g.slug}>
-                  <TableCell>{g.name}</TableCell>
+                  <TableCell>{g.name.en}</TableCell>
                   <TableCell>{g.slug}</TableCell>
                   <TableCell>{g.active ? "✓" : "—"}</TableCell>
                   <TableCell>
