@@ -13,15 +13,21 @@ import { useI18n } from "@/components/I18nProvider";
 import { AdaptiveDifficultySuggestion, type DifficultyLevel } from "@/lib/types";
 import { MoreGamesSection } from "./MoreGamesSection";
 
-// Base correct-in-a-row streak (on the current level) needed before we even consider
-// suggesting the next level. Repeats within the same level use a growing multiple of this
-// (3 -> 6 -> 9 -> ...) via suggestionCountByLevelRef, so it doesn't nag after every 3 again.
-const HIGHER_LEVEL_SUGGESTION_BASE_STREAKS: Partial<Record<DifficultyLevel, number>> = {
-  1: 3,
-  2: 5,
-  3: 7,
-  4: 10,
-};
+// Each entry is the streak-threshold table used the Nth time the suggestion fires on a given
+// level (index 0 = first time, index 1 = second time, ...). If the suggestion fires more times
+// than there are tables, the last table is reused. Level 5 has no "next level" so it's absent
+// from every table on purpose.
+const HIGHER_LEVEL_SUGGESTION_STREAK_TABLES: Partial<Record<DifficultyLevel, number>>[] = [
+  { 1: 3, 2: 5, 3: 7, 4: 10 },
+  { 1: 5, 2: 7, 3: 9, 4: 12 },
+  { 1: 5, 2: 7, 3: 10, 4: 12 },
+  { 1: 7, 2: 9, 3: 12, 4: 14 },
+];
+
+function getRequiredStreak(difficulty: DifficultyLevel, timesShownThisLevel: number): number | undefined {
+  const tableIndex = Math.min(timesShownThisLevel, HIGHER_LEVEL_SUGGESTION_STREAK_TABLES.length - 1);
+  return HIGHER_LEVEL_SUGGESTION_STREAK_TABLES[tableIndex][difficulty];
+}
 
 export function QuizPlayground() {
   const { t } = useI18n();
@@ -95,11 +101,11 @@ export function QuizPlayground() {
     lastProcessedAnswerKeyRef.current = null;
   }, [difficulty]);
 
-  // Client-side streak counter drives WHEN to even check (progressive threshold: 3, then 6,
-  // then 9... on the same level, resets to 0 on any wrong answer). The server's
-  // difficultySuggestion (MOVE_UP, last-10-attempt accuracy) plus a fresh unlocked-check still
-  // gate whether we actually show it — the streak alone doesn't confirm a longer accuracy
-  // window or unlock status, and `stats` can be stale right after an admin config change.
+  // Client-side streak counter drives WHEN to even check (progressive threshold table, resets
+  // to 0 on any wrong answer). The server's difficultySuggestion (MOVE_UP, last-10-attempt
+  // accuracy) plus a fresh unlocked-check still gate whether we actually show it — the streak
+  // alone doesn't confirm a longer accuracy window or unlock status, and `stats` can be stale
+  // right after an admin config change.
   useEffect(() => {
     if (!answerResult) return;
 
@@ -113,11 +119,9 @@ export function QuizPlayground() {
     }
     sessionCorrectStreakRef.current += 1;
 
-    const baseThreshold = HIGHER_LEVEL_SUGGESTION_BASE_STREAKS[difficulty];
-    if (baseThreshold === undefined) return;
-
     const timesShownThisLevel = suggestionCountByLevelRef.current.get(difficulty) ?? 0;
-    const requiredStreak = baseThreshold * (timesShownThisLevel + 1);
+    const requiredStreak = getRequiredStreak(difficulty, timesShownThisLevel);
+    if (requiredStreak === undefined) return;
     if (sessionCorrectStreakRef.current < requiredStreak) return;
     if (difficultySuggestion !== AdaptiveDifficultySuggestion.MOVE_UP) return;
 
