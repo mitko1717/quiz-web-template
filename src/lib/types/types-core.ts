@@ -19,9 +19,9 @@ export enum HintType {
 }
 
 export enum AdaptiveDifficultySuggestion {
-  MOVE_UP = 'move_up',
-  MOVE_DOWN = 'move_down',
-  STAY = 'stay'
+  MOVE_UP = 'MOVE_UP',
+  MOVE_DOWN = 'MOVE_DOWN',
+  STAY = 'STAY'
 }
 
 export type AuthMode = 'guest' | 'localAdmin' | 'google' | 'apple' | 'telegram';
