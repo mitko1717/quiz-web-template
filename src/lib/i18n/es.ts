@@ -135,6 +135,7 @@ export const es: Record<keyof typeof en, string> = {
   question_scope_europe: 'Europa',
   question_scope_oceania: 'Oceanía',
   question_hint_use: 'Usar pista',
+  question_hint_use_another: "Usar otra pista",
   question_hint_using: 'Usando pista...',
   question_hint_loading_cost: 'Comprobando disponibilidad de la pista...',
   question_hint_free_available: 'Pista gratuita disponible hoy; después cuesta {points} puntos',

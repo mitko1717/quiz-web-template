@@ -135,6 +135,7 @@ export const uk: Record<keyof typeof en, string> = {
   question_scope_europe: 'Європа',
   question_scope_oceania: 'Океанія',
   question_hint_use: 'Використати підказку',
+  question_hint_use_another: "Використати ще одну підказку",
   question_hint_using: 'Застосування підказки...',
   question_hint_loading_cost: 'Перевірка доступності підказки...',
   question_hint_free_available: 'Сьогодні доступна безкоштовна підказка, далі вартість {points} балів',

@@ -293,6 +293,7 @@ function HintModal({ isOpen, onClose, difficulty, hintCost, currentProgress, loa
           disabled={hintDisabled}
           pending={usingHint}
           onUseHint={onUseHint}
+          hasUsedHintThisQuestion={Boolean(hintResult)}
         />
         <HintNotice hintResult={hintResult} />
       </div>

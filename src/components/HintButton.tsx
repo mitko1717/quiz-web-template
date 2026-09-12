@@ -6,6 +6,7 @@ import type { DifficultyLevel, ProgressResponse } from "@/lib/types";
 
 type HintButtonProps = {
   hintCost: number;
+  hasUsedHintThisQuestion: boolean;
   progress: ProgressResponse | null;
   loadingProgress: boolean;
   disabled: boolean;
@@ -28,7 +29,7 @@ function hasFreeHintAvailable(lastFreeHintUsedAt: string | null | undefined): bo
   return !isSameUtcDay(lastUsed, new Date());
 }
 
-export function HintButton({ hintCost, progress, loadingProgress, disabled, pending, onUseHint }: HintButtonProps) {
+export function HintButton({ hintCost, hasUsedHintThisQuestion, progress, loadingProgress, disabled, pending, onUseHint }: HintButtonProps) {
   const { t } = useI18n();
   const freeHintAvailable = progress ? hasFreeHintAvailable(progress.lastFreeHintUsedAt) : false;
   const hasEnoughPoints = progress ? progress.insightPoints >= hintCost : false;
@@ -43,6 +44,12 @@ export function HintButton({ hintCost, progress, loadingProgress, disabled, pend
       : insufficientPoints
         ? t("question_hint_cost_unavailable", { points: hintCost })
         : t("question_hint_cost", { points: hintCost });
+
+  const useLabel = pending
+    ? t("question_hint_using")
+    : hasUsedHintThisQuestion
+      ? t("question_hint_use_another")
+      : t("question_hint_use");
 
   return (
     <div className="min-w-0 rounded-xl border border-pastel-amber/35 bg-pastel-amber/10 p-3 text-sm text-ink-200">
@@ -59,7 +66,7 @@ export function HintButton({ hintCost, progress, loadingProgress, disabled, pend
           onClick={() => void onUseHint()}
           disabled={buttonDisabled}
         >
-          {pending ? t("question_hint_using") : t("question_hint_use")}
+          {useLabel}
         </Button>
       </div>
     </div>

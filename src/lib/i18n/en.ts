@@ -133,6 +133,7 @@ export const en = {
   question_scope_europe: 'Europe',
   question_scope_oceania: 'Oceania',
   question_hint_use: 'Use hint',
+  question_hint_use_another: "Use another hint",
   question_hint_using: 'Using hint...',
   question_hint_loading_cost: 'Checking hint availability...',
   question_hint_free_available: 'Free hint available today, then costs {points} insight points',
