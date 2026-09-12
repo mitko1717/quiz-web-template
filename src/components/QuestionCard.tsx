@@ -269,7 +269,7 @@ function HintNotice({ hintResult }: HintNoticeProps) {
   );
 }
 
-function HintModal({ isOpen, onClose, difficulty, hintCost, currentProgress, loadingStats, hintDisabled, usingHint, hintResult, onUseHint }: HintModalProps) {
+function HintModal({ isOpen, onClose, hintCost, totalInsightPoints, currentProgress, loadingStats, hintDisabled, usingHint, hintResult, onUseHint }: HintModalProps) {
   const { t } = useI18n();
 
   return (
@@ -294,7 +294,7 @@ function HintModal({ isOpen, onClose, difficulty, hintCost, currentProgress, loa
           pending={usingHint}
           onUseHint={onUseHint}
           hasUsedHintThisQuestion={Boolean(hintResult)}
-          totalInsightPoints={currentProgress?.insightPoints ?? null}
+          totalInsightPoints={totalInsightPoints}
         />
         <HintNotice hintResult={hintResult} />
       </div>
@@ -401,6 +401,7 @@ export function QuestionCard({
   onQuestionScopeChange,
   allowReverseMode,
   hintCost,
+  totalInsightPoints,
   unlockedAchievements,
   onDismissAchievement,
 }: QuestionCardProps) {
@@ -491,7 +492,6 @@ export function QuestionCard({
       <HintModal
         isOpen={hintModalOpen}
         onClose={() => setHintModalOpen(false)}
-        difficulty={question?.difficulty ?? 1}
         currentProgress={currentProgress}
         loadingStats={loadingStats}
         hintDisabled={hintDisabled}
@@ -499,7 +499,7 @@ export function QuestionCard({
         hintResult={hintResult}
         onUseHint={onUseHint}
         hintCost={hintCost}
-        totalInsightPoints={currentProgress?.insightPoints ?? null}
+        totalInsightPoints={totalInsightPoints}
       />
       <ModeModal
         isOpen={modeModalOpen}

@@ -94,7 +94,6 @@ export type HintNoticeProps = {
 export interface HintModalProps {
   isOpen: boolean;
   onClose: () => void;
-  difficulty: QuestionResponse['difficulty'];
   hintCost: number;
   currentProgress: QuestionCardProps['currentProgress'];
   loadingStats: boolean;
