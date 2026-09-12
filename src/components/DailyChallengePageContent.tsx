@@ -28,7 +28,7 @@ function toErrorMessage(cause: unknown, fallback: string): string {
 
 export function DailyChallengePageContent() {
   const { token, authMode, username, setPreferredLanguage } = useAuthContext();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { isOnline } = useNetworkStatus();
   const queryClient = useQueryClient();
   const profileQuery = useProfileQuery(token);
@@ -41,13 +41,13 @@ export function DailyChallengePageContent() {
   const [advancing, setAdvancing] = useState(false);
 
   const dailyChallengeQuery = useQuery({
-    queryKey: queryKeys.dailyChallenge(token),
-    queryFn: () => apiClient.getDailyChallenge(token),
+    queryKey: [...queryKeys.dailyChallenge(token), language],
+    queryFn: () => apiClient.getDailyChallenge(token, language),
     enabled: Boolean(token),
   });
 
   const submitMutation = useMutation({
-    mutationFn: (payload: { itemId: string; selectedOption: string }) => apiClient.submitDailyChallengeAnswer(payload, token),
+    mutationFn: (payload: { itemId: string; selectedOption: string }) => apiClient.submitDailyChallengeAnswer(payload, token, language),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.progressRoot(token) });
     },
