@@ -172,12 +172,7 @@ export function DifficultySelector({ value, onChange, progression, disabled = fa
                       </div>
                     </div>
                   ) : (
-                    <span
-                      className={[
-                        "relative z-[1] mt-1.5 block text-xs text-ink-400",
-                        showUnlockMotion ? "difficulty-unlocked-label" : "",
-                      ].join(" ")}
-                    >
+                    <span className={["relative z-[1] mt-1.5 block text-xs text-ink-400", showUnlockMotion ? "difficulty-unlocked-label" : ""].join(" ")}>
                       {showUnlockMotion ? t("difficulty_unlocked_now") : "\u00a0"}
                     </span>
                   )}

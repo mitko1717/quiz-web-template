@@ -29,6 +29,8 @@ function getRequiredStreak(difficulty: DifficultyLevel, timesShownThisLevel: num
   return HIGHER_LEVEL_SUGGESTION_STREAK_TABLES[tableIndex][difficulty];
 }
 
+const ALL_LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
+
 export function QuizPlayground() {
   const { t } = useI18n();
   const { token, authMode, username, setPreferredLanguage } = useAuthContext();
@@ -74,6 +76,8 @@ export function QuizPlayground() {
   const sessionCorrectStreakRef = useRef(0);
   const suggestionCountByLevelRef = useRef<Map<DifficultyLevel, number>>(new Map());
   const lastProcessedAnswerKeyRef = useRef<string | null>(null);
+  const unlockNotifiedLevelsRef = useRef<Set<DifficultyLevel>>(new Set());
+  const previousUnlockedMapRef = useRef<Map<DifficultyLevel, boolean> | null>(null);
   const [suggestedDifficulty, setSuggestedDifficulty] = useState<DifficultyLevel | null>(null);
 
   useEffect(() => {
@@ -101,11 +105,38 @@ export function QuizPlayground() {
     lastProcessedAnswerKeyRef.current = null;
   }, [difficulty]);
 
-  // Client-side streak counter drives WHEN to even check (progressive threshold table, resets
-  // to 0 on any wrong answer). The server's difficultySuggestion (MOVE_UP, last-10-attempt
-  // accuracy) plus a fresh unlocked-check still gate whether we actually show it — the streak
-  // alone doesn't confirm a longer accuracy window or unlock status, and `stats` can be stale
-  // right after an admin config change.
+  // TRIGGER A: fires the moment a level genuinely transitions locked -> unlocked (server-confirmed
+  // via stats.progression.levels[].unlocked), independent of streak/accuracy. This is the "you just
+  // unlocked a new level" notification — distinct from trigger B below. Compares against the
+  // previous snapshot of unlocked flags to detect the transition; fires once per level ever
+  // (per session — the ref resets on remount).
+  useEffect(() => {
+    const levels = stats?.progression.levels;
+    if (!levels || levels.length === 0) return;
+
+    const currentMap = new Map<DifficultyLevel, boolean>();
+    for (const row of levels) currentMap.set(row.difficultyLevel, row.unlocked);
+
+    const previousMap = previousUnlockedMapRef.current;
+    previousUnlockedMapRef.current = currentMap;
+    if (!previousMap) return; // first snapshot — nothing to diff against yet, avoids a false-positive on load
+
+    for (const level of ALL_LEVELS) {
+      const wasUnlocked = previousMap.get(level) ?? false;
+      const isUnlocked = currentMap.get(level) ?? false;
+      if (!wasUnlocked && isUnlocked && !unlockNotifiedLevelsRef.current.has(level)) {
+        unlockNotifiedLevelsRef.current.add(level);
+        setSuggestedDifficulty(level);
+        break;
+      }
+    }
+  }, [stats]);
+
+  // TRIGGER B: client-side streak counter drives WHEN to even check (progressive threshold
+  // table, resets to 0 on any wrong answer). The server's difficultySuggestion (MOVE_UP,
+  // last-10-attempt accuracy) plus a fresh unlocked-check still gate whether we actually show
+  // it — this is the "you're doing great, the next level is already open, want to try it?"
+  // notification for a level the player already unlocked earlier but hasn't moved to.
   useEffect(() => {
     if (!answerResult) return;
 
@@ -143,8 +174,7 @@ export function QuizPlayground() {
     setSuggestedDifficulty(null);
   }, []);
 
-  const nextDifficultyForCurrentLevel = difficulty < 5 ? ((difficulty + 1) as DifficultyLevel) : null;
-  const shouldShowSuggestionModal = suggestedDifficulty !== null && suggestedDifficulty === nextDifficultyForCurrentLevel;
+  const shouldShowSuggestionModal = suggestedDifficulty !== null;
 
   return (
     <section className="w-full space-y-2.5 sm:space-y-3">
