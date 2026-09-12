@@ -10,15 +10,8 @@ import { useQuiz } from "@/hooks/useQuiz";
 import { useProfileQuery, useUpdateProfileDifficultyMutation } from "@/hooks/useProfile";
 import { DashboardHeader } from "./DashboardHeader";
 import { useI18n } from "@/components/I18nProvider";
-import { type DifficultyLevel } from "@/lib/types";
+import { AdaptiveDifficultySuggestion, type DifficultyLevel } from "@/lib/types";
 import { MoreGamesSection } from "./MoreGamesSection";
-
-const HIGHER_LEVEL_SUGGESTION_STREAKS: Partial<Record<DifficultyLevel, number>> = {
-  1: 3,
-  2: 5,
-  3: 7,
-  4: 10,
-};
 
 export function QuizPlayground() {
   const { t } = useI18n();
@@ -51,6 +44,8 @@ export function QuizPlayground() {
     submittingAnswer,
     usingHint,
     error,
+    difficultySuggestion,
+    refetchStats,
     submitAnswer,
     skipQuestion,
     useHint,
@@ -59,10 +54,8 @@ export function QuizPlayground() {
     dismissUnlockedAchievement,
   } = useQuiz(token, allowReverseMode);
 
-  const highestUnlockedDifficulty = stats?.progression.highestUnlockedDifficulty ?? 1;
-  const sessionCorrectStreakRef = useRef(0);
-  const lastProcessedAnswerRef = useRef<string | null>(null);
   const shownHigherLevelSuggestionLevelsRef = useRef<Set<DifficultyLevel>>(new Set());
+  const lastProcessedSuggestionKeyRef = useRef<string | null>(null);
   const appliedProfileDifficultyRef = useRef(false);
   const [suggestedDifficulty, setSuggestedDifficulty] = useState<DifficultyLevel | null>(null);
 
@@ -83,47 +76,39 @@ export function QuizPlayground() {
     void updateDifficultyMutation.mutateAsync(level).catch(() => undefined);
   }, [setDifficulty, updateDifficultyMutation]);
 
+  // Reset the "already shown" guard whenever the player switches levels — a MOVE_UP
+  // suggestion for a level should be eligible to show again if they come back to it later.
   useEffect(() => {
-    sessionCorrectStreakRef.current = 0;
-    lastProcessedAnswerRef.current = null;
+    shownHigherLevelSuggestionLevelsRef.current = new Set();
   }, [difficulty]);
 
+  // Server is the source of truth for both signals we need here: (1) whether the player
+  // is doing well enough to suggest moving up (AdaptiveDifficultyLogic, last-10 accuracy —
+  // independent of unlockThresholds) and (2) whether the next level is actually unlocked
+  // (progression.levels[].unlocked, computed from real correct-answer counts). Neither
+  // signal alone is enough — a MOVE_UP suggestion says nothing about unlock status, and the
+  // cached `stats` query (20s staleTime, no refetchOnMount/refetchOnWindowFocus) can be stale
+  // right after an admin changes unlockThresholds. So on a MOVE_UP signal we force a fresh
+  // refetch of stats before deciding, instead of trusting whatever is currently cached.
   useEffect(() => {
-    if (skipResult) sessionCorrectStreakRef.current = 0;
-  }, [skipResult]);
+    if (!answerResult || difficultySuggestion !== AdaptiveDifficultySuggestion.MOVE_UP) return;
 
-  useEffect(() => {
-    if (!answerResult) return;
-
-    const answerKey = `${question?.itemId ?? 'unknown'}:${difficulty}:${answerResult.correct}:${answerResult.answerRevealed}:${answerResult.updatedStreak}:${answerResult.attemptsRemaining}`;
-    const isNewAnswer = lastProcessedAnswerRef.current !== answerKey;
-
-    if (isNewAnswer) {
-      lastProcessedAnswerRef.current = answerKey;
-
-      if (!answerResult.correct) {
-        sessionCorrectStreakRef.current = 0;
-        return;
-      }
-
-      sessionCorrectStreakRef.current += 1;
-    } else if (!answerResult.correct) {
-      return;
-    }
+    const answerKey = `${question?.itemId ?? 'unknown'}:${difficulty}:${answerResult.updatedStreak}`;
+    if (lastProcessedSuggestionKeyRef.current === answerKey) return;
+    lastProcessedSuggestionKeyRef.current = answerKey;
 
     const nextDifficulty = (difficulty + 1) as DifficultyLevel;
-    const requiredStreak = HIGHER_LEVEL_SUGGESTION_STREAKS[difficulty];
-    if (
-      requiredStreak !== undefined &&
-      sessionCorrectStreakRef.current >= requiredStreak &&
-      nextDifficulty <= highestUnlockedDifficulty &&
-      !shownHigherLevelSuggestionLevelsRef.current.has(nextDifficulty)
-    ) {
+    if (nextDifficulty > 5 || shownHigherLevelSuggestionLevelsRef.current.has(nextDifficulty)) return;
+
+    void (async () => {
+      const fresh = await refetchStats();
+      const nextLevelUnlocked = fresh.data?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
+      if (!nextLevelUnlocked) return;
+
       shownHigherLevelSuggestionLevelsRef.current.add(nextDifficulty);
-      sessionCorrectStreakRef.current = 0;
       setSuggestedDifficulty(nextDifficulty);
-    }
-  }, [answerResult, difficulty, highestUnlockedDifficulty, question?.itemId]);
+    })();
+  }, [answerResult, difficulty, difficultySuggestion, question?.itemId, refetchStats]);
 
   const closeSuggestionModal = useCallback(() => {
     setSuggestedDifficulty(null);

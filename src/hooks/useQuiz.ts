@@ -37,6 +37,7 @@ interface UseQuizResult {
   usingHint: boolean;
   error: QuizError;
   difficultySuggestion: Exclude<AdaptiveDifficultySuggestion, AdaptiveDifficultySuggestion.STAY> | null;
+  refetchStats: () => Promise<{ data?: UserAnswerStatsResponse }>;
   dismissDifficultySuggestion: () => void;
   hasAnswered: boolean;
   unlockedAchievements: UnlockedAchievement[];
@@ -361,7 +362,7 @@ const useHint = useCallback(async () => {
   }, [difficulty, inputMode, loadQuestion, questionDirection, questionScope]);
 
   const refreshAfterProfileReset = useCallback(async () => {
-    await queryClient.removeQueries({ queryKey: ['quiz', token, 'card'] });
+    queryClient.removeQueries({ queryKey: ['quiz', token, 'card'] });
     queryClient.removeQueries({ queryKey: queryKeys.quizSession(token) });
     setDifficultyState(1);
     await Promise.all([
@@ -380,8 +381,7 @@ const useHint = useCallback(async () => {
 
   const submittingAnswer = submitAnswerMutation.isPending || skipQuestionMutation.isPending || hintMutation.isPending;
   const statsError = statsQuery.error instanceof Error ? statsQuery.error.message : null;
-  const totalInsightPoints =
-    liveInsightPoints ?? (typeof statsQuery.data?.totalInsightPoints === 'number' ? statsQuery.data.totalInsightPoints : null);
+  const totalInsightPoints = liveInsightPoints ?? (typeof statsQuery.data?.totalInsightPoints === 'number' ? statsQuery.data.totalInsightPoints : null);
 
   return {
     difficulty,
@@ -418,5 +418,6 @@ const useHint = useCallback(async () => {
     useHint,
     nextQuestion,
     refreshAfterProfileReset,
+    refetchStats: statsQuery.refetch,
   };
 }
