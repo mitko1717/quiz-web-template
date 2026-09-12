@@ -91,14 +91,24 @@ export function QuizPlayground() {
   // right after an admin changes unlockThresholds. So on a MOVE_UP signal we force a fresh
   // refetch of stats before deciding, instead of trusting whatever is currently cached.
   useEffect(() => {
-    if (!answerResult || difficultySuggestion !== AdaptiveDifficultySuggestion.MOVE_UP) return;
+    console.log('[suggestion-debug] effect fired', { answerResult: !!answerResult, difficultySuggestion });
+    if (!answerResult || difficultySuggestion !== AdaptiveDifficultySuggestion.MOVE_UP) {
+      console.log('[suggestion-debug] blocked at first guard');
+      return;
+    }
 
     const answerKey = `${question?.itemId ?? 'unknown'}:${difficulty}:${answerResult.updatedStreak}`;
-    if (lastProcessedSuggestionKeyRef.current === answerKey) return;
+    if (lastProcessedSuggestionKeyRef.current === answerKey) {
+      console.log('[suggestion-debug] blocked: already processed this answerKey', answerKey);
+      return;
+    }
     lastProcessedSuggestionKeyRef.current = answerKey;
 
     const nextDifficulty = (difficulty + 1) as DifficultyLevel;
-    if (nextDifficulty > 5 || shownHigherLevelSuggestionLevelsRef.current.has(nextDifficulty)) return;
+    if (nextDifficulty > 5 || shownHigherLevelSuggestionLevelsRef.current.has(nextDifficulty)) {
+      console.log('[suggestion-debug] blocked: nextDifficulty out of range or already shown', nextDifficulty);
+      return;
+    }
 
     void (async () => {
       try {
