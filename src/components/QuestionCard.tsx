@@ -11,7 +11,7 @@ import { OfflineStateHint } from "@/components/common/Skeleton";
 import { AnswerOption } from "./AnswerOption";
 import { CardSection } from "./types/CardSection";
 import { useI18n } from "@/components/I18nProvider";
-import { HintType, QuestionDirection, QuizInputMode } from "@/lib/types";
+import { HintType, QuestionDirection, QuizInputMode, Topic } from "@/lib/types";
 import { QuizModeControls } from "@/components/QuizModeControls";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
@@ -198,6 +198,7 @@ function FreeTextAnswerInput({ selectedOption, hasAnswered, submittingAnswer, qu
 function AnswerOptionsList({ question, selectedOption, hasAnswered, submittingAnswer, skipResult, answerResult, wrongSelections, onSelectOption }: AnswerOptionsListProps) {
   const { t } = useI18n();
   const noneOfAboveLabel = t('question_none_of_the_above');
+  const isFlagOptions = topicConfig.slug === Topic.Flags && question.questionDirection === QuestionDirection.REVERSE;
 
   const sortedOptions = [...question.options].sort((a, b) => {
     if (a === noneOfAboveLabel) return 1;
@@ -224,6 +225,7 @@ function AnswerOptionsList({ question, selectedOption, hasAnswered, submittingAn
             isCorrectAnswer={Boolean(isCorrectAnswer)}
             isWrongSelection={Boolean(isWrongSelection)}
             isNoneOfAbove={isNoneOfAbove}
+            isFlagOption={isFlagOptions && !isNoneOfAbove}
             onSelect={() => onSelectOption(option)}
           />
         );

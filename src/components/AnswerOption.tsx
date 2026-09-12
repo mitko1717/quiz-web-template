@@ -10,10 +10,11 @@ interface AnswerOptionProps {
   isCorrectAnswer: boolean;
   isWrongSelection: boolean;
   isNoneOfAbove: boolean;
+  isFlagOption?: boolean;
   onSelect: () => void;
 }
 
-export function AnswerOption({ label, selected, locked, triedWrong, isCorrectAnswer, isWrongSelection, isNoneOfAbove, onSelect }: AnswerOptionProps) {
+export function AnswerOption({ label, selected, locked, triedWrong, isCorrectAnswer, isWrongSelection, isNoneOfAbove, isFlagOption, onSelect }: AnswerOptionProps) {
   const variant = (() => {
     if (isCorrectAnswer) return "answerCorrect" as const;
     if (isWrongSelection) return "answerWrong" as const;
@@ -37,7 +38,9 @@ export function AnswerOption({ label, selected, locked, triedWrong, isCorrectAns
         isCorrectAnswer ? "answer-correct-vivid" : "",
       ].join(" ")}
     >
-      <span className="block min-w-0 break-words">{label}</span>
+      <span className={isFlagOption ? "block min-w-0 break-words text-4xl leading-none" : "block min-w-0 break-words"} aria-hidden={isFlagOption ? "true" : undefined}>
+        {label}
+      </span>
     </Button>
   );
 }

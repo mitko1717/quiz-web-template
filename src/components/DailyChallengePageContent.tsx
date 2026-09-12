@@ -14,7 +14,7 @@ import { apiClient } from "@/lib/apiClient";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queryKeys } from "@/lib/queryKeys";
 import { useProfileQuery } from "@/hooks/useProfile";
-import type { DailyChallengeAnswerResponse, UnlockedAchievement } from "@/lib/types";
+import { Topic, type DailyChallengeAnswerResponse, type UnlockedAchievement } from "@/lib/types";
 import { topicConfig } from "@/lib/topic.config";
 import { TranslationKey } from "@/lib/i18n";
 import { parsePromptToken } from "@/lib/prompt-token";
@@ -66,7 +66,7 @@ export function DailyChallengePageContent() {
     return `${state.correctCount}/${state.questionCount}`;
   }, [state]);
 
-  const isFlagsTopic = topicConfig.slug === 'flags';
+  const isFlagsTopic = topicConfig.slug === Topic.Flags;
   const badge = question && topicConfig.publicFields.badge ? ((question.publicFields?.[topicConfig.publicFields.badge] as string) ?? null) : null;
 
   // Only valid for the item it was generated from — prevents a stale banner (e.g.

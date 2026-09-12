@@ -25,3 +25,10 @@ export enum AdaptiveDifficultySuggestion {
 }
 
 export type AuthMode = 'guest' | 'localAdmin' | 'google' | 'apple' | 'telegram';
+
+export enum Topic {
+  Capitals = 'capitals',
+  EnglishVocab = 'english-vocab',
+  Planets = 'planets',
+  Flags = 'flags'
+}
