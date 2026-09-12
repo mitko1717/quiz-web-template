@@ -13,6 +13,16 @@ import { useI18n } from "@/components/I18nProvider";
 import { AdaptiveDifficultySuggestion, type DifficultyLevel } from "@/lib/types";
 import { MoreGamesSection } from "./MoreGamesSection";
 
+// Base correct-in-a-row streak (on the current level) needed before we even consider
+// suggesting the next level. Repeats within the same level use a growing multiple of this
+// (3 -> 6 -> 9 -> ...) via suggestionCountByLevelRef, so it doesn't nag after every 3 again.
+const HIGHER_LEVEL_SUGGESTION_BASE_STREAKS: Partial<Record<DifficultyLevel, number>> = {
+  1: 3,
+  2: 5,
+  3: 7,
+  4: 10,
+};
+
 export function QuizPlayground() {
   const { t } = useI18n();
   const { token, authMode, username, setPreferredLanguage } = useAuthContext();
@@ -54,9 +64,10 @@ export function QuizPlayground() {
     dismissUnlockedAchievement,
   } = useQuiz(token, allowReverseMode);
 
-  const shownHigherLevelSuggestionLevelsRef = useRef<Set<DifficultyLevel>>(new Set());
-  const lastProcessedSuggestionKeyRef = useRef<string | null>(null);
   const appliedProfileDifficultyRef = useRef(false);
+  const sessionCorrectStreakRef = useRef(0);
+  const suggestionCountByLevelRef = useRef<Map<DifficultyLevel, number>>(new Map());
+  const lastProcessedAnswerKeyRef = useRef<string | null>(null);
   const [suggestedDifficulty, setSuggestedDifficulty] = useState<DifficultyLevel | null>(null);
 
   useEffect(() => {
@@ -76,53 +87,51 @@ export function QuizPlayground() {
     void updateDifficultyMutation.mutateAsync(level).catch(() => undefined);
   }, [setDifficulty, updateDifficultyMutation]);
 
-  // Reset the "already shown" guard whenever the player switches levels — a MOVE_UP
-  // suggestion for a level should be eligible to show again if they come back to it later.
+  // Reset the streak counter and the per-level "how many times shown" counter whenever the
+  // player switches levels — thresholds and progress are per-level, not global.
   useEffect(() => {
-    shownHigherLevelSuggestionLevelsRef.current = new Set();
+    sessionCorrectStreakRef.current = 0;
+    suggestionCountByLevelRef.current = new Map();
+    lastProcessedAnswerKeyRef.current = null;
   }, [difficulty]);
 
-  // Server is the source of truth for both signals we need here: (1) whether the player
-  // is doing well enough to suggest moving up (AdaptiveDifficultyLogic, last-10 accuracy —
-  // independent of unlockThresholds) and (2) whether the next level is actually unlocked
-  // (progression.levels[].unlocked, computed from real correct-answer counts). Neither
-  // signal alone is enough — a MOVE_UP suggestion says nothing about unlock status, and the
-  // cached `stats` query (20s staleTime, no refetchOnMount/refetchOnWindowFocus) can be stale
-  // right after an admin changes unlockThresholds. So on a MOVE_UP signal we force a fresh
-  // refetch of stats before deciding, instead of trusting whatever is currently cached.
+  // Client-side streak counter drives WHEN to even check (progressive threshold: 3, then 6,
+  // then 9... on the same level, resets to 0 on any wrong answer). The server's
+  // difficultySuggestion (MOVE_UP, last-10-attempt accuracy) plus a fresh unlocked-check still
+  // gate whether we actually show it — the streak alone doesn't confirm a longer accuracy
+  // window or unlock status, and `stats` can be stale right after an admin config change.
   useEffect(() => {
-    console.log('[suggestion-debug] effect fired', { answerResult: !!answerResult, difficultySuggestion });
-    if (!answerResult || difficultySuggestion !== AdaptiveDifficultySuggestion.MOVE_UP) {
-      console.log('[suggestion-debug] blocked at first guard');
-      return;
-    }
+    if (!answerResult) return;
 
-    const answerKey = `${question?.itemId ?? 'unknown'}:${difficulty}:${answerResult.updatedStreak}`;
-    if (lastProcessedSuggestionKeyRef.current === answerKey) {
-      console.log('[suggestion-debug] blocked: already processed this answerKey', answerKey);
+    const answerKey = `${question?.itemId ?? 'unknown'}:${difficulty}:${answerResult.updatedStreak}:${answerResult.correct}`;
+    if (lastProcessedAnswerKeyRef.current === answerKey) return;
+    lastProcessedAnswerKeyRef.current = answerKey;
+
+    if (!answerResult.correct) {
+      sessionCorrectStreakRef.current = 0;
       return;
     }
-    lastProcessedSuggestionKeyRef.current = answerKey;
+    sessionCorrectStreakRef.current += 1;
+
+    const baseThreshold = HIGHER_LEVEL_SUGGESTION_BASE_STREAKS[difficulty];
+    if (baseThreshold === undefined) return;
+
+    const timesShownThisLevel = suggestionCountByLevelRef.current.get(difficulty) ?? 0;
+    const requiredStreak = baseThreshold * (timesShownThisLevel + 1);
+    if (sessionCorrectStreakRef.current < requiredStreak) return;
+    if (difficultySuggestion !== AdaptiveDifficultySuggestion.MOVE_UP) return;
 
     const nextDifficulty = (difficulty + 1) as DifficultyLevel;
-    if (nextDifficulty > 5 || shownHigherLevelSuggestionLevelsRef.current.has(nextDifficulty)) {
-      console.log('[suggestion-debug] blocked: nextDifficulty out of range or already shown', nextDifficulty);
-      return;
-    }
+    if (nextDifficulty > 5) return;
 
     void (async () => {
-      try {
-        const fresh = await refetchStats();
-        console.log('[suggestion-debug] fresh stats:', fresh.data?.progression);
-        const nextLevelUnlocked = fresh.data?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
-        console.log('[suggestion-debug] nextDifficulty:', nextDifficulty, 'unlocked:', nextLevelUnlocked);
-        if (!nextLevelUnlocked) return;
+      const fresh = await refetchStats();
+      const nextLevelUnlocked = fresh.data?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
+      if (!nextLevelUnlocked) return;
 
-        shownHigherLevelSuggestionLevelsRef.current.add(nextDifficulty);
-        setSuggestedDifficulty(nextDifficulty);
-      } catch (err) {
-        console.error('[suggestion-debug] refetchStats failed:', err);
-      }
+      sessionCorrectStreakRef.current = 0;
+      suggestionCountByLevelRef.current.set(difficulty, timesShownThisLevel + 1);
+      setSuggestedDifficulty(nextDifficulty);
     })();
   }, [answerResult, difficulty, difficultySuggestion, question?.itemId, refetchStats]);
 
