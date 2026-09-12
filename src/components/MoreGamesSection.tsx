@@ -1,6 +1,6 @@
 "use client";
 
-import { CardSection } from "@/components/CardSection";
+import { CardSection } from "@/components/types/CardSection";
 import { useI18n } from "@/components/I18nProvider";
 import { useOtherGamesQuery } from "@/hooks/usePublicGames";
 

@@ -2,9 +2,9 @@
 
 import { type ReactNode, useDeferredValue, useState } from "react";
 import { Button } from "@/components/button";
-import { Input } from "@/components/input";
+import { Input } from "@/components/common/input";
 import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
 import { useAdminPanel } from "@/hooks/useAdminPanel";
 import { Pagination } from "@/components/common/Pagination";
 import { useI18n } from "@/components/I18nProvider";
@@ -20,7 +20,7 @@ import type {
   SurfaceProps,
   UserDetailPanelProps,
   UserListPanelProps
-} from "./AdminPanel.types";
+} from "./types/AdminPanel.types";
 import { topicConfig } from "@/lib/topic.config";
 import { formatPercent } from "@/lib/utils";
 

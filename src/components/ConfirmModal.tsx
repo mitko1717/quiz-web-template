@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/button";
 import { Modal } from "@/components/common/Modal";
-import type { ConfirmModalProps } from "@/components/ConfirmModal.types";
+import type { ConfirmModalProps } from "@/components/types/ConfirmModal.types";
 
 export function ConfirmModal({
   isOpen,
@@ -23,7 +23,7 @@ export function ConfirmModal({
       title={title}
       description={description}
       footer={
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-center">
           <Button variant="ghost" onClick={onCancel} className="w-full sm:w-auto">
             {cancelLabel}
           </Button>

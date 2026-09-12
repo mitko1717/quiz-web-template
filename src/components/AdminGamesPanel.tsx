@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/button";
-import { Input } from "@/components/input";
+import { Input } from "@/components/common/input";
 import { SectionLabel, BodyText } from "@/components/common/SectionLabel";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
 import { useI18n } from "@/components/I18nProvider";
 import { useAdminGames } from "@/hooks/useAdminGames";
 import type { AdminGame, CreateGamePayload } from "@/lib/types";

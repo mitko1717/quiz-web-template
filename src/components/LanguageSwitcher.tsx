@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useI18n } from '@/providers/I18nProvider';
 import { type Language } from '@/lib/i18n';
 import { LANGUAGE_FLAGS } from '@/lib/constants/language-flags';
-import { GlobeIcon } from '@/components/icons/GlobeIcon';
+import { GlobeIcon } from '@/components/icons';
 
 interface LanguageSwitcherProps {
   onChange?: (language: Language) => Promise<void> | void;
@@ -27,9 +27,9 @@ export function LanguageSwitcher({ onChange, disabled = false, compact = false, 
   useEffect(() => {
     if (!isOpen) return;
 
-    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+    const onPointerDown = (e: MouseEvent | TouchEvent) => {
       if (!popoverRef.current || !rootRef.current) return;
-      const target = event.target as Node;
+      const target = e.target as Node;
       if (!popoverRef.current.contains(target) && !rootRef.current.contains(target)) setIsOpen(false);
     };
 
@@ -40,10 +40,7 @@ export function LanguageSwitcher({ onChange, disabled = false, compact = false, 
         Math.max(8, rect.right - ICON_POPOVER_WIDTH_PX),
         window.innerWidth - ICON_POPOVER_WIDTH_PX - 8,
       );
-      setPopoverStyle({
-        top: rect.bottom + 8,
-        left,
-      });
+      setPopoverStyle({ top: rect.bottom + 8, left });
     };
 
     document.addEventListener('mousedown', onPointerDown);
@@ -80,8 +77,8 @@ export function LanguageSwitcher({ onChange, disabled = false, compact = false, 
   const selectControl = (
     <select
       value={language}
-      onChange={(event) => {
-        void handleChange(event.target.value as Language);
+      onChange={(e) => {
+        void handleChange(e.target.value as Language);
         setIsOpen(false);
       }}
       disabled={disabled}

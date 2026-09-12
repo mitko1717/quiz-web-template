@@ -1,13 +1,14 @@
 "use client";
 
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { PageWrapper } from "@/components/PageWrapper";
 
 export function TabMountSpinner() {
   return (
-    <main className="app-page mx-auto flex w-full max-w-5xl flex-col px-4 sm:px-6">
+    <PageWrapper>
       <div className="flex min-h-[60vh] items-center justify-center" aria-busy="true">
         <LoadingSpinner size="lg" />
       </div>
-    </main>
+    </PageWrapper>
   );
 }

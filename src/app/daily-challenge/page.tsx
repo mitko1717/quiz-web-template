@@ -1,12 +1,13 @@
 import { DailyChallengePageContent } from "@/components/DailyChallengePageContent";
+import { PageWrapper } from "@/components/PageWrapper";
 import { topicConfig } from "@/lib/topic.config";
 
 export const metadata = { title: `Daily Challenge - ${topicConfig.appName}` };
 
 export default function DailyChallengePage() {
   return (
-    <main className="app-page mx-auto flex w-full max-w-5xl flex-col px-4 sm:px-6">
+    <PageWrapper>
       <DailyChallengePageContent />
-    </main>
+    </PageWrapper>
   );
 }

@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { Button } from "@/components/button";
 import { HintButton } from "@/components/HintButton";
-import { ModeIcon } from "@/components/icons/ModeIcon";
-import { Input } from "@/components/input";
+import { ModeIcon } from "@/components/icons";
+import { Input } from "@/components/common/input";
 import { Modal } from "@/components/common/Modal";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { OfflineStateHint } from "@/components/common/Skeleton";
 import { AnswerOption } from "./AnswerOption";
-import { CardSection } from "./CardSection";
+import { CardSection } from "./types/CardSection";
 import { useI18n } from "@/components/I18nProvider";
 import { HintType, QuestionDirection, QuizInputMode } from "@/lib/types";
 import { QuizModeControls } from "@/components/QuizModeControls";
@@ -28,10 +28,18 @@ import type {
   QuestionCardProps,
   QuestionHeadingProps,
   ResultNoticeProps
-} from "./QuestionCard.types";
+} from "./types/QuestionCard.types";
 import { topicConfig } from "@/lib/topic.config";
 import { TranslationKey } from "@/lib/i18n";
 import { parsePromptToken } from "@/lib/prompt-token";
+
+// Shared by QuestionHeading/AnswerOptionsList/ResultNotice — a value may be an i18n key
+// (e.g. a prompt-token label, or a mapper-emitted enum like planets_value_type_terrestrial).
+// Returns the localized string if a matching key exists, otherwise the raw value unchanged.
+function localizeValue(t: (key: TranslationKey, values?: Record<string, string | number>) => string, value: string): string {
+  const resolved = t(value as TranslationKey);
+  return resolved && resolved !== value ? resolved : value;
+}
 
 function LoadingState({ inputMode }: { inputMode: QuizInputMode }) {
   const optionRowTones = inputMode === QuizInputMode.FREE_TEXT ? ["bg-base-700/70", "bg-base-700/35", "bg-base-700/25"] : Array(4).fill("bg-base-700/70");
@@ -113,12 +121,6 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   const answerNoun = t(`${topicConfig.slug}_answer_noun` as TranslationKey);
   const promptNoun = t(`${topicConfig.slug}_prompt_noun` as TranslationKey);
 
-  // Localize a prompt token that may be an i18n key. Returns the raw token if no key matches.
-  const localizeToken = (token: string): string => {
-    const resolved = t(token as TranslationKey);
-    return resolved && resolved !== token ? resolved : token;
-  };
-
   let prompt: string;
   if (question.questionDirection === QuestionDirection.REVERSE) {
     const reverseToken = parsePromptToken(String(question.prompt));
@@ -127,7 +129,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
     } else {
       // Reverse prompt may be "labelKey|answerValue" (legacy variant topics) or a plain value.
       const [maybeLabel, maybeValue] = String(question.prompt).split('|');
-      const value = maybeValue !== undefined ? `${localizeToken(maybeLabel)}: ${maybeValue}` : question.prompt;
+      const value = maybeValue !== undefined ? `${localizeValue(t, maybeLabel)}: ${maybeValue}` : question.prompt;
       prompt = t('question_prompt_reverse', { value, answerNoun, promptNoun });
     }
   } else {
@@ -135,7 +137,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
     if (forwardToken) {
       prompt = t(forwardToken.key as TranslationKey, forwardToken.params);
     } else {
-      const localizedLabel = localizeToken(String(question.prompt));
+      const localizedLabel = localizeValue(t, String(question.prompt));
       const promptValue = localizedLabel !== String(question.prompt) ? `${displayName} · ${localizedLabel}` : displayName;
       prompt = t('question_prompt', { value: promptValue, promptNoun });
     }
@@ -182,7 +184,7 @@ function FreeTextAnswerInput({ selectedOption, hasAnswered, submittingAnswer, qu
     <div className="mb-3">
       <Input
         value={selectedOption ?? ''}
-        onChange={(event) => onSelectOption(event.target.value)}
+        onChange={(e) => onSelectOption(e.target.value)}
         placeholder={placeholder}
         disabled={hasAnswered || submittingAnswer}
         className="w-full"
@@ -194,13 +196,6 @@ function FreeTextAnswerInput({ selectedOption, hasAnswered, submittingAnswer, qu
 function AnswerOptionsList({ question, selectedOption, hasAnswered, submittingAnswer, skipResult, answerResult, wrongSelections, onSelectOption }: AnswerOptionsListProps) {
   const { t } = useI18n();
   const noneOfAboveLabel = t('question_none_of_the_above');
-
-  // Localize an option value that may be an i18n key (e.g. mapper-emitted enum values
-  // like planets_value_type_terrestrial). Returns the raw value if no key matches.
-  const localizeOption = (value: string): string => {
-    const resolved = t(value as TranslationKey);
-    return resolved && resolved !== value ? resolved : value;
-  };
 
   const sortedOptions = [...question.options].sort((a, b) => {
     if (a === noneOfAboveLabel) return 1;
@@ -220,7 +215,7 @@ function AnswerOptionsList({ question, selectedOption, hasAnswered, submittingAn
         return (
           <AnswerOption
             key={option}
-            label={localizeOption(option)}
+            label={localizeValue(t, option)}
             selected={isSelected}
             locked={hasAnswered || submittingAnswer || triedWrong}
             triedWrong={triedWrong}
@@ -240,16 +235,11 @@ function ResultNotice({ answerResult, skipResult, hasAnswered }: ResultNoticePro
   if (!hasAnswered || (!answerResult && !skipResult)) return null;
   if (!skipResult && !answerResult?.freeTextBonusInsightPointsAwarded) return null;
 
-  const localizeOption = (value: string): string => {
-    const resolved = t(value as TranslationKey);
-    return resolved && resolved !== value ? resolved : value;
-  };
-
   const statusTone = skipResult ? "border-pastel-coral/40 bg-pastel-coral/10 text-pastel-coral" : "border-pastel-mint/40 bg-pastel-mint/10 text-pastel-mint";
 
   return (
     <div className={["mt-3 rounded-xl border p-1.5 text-sm sm:mt-5", statusTone].join(" ")}>
-      {skipResult ? t('question_result_skipped', { answer: localizeOption(skipResult.correctAnswer) }) : null}
+      {skipResult ? t('question_result_skipped', { answer: localizeValue(t, skipResult.correctAnswer) }) : null}
       {answerResult?.correct && answerResult.freeTextBonusInsightPointsAwarded > 0 ? (
         <p className="mt-1 text-xs text-ink-100">
           {t('question_free_text_bonus', {
@@ -273,9 +263,7 @@ function HintNotice({ hintResult }: HintNoticeProps) {
       <p className="font-semibold text-pastel-amber">
         {hintResult.type === HintType.REMOVE_OPTION ? t('question_hint_removed_option') : t('question_hint_text_clue')}
       </p>
-      {hintResult.type === HintType.TEXT_CLUE ? (
-        <p className="mt-2 text-ink-100">{hintResult.clue}</p>
-      ) : null}
+      {hintResult.type === HintType.TEXT_CLUE ? <p className="mt-2 text-ink-100">{hintResult.clue}</p> : null}
       <p className="mt-2 text-xs text-ink-300">{costText}</p>
     </div>
   );
@@ -431,6 +419,7 @@ export function QuestionCard({
   const hintDisabled = loadingQuestion || submittingAnswer || usingHint || !question || hasAnswered || question.options.length <= 2;
   const nextDisabled = loadingQuestion || submittingAnswer || usingHint;
   const showOfflineFallback = !isOnline && !question && (loadingQuestion || Boolean(error));
+  const showLoadingOrOfflineState = loadingQuestion || showOfflineFallback;
   const questionActions = (
     <>
       <ModeTrigger
@@ -447,7 +436,7 @@ export function QuestionCard({
       <div className="grid gap-2 md:grid-cols-[minmax(0,3fr)_minmax(10rem,2fr)] md:items-start md:gap-3">
         <div className="min-w-0">
           <QuestionContentFrame>
-            {loadingQuestion ? (
+            {showLoadingOrOfflineState ? (
               <>
                 <div className="mb-2 flex justify-end gap-2">{questionActions}</div>
                 <LoadingState inputMode={inputMode} />
@@ -455,15 +444,7 @@ export function QuestionCard({
               </>
             ) : null}
 
-            {!loadingQuestion && showOfflineFallback ? (
-              <>
-                <div className="mb-2 flex justify-end gap-2">{questionActions}</div>
-                <LoadingState inputMode={inputMode} />
-                <OfflineStateHint className="mt-3" />
-              </>
-            ) : null}
-
-            {!loadingQuestion && question && !showOfflineFallback ? (
+            {!showLoadingOrOfflineState && question ? (
               <>
                 <QuestionHeading question={question} actions={questionActions} />
                 {isFreeTextMode ? (

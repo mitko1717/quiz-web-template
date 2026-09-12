@@ -1,12 +1,12 @@
 "use client";
 import { useState, type KeyboardEvent } from "react";
 import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
 import { useI18n } from "@/components/I18nProvider";
 import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/button";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
-import { RefreshIcon } from "@/components/icons/RefreshIcon";
+import { RefreshIcon } from "@/components/icons";
 import { AchievementScope, type AchievementProgressResponse, type DifficultyLevel, type UserAnswerStatsByDifficulty } from "@/lib/types";
 import type {
   ActiveDifficultyPanelProps,
@@ -21,7 +21,7 @@ import type {
   UnlockLevelCardProps,
   UnlockLevelsGridProps,
   UserStatsPanelProps
-} from "./UserStatsPanel.types";
+} from "./types/UserStatsPanel.types";
 import { formatPercent } from "@/lib/utils";
 import { Accordion } from "./common/Accordion";
 import { topicConfig } from "@/lib/topic.config";
@@ -187,7 +187,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
         rel="noopener noreferrer"
         aria-label={t('achievements_play_game')}
         title={t('achievements_play_game')}
-        onClick={(event) => event.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         className="group inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-accent-greenDim/50 bg-accent-green/10 text-sm text-accent-green transition-all duration-200 hover:scale-110 hover:border-accent-greenDim hover:bg-accent-green/20 hover:shadow-[0_0_10px_rgba(34,197,94,0.45)]"
       >
         <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5">🚀</span>
@@ -351,9 +351,9 @@ function ActiveDifficultyPanel({ activeLevel }: ActiveDifficultyPanelProps) {
 function DifficultyStatsTable({ stats, activeDifficulty, onOpenDetails }: DifficultyStatsTableProps) {
   const { t } = useI18n();
 
-  function onKeyDown(event: KeyboardEvent<HTMLTableRowElement>, difficultyLevel: DifficultyLevel) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
+  function onKeyDown(e: KeyboardEvent<HTMLTableRowElement>, difficultyLevel: DifficultyLevel) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
       onOpenDetails(difficultyLevel);
     }
   }
@@ -410,7 +410,7 @@ function DifficultyStatsTable({ stats, activeDifficulty, onOpenDetails }: Diffic
               <TableRow
                 key={row.difficultyLevel}
                 onClick={() => onOpenDetails(row.difficultyLevel)}
-                onKeyDown={(event) => onKeyDown(event, row.difficultyLevel)}
+                onKeyDown={(e) => onKeyDown(e, row.difficultyLevel)}
                 role="button"
                 tabIndex={0}
                 aria-label={t('stats_detail_open_for_level', { level: row.difficultyLevel })}

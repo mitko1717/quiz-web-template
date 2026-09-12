@@ -2,7 +2,7 @@
 import { createContext, ChangeEvent, useContext, useState, useSyncExternalStore } from "react";
 import { useEffect } from "react";
 import { Button } from "@/components/button";
-import { Input } from "@/components/input";
+import { Input } from "@/components/common/input";
 import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
 import { useAuth } from "@/hooks/useAuth";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -12,7 +12,7 @@ import { useTelegram } from "@/providers/TelegramProvider";
 import { retrieveRawInitData } from "@telegram-apps/sdk-react";
 import { getApiBaseUrlForDisplay } from "@/lib/http";
 import type { Language } from "@/lib/i18n";
-import type { AuthContextValue, AuthGateProps } from "./AuthGate.types";
+import type { AuthContextValue, AuthGateProps } from "./types/AuthGate.types";
 import { useProfileQuery, useUpdateProfileLanguageMutation } from "@/hooks/useProfile";
 import { topicConfig } from "@/lib/topic.config";
 import { useI18n } from "@/components/I18nProvider";
@@ -81,8 +81,8 @@ export function AuthGate({ children, adminOnly = false }: AuthGateProps) {
 
   const isSubmitting = loading;
 
-  const handleLocalAdminSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleLocalAdminSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
     await loginAsLocalAdmin(localUsername, localPassword, rawTelegramInitData);
   };
 

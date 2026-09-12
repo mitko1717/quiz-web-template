@@ -9,8 +9,8 @@ export function Modal({ isOpen, onClose, closeLabel, showTopRightCloseButton = f
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
     };
 
     window.addEventListener("keydown", handleEscape);

@@ -2,7 +2,7 @@
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useI18n } from "@/components/I18nProvider";
-import type { DashboardHeaderProps } from "./DashboardHeader.types";
+import type { DashboardHeaderProps } from "./types/DashboardHeader.types";
 
 export function DashboardHeader({ dailyStreak, totalInsightPoints = null, onLanguageChange, headerAction }: DashboardHeaderProps) {
   const { t } = useI18n();

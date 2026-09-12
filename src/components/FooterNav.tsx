@@ -4,8 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useI18n } from "@/components/I18nProvider";
-import { ChartIcon, SettingsIcon } from "@/components/icons/DashboardIcons";
-import { CalendarIcon, HomeIcon, ShieldIcon } from "@/components/icons/FooterNavIcons";
+import { ChartIcon, SettingsIcon, CalendarIcon, HomeIcon, ShieldIcon } from "@/components/icons";
 import type { AuthMode } from "@/lib/types";
 
 type FooterNavProps = {

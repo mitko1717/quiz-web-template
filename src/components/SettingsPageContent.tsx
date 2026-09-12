@@ -20,6 +20,7 @@ import { useProfileQuery, useResetProfileMutation } from "@/hooks/useProfile";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useTelegram } from "@/providers/TelegramProvider";
 import { toast } from "@/components/toast";
+import { CheckIcon } from "@/components/icons";
 import { topicConfig } from "@/lib/topic.config";
 
 export function SettingsPageContent() {
@@ -347,7 +348,7 @@ function SettingsToggleRow({ checked, label, onToggle, danger = false }: Setting
         <input
           type="checkbox"
           checked={checked}
-          onChange={(event) => onToggle(event.target.checked)}
+          onChange={(e) => onToggle(e.target.checked)}
           className={[
             "peer h-5 w-5 appearance-none rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-base-900",
             danger
@@ -355,13 +356,7 @@ function SettingsToggleRow({ checked, label, onToggle, danger = false }: Setting
               : "border-base-500 bg-base-900/80 checked:border-pastel-mint checked:bg-pastel-mint focus-visible:ring-pastel-mint",
           ].join(" ")}
         />
-        <svg
-          viewBox="0 0 16 16"
-          aria-hidden="true"
-          className="pointer-events-none absolute h-3.5 w-3.5 scale-75 text-base-900 opacity-0 transition-all duration-150 peer-checked:scale-100 peer-checked:opacity-100"
-        >
-          <path d="M3.2 8.4 6.6 11.6 12.8 4.8" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-        </svg>
+        <CheckIcon className="pointer-events-none absolute scale-75 text-base-900 opacity-0 transition-all duration-150 peer-checked:scale-100 peer-checked:opacity-100" />
       </span>
       <span className="leading-5">{label}</span>
     </label>
