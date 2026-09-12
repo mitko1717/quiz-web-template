@@ -244,7 +244,7 @@ export function QuizPlayground() {
         currentProgress={currentProgress}
         wrongSelections={wrongSelections}
         loadingStats={loadingStats}
-        totalInsightPoints={currentProgress?.insightPoints ?? null}
+        totalInsightPoints={totalInsightPoints}
         usingHint={usingHint}
         error={error}
         onSelectOption={setSelectedOption}
