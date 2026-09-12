@@ -101,12 +101,18 @@ export function QuizPlayground() {
     if (nextDifficulty > 5 || shownHigherLevelSuggestionLevelsRef.current.has(nextDifficulty)) return;
 
     void (async () => {
-      const fresh = await refetchStats();
-      const nextLevelUnlocked = fresh.data?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
-      if (!nextLevelUnlocked) return;
+      try {
+        const fresh = await refetchStats();
+        console.log('[suggestion-debug] fresh stats:', fresh.data?.progression);
+        const nextLevelUnlocked = fresh.data?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
+        console.log('[suggestion-debug] nextDifficulty:', nextDifficulty, 'unlocked:', nextLevelUnlocked);
+        if (!nextLevelUnlocked) return;
 
-      shownHigherLevelSuggestionLevelsRef.current.add(nextDifficulty);
-      setSuggestedDifficulty(nextDifficulty);
+        shownHigherLevelSuggestionLevelsRef.current.add(nextDifficulty);
+        setSuggestedDifficulty(nextDifficulty);
+      } catch (err) {
+        console.error('[suggestion-debug] refetchStats failed:', err);
+      }
     })();
   }, [answerResult, difficulty, difficultySuggestion, question?.itemId, refetchStats]);
 
