@@ -5,17 +5,13 @@ import { useI18n } from "@/components/I18nProvider";
 import type { DifficultyLevel, ProgressResponse } from "@/lib/types";
 
 type HintButtonProps = {
-  difficulty: DifficultyLevel;
+  hintCost: number;
   progress: ProgressResponse | null;
   loadingProgress: boolean;
   disabled: boolean;
   pending: boolean;
   onUseHint: () => Promise<void>;
 };
-
-function getHintCost(difficulty: DifficultyLevel): number {
-  return difficulty;
-}
 
 function isSameUtcDay(first: Date, second: Date): boolean {
   return (
@@ -32,9 +28,8 @@ function hasFreeHintAvailable(lastFreeHintUsedAt: string | null | undefined): bo
   return !isSameUtcDay(lastUsed, new Date());
 }
 
-export function HintButton({ difficulty, progress, loadingProgress, disabled, pending, onUseHint }: HintButtonProps) {
+export function HintButton({ hintCost, progress, loadingProgress, disabled, pending, onUseHint }: HintButtonProps) {
   const { t } = useI18n();
-  const hintCost = getHintCost(difficulty);
   const freeHintAvailable = progress ? hasFreeHintAvailable(progress.lastFreeHintUsedAt) : false;
   const hasEnoughPoints = progress ? progress.insightPoints >= hintCost : false;
   const costKnown = Boolean(progress) && !loadingProgress;

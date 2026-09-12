@@ -15,6 +15,7 @@ export interface QuestionCardProps {
   usingHint: boolean;
   error: string | null;
   allowReverseMode: boolean;
+  hintCost: number;
   onSelectOption: (option: string) => void;
   onSubmitAnswer: () => Promise<void>;
   onSkipQuestion: () => Promise<void>;
@@ -93,6 +94,7 @@ export interface HintModalProps {
   isOpen: boolean;
   onClose: () => void;
   difficulty: QuestionResponse['difficulty'];
+  hintCost: number;
   currentProgress: QuestionCardProps['currentProgress'];
   loadingStats: boolean;
   hintDisabled: boolean;

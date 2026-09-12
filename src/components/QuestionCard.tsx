@@ -269,7 +269,7 @@ function HintNotice({ hintResult }: HintNoticeProps) {
   );
 }
 
-function HintModal({ isOpen, onClose, difficulty, currentProgress, loadingStats, hintDisabled, usingHint, hintResult, onUseHint }: HintModalProps) {
+function HintModal({ isOpen, onClose, difficulty, hintCost, currentProgress, loadingStats, hintDisabled, usingHint, hintResult, onUseHint }: HintModalProps) {
   const { t } = useI18n();
 
   return (
@@ -287,7 +287,7 @@ function HintModal({ isOpen, onClose, difficulty, currentProgress, loadingStats,
     >
       <div className="space-y-3">
         <HintButton
-          difficulty={difficulty}
+          hintCost={hintCost}
           progress={currentProgress}
           loadingProgress={loadingStats}
           disabled={hintDisabled}
@@ -398,6 +398,7 @@ export function QuestionCard({
   questionScope,
   onQuestionScopeChange,
   allowReverseMode,
+  hintCost,
   unlockedAchievements,
   onDismissAchievement,
 }: QuestionCardProps) {
@@ -495,6 +496,7 @@ export function QuestionCard({
         usingHint={usingHint}
         hintResult={hintResult}
         onUseHint={onUseHint}
+        hintCost={hintCost}
       />
       <ModeModal
         isOpen={modeModalOpen}

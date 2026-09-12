@@ -258,6 +258,7 @@ export function QuizPlayground() {
         questionScope={questionScope}
         onQuestionScopeChange={setQuestionScope}
         allowReverseMode={allowReverseMode}
+        hintCost={profileQuery.data?.hintCostByDifficulty?.[difficulty] ?? difficulty}
         unlockedAchievements={unlockedAchievements}
         onDismissAchievement={dismissUnlockedAchievement}
       />

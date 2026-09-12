@@ -22,6 +22,7 @@ export interface ProfileResponse {
   refCode: string;
   referralLink: string | null;
   allowReverseMode: boolean;
+  hintCostByDifficulty: Record<DifficultyLevel, number>;
 }
 
 export interface ProfileLanguageResponse {
