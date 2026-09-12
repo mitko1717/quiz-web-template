@@ -29,6 +29,7 @@ export interface QuestionCardProps {
   onQuestionScopeChange: (scope: QuizScope) => void;
   unlockedAchievements: UnlockedAchievement[];
   onDismissAchievement: () => void;
+  totalInsightPoints: number | null;
 }
 
 export type InputModeToggleProps = {
@@ -101,6 +102,7 @@ export interface HintModalProps {
   usingHint: boolean;
   hintResult: HintNoticeProps['hintResult'];
   onUseHint: () => Promise<void>;
+  totalInsightPoints: number | null;
 }
 
 export type HintTriggerProps = {

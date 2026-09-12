@@ -294,6 +294,7 @@ function HintModal({ isOpen, onClose, difficulty, hintCost, currentProgress, loa
           pending={usingHint}
           onUseHint={onUseHint}
           hasUsedHintThisQuestion={Boolean(hintResult)}
+          totalInsightPoints={currentProgress?.insightPoints ?? null}
         />
         <HintNotice hintResult={hintResult} />
       </div>
@@ -498,6 +499,7 @@ export function QuestionCard({
         hintResult={hintResult}
         onUseHint={onUseHint}
         hintCost={hintCost}
+        totalInsightPoints={currentProgress?.insightPoints ?? null}
       />
       <ModeModal
         isOpen={modeModalOpen}
