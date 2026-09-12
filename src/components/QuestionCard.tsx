@@ -166,7 +166,9 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
       <div className="min-w-0">
         <h2 className="break-words text-lg font-semibold leading-snug text-ink-100 sm:mt-1 sm:text-2xl">
           {prompt}
-          {badge ? <span className="ml-2 inline-block align-middle" aria-hidden="true">{badge}</span> : null}
+          {badge && question.questionDirection !== QuestionDirection.REVERSE ? (
+            <span className="ml-2 inline-block align-middle" aria-hidden="true">{badge}</span>
+          ) : null}
         </h2>
       </div>
       {actions ? <div className="flex shrink-0 justify-end gap-1">{actions}</div> : null}
