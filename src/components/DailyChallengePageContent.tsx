@@ -12,8 +12,8 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "./common/Skeleton";
 import { apiClient } from "@/lib/apiClient";
 import { queryKeys } from "@/lib/queryKeys";
-import { useProfileQuery, useNetworkStatus } from "@/hooks";
-import { parsePromptToken, topicConfig, TranslationKey, Topic, type DailyChallengeAnswerResponse, type UnlockedAchievement } from "@/lib";
+import { useProfileQuery, useNetworkStatus, useReferralLink } from "@/hooks";
+import { parsePromptToken, topicConfig, TranslationKey, Topic, type DailyChallengeAnswerResponse, type UnlockedAchievement, shareViaTelegram } from "@/lib";
 import { MoreGamesSection } from "./MoreGamesSection";
 import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
 
@@ -28,6 +28,7 @@ export function DailyChallengePageContent() {
   const { isOnline } = useNetworkStatus();
   const queryClient = useQueryClient();
   const profileQuery = useProfileQuery(token);
+  const referralLink = useReferralLink(profileQuery.data);
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [answerResult, setAnswerResult] = useState<DailyChallengeAnswerResponse | null>(null);
@@ -115,7 +116,7 @@ export function DailyChallengePageContent() {
         {error && <p className="mt-4 text-sm text-pastel-coral">{error}</p>}
 
         {state?.completed ? (
-          <CompletionMessage correct={state.correctCount} total={state.questionCount} />
+          <CompletionMessage correct={state.correctCount} total={state.questionCount} referralLink={referralLink} />
         ) : question ? (
           <div className="mt-2">
             <div className="flex items-center justify-between gap-3">
@@ -211,9 +212,10 @@ function RefreshButton({ loading, submitting, onRefresh }: { loading: boolean; s
   );
 }
 
-function CompletionMessage({ correct, total }: { correct: number; total: number }) {
+function CompletionMessage({ correct, total, referralLink }: { correct: number; total: number; referralLink: string | null }) {
   const { t } = useI18n();
-  
+  const isPerfect = total > 0 && correct === total;
+
   const getScoreColor = (correct: number, total: number) => {
     if (total === 0) return "border-pastel-mint/40 bg-pastel-mint/10 text-pastel-mint";
     const percentage = (correct / total) * 100;
@@ -222,9 +224,27 @@ function CompletionMessage({ correct, total }: { correct: number; total: number 
     return "border-pastel-mint/40 bg-pastel-mint/10 text-pastel-mint";
   };
 
+  const handleShare = async () => {
+    if (!referralLink) return;
+    const text = t('share_hook_daily_perfect', { total, appName: topicConfig.appName, link: referralLink });
+    await shareViaTelegram(text);
+  };
+
   return (
     <div className={["mt-5 rounded-xl border p-4 text-sm", getScoreColor(correct, total)].join(" ")}>
-      {t("daily_challenge_completed", { correct, total })}
+      <p>{t("daily_challenge_completed", { correct, total })}</p>
+      {isPerfect ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="mt-3 w-full sm:w-auto"
+          onClick={() => void handleShare()}
+          disabled={!referralLink}
+        >
+          {t("share_button")}
+        </Button>
+      ) : null}
     </div>
   );
 }

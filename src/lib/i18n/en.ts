@@ -217,6 +217,7 @@ export const en = {
   share_hook_achievement: "🏆 Unlocked '{achievement}' in {appName}! Try it yourself: {link}",
   share_hook_level: "🎯 I'm already on level {level} in {appName}! Can you catch up? {link}",
   share_hook_streak: "🔥 {streak} correct in a row in {appName}! Beat my record: {link}",
+  share_hook_daily_perfect: "✅ Perfect {total}/{total} in today's {appName} challenge! Can you match it? {link}",
 
   global_stats_label: 'Global stats',
   global_stats_insight_points: 'Insight points',

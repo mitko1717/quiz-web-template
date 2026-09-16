@@ -219,6 +219,7 @@ export const uk: Record<keyof typeof en, string> = {
   share_hook_achievement: "🏆 Розблокував(-ла) досягнення «{achievement}» у {appName}! Спробуй сам: {link}",
   share_hook_level: "🎯 Я вже на рівні {level} у {appName}! Наздоженеш? {link}",
   share_hook_streak: "🔥 {streak} правильних поспіль у {appName}! Побий мій рекорд: {link}",
+  share_hook_daily_perfect: "✅ Ідеальний результат {total}/{total} у щоденному челенджі {appName}! Зможеш повторити? {link}",
 
   global_stats_label: 'Загальна статистика',
   global_stats_insight_points: 'Очки прозорливості',
