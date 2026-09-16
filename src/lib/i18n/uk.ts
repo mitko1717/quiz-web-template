@@ -131,7 +131,7 @@ export const uk: Record<keyof typeof en, string> = {
   question_scope_chip_label: 'Поточний регіон: {scope}',
   question_scope_world: 'Увесь світ',
   question_scope_africa: 'Африка',
-  question_scope_americas: 'Північна та Південна Америка',
+  question_scope_americas: 'Пн. та Пд. Америка',
   question_scope_asia: 'Азія',
   question_scope_europe: 'Європа',
   question_scope_oceania: 'Океанія',
