@@ -13,10 +13,10 @@ import { useI18n } from "@/components/I18nProvider";
 import { AdaptiveDifficultySuggestion, type DifficultyLevel } from "@/lib/types";
 import { MoreGamesSection } from "./MoreGamesSection";
 
-// Each entry is the streak-threshold table used the Nth time the suggestion fires on a given
-// level (index 0 = first time, index 1 = second time, ...). If the suggestion fires more times
-// than there are tables, the last table is reused. Level 5 has no "next level" so it's absent
-// from every table on purpose.
+// Each entry is the streak-threshold table used the Nth time the MOVE_UP suggestion fires on a
+// given level (index 0 = first time, index 1 = second time, ...). If it fires more times than
+// there are tables, the last table is reused. Level 5 has no "next level" so it's absent from
+// every table on purpose.
 const HIGHER_LEVEL_SUGGESTION_STREAK_TABLES: Partial<Record<DifficultyLevel, number>>[] = [
   { 1: 3, 2: 5, 3: 7, 4: 10 },
   { 1: 5, 2: 7, 3: 9, 4: 12 },
@@ -30,6 +30,8 @@ function getRequiredStreak(difficulty: DifficultyLevel, timesShownThisLevel: num
 }
 
 const ALL_LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
+
+type SuggestionKind = "up" | "down";
 
 export function QuizPlayground() {
   const { t } = useI18n();
@@ -78,7 +80,9 @@ export function QuizPlayground() {
   const lastProcessedAnswerKeyRef = useRef<string | null>(null);
   const unlockNotifiedLevelsRef = useRef<Set<DifficultyLevel>>(new Set());
   const previousUnlockedMapRef = useRef<Map<DifficultyLevel, boolean> | null>(null);
+  const downNotifiedLevelsRef = useRef<Set<DifficultyLevel>>(new Set());
   const [suggestedDifficulty, setSuggestedDifficulty] = useState<DifficultyLevel | null>(null);
+  const [suggestionKind, setSuggestionKind] = useState<SuggestionKind>("up");
 
   useEffect(() => {
     appliedProfileDifficultyRef.current = false;
@@ -97,17 +101,18 @@ export function QuizPlayground() {
     void updateDifficultyMutation.mutateAsync(level).catch(() => undefined);
   }, [setDifficulty, updateDifficultyMutation]);
 
-  // Reset the streak counter and the per-level "how many times shown" counter whenever the
-  // player switches levels — thresholds and progress are per-level, not global.
+  // Reset per-level guards whenever the player switches levels — thresholds and "already
+  // shown" state are per-level, not global.
   useEffect(() => {
     sessionCorrectStreakRef.current = 0;
     suggestionCountByLevelRef.current = new Map();
     lastProcessedAnswerKeyRef.current = null;
+    downNotifiedLevelsRef.current = new Set();
   }, [difficulty]);
 
   // TRIGGER A: fires the moment a level genuinely transitions locked -> unlocked (server-confirmed
   // via stats.progression.levels[].unlocked), independent of streak/accuracy. This is the "you just
-  // unlocked a new level" notification — distinct from trigger B below. Compares against the
+  // unlocked a new level" notification — distinct from triggers B and C. Compares against the
   // previous snapshot of unlocked flags to detect the transition; fires once per level ever
   // (per session — the ref resets on remount).
   useEffect(() => {
@@ -126,6 +131,7 @@ export function QuizPlayground() {
       const isUnlocked = currentMap.get(level) ?? false;
       if (!wasUnlocked && isUnlocked && !unlockNotifiedLevelsRef.current.has(level)) {
         unlockNotifiedLevelsRef.current.add(level);
+        setSuggestionKind("up");
         setSuggestedDifficulty(level);
         break;
       }
@@ -146,28 +152,48 @@ export function QuizPlayground() {
 
     if (!answerResult.correct) {
       sessionCorrectStreakRef.current = 0;
-      return;
+    } else {
+      sessionCorrectStreakRef.current += 1;
     }
-    sessionCorrectStreakRef.current += 1;
 
-    const timesShownThisLevel = suggestionCountByLevelRef.current.get(difficulty) ?? 0;
-    const requiredStreak = getRequiredStreak(difficulty, timesShownThisLevel);
-    if (requiredStreak === undefined) return;
-    if (sessionCorrectStreakRef.current < requiredStreak) return;
-    if (difficultySuggestion !== AdaptiveDifficultySuggestion.MOVE_UP) return;
+    if (answerResult.correct) {
+      const timesShownThisLevel = suggestionCountByLevelRef.current.get(difficulty) ?? 0;
+      const requiredStreak = getRequiredStreak(difficulty, timesShownThisLevel);
+      const nextDifficulty = (difficulty + 1) as DifficultyLevel;
 
-    const nextDifficulty = (difficulty + 1) as DifficultyLevel;
-    if (nextDifficulty > 5) return;
+      if (
+        requiredStreak !== undefined &&
+        sessionCorrectStreakRef.current >= requiredStreak &&
+        difficultySuggestion === AdaptiveDifficultySuggestion.MOVE_UP &&
+        nextDifficulty <= 5
+      ) {
+        void (async () => {
+          const fresh = await refetchStats();
+          const nextLevelUnlocked = fresh.data?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
+          if (!nextLevelUnlocked) return;
 
-    void (async () => {
-      const fresh = await refetchStats();
-      const nextLevelUnlocked = fresh.data?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
-      if (!nextLevelUnlocked) return;
+          sessionCorrectStreakRef.current = 0;
+          suggestionCountByLevelRef.current.set(difficulty, timesShownThisLevel + 1);
+          setSuggestionKind("up");
+          setSuggestedDifficulty(nextDifficulty);
+        })();
+        return;
+      }
+    }
 
-      sessionCorrectStreakRef.current = 0;
-      suggestionCountByLevelRef.current.set(difficulty, timesShownThisLevel + 1);
-      setSuggestedDifficulty(nextDifficulty);
-    })();
+    // TRIGGER C: server signals MOVE_DOWN (last-10-attempt accuracy <= 40%) — no lower-level
+    // unlock check needed, since a lower difficulty is always already unlocked. Shown once per
+    // level per session, same as the unlock notice.
+    const previousDifficulty = (difficulty - 1) as DifficultyLevel;
+    if (
+      difficultySuggestion === AdaptiveDifficultySuggestion.MOVE_DOWN &&
+      previousDifficulty >= 1 &&
+      !downNotifiedLevelsRef.current.has(difficulty)
+    ) {
+      downNotifiedLevelsRef.current.add(difficulty);
+      setSuggestionKind("down");
+      setSuggestedDifficulty(previousDifficulty);
+    }
   }, [answerResult, difficulty, difficultySuggestion, question?.itemId, refetchStats]);
 
   const closeSuggestionModal = useCallback(() => {
@@ -200,7 +226,7 @@ export function QuizPlayground() {
         onClose={closeSuggestionModal}
         closeLabel={t("common_dismiss")}
         title={t("difficulty_label")}
-        description={t("question_suggestion_up")}
+        description={t(suggestionKind === "up" ? "question_suggestion_up" : "question_suggestion_down")}
         footer={
           <div className="space-y-4">
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-center">

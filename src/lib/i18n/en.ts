@@ -112,6 +112,7 @@ export const en = {
   question_free_text_placeholder: 'Type the {noun} name',
   question_free_text_placeholder_reverse: 'Type the {noun} name',
   question_free_text_bonus: '+{points} bonus insight point{plural} for typing it!',
+  question_free_text_retry_wrong: "Not quite — try again.",
   question_retry_notice: 'Wrong option. Try again. Penalty: -{penalty} insight point{plural}. Attempts left: {attempts}.',
   question_result_skipped: 'Skipped. Correct answer: {answer}',
   question_none_of_the_above: 'None of the above',

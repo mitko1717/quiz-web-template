@@ -114,6 +114,7 @@ export const es: Record<keyof typeof en, string> = {
   question_free_text_placeholder: 'Escribe el nombre de {noun}',
   question_free_text_placeholder_reverse: 'Escribe el nombre de {noun}',
   question_free_text_bonus: '¡+{points} punto(s) de bonificación por escribirla!',
+  question_free_text_retry_wrong: "No es correcto — inténtalo de nuevo.",
   question_retry_notice: 'Opción incorrecta. Intenta de nuevo. Penalización: -{penalty} punto(s). Intentos restantes: {attempts}.',
   question_result_skipped: 'Omitida. Respuesta correcta: {answer}',
   question_none_of_the_above: 'Ninguna de las anteriores',

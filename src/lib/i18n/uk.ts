@@ -114,6 +114,7 @@ export const uk: Record<keyof typeof en, string> = {
   question_free_text_placeholder: 'Введіть назву {noun}',
   question_free_text_placeholder_reverse: 'Введіть назву {noun}',
   question_free_text_bonus: '+{points} бонусних балів за введення вручну!',
+  question_free_text_retry_wrong: "Не вгадали — спробуй ще раз.",
   question_retry_notice: 'Неправильна відповідь. Спробуйте ще раз. Штраф: -{penalty} балів. Залишилось спроб: {attempts}.',
   question_result_skipped: 'Пропущено. Правильна відповідь: {answer}',
   question_none_of_the_above: 'Жоден з варіантів',

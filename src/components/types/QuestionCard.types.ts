@@ -85,6 +85,7 @@ export type ResultNoticeProps = {
   answerResult: AnswerResponse | null;
   skipResult: SkipResponse | null;
   hasAnswered: boolean;
+  inputMode: QuizInputMode;
 };
 
 export type HintNoticeProps = {

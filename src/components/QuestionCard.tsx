@@ -234,8 +234,18 @@ function AnswerOptionsList({ question, selectedOption, hasAnswered, submittingAn
   );
 }
 
-function ResultNotice({ answerResult, skipResult, hasAnswered }: ResultNoticeProps) {
+function ResultNotice({ answerResult, skipResult, hasAnswered, inputMode }: ResultNoticeProps) {
   const { t } = useI18n();
+  const isFreeTextRetryWrong = !hasAnswered && !skipResult && answerResult?.correct === false && answerResult.canRetry && inputMode === QuizInputMode.FREE_TEXT;
+
+  if (isFreeTextRetryWrong) {
+    return (
+      <div className="mt-3 rounded-xl border p-1.5 text-sm sm:mt-5 border-pastel-coral/40 bg-pastel-coral/10 text-pastel-coral">
+        {t('question_free_text_retry_wrong')}
+      </div>
+    );
+  }
+
   if (!hasAnswered || (!answerResult && !skipResult)) return null;
   if (!skipResult && !answerResult?.freeTextBonusInsightPointsAwarded) return null;
 
@@ -479,7 +489,7 @@ export function QuestionCard({
             ) : null}
           </QuestionContentFrame>
 
-          <ResultNotice answerResult={answerResult} skipResult={skipResult} hasAnswered={hasAnswered} />
+          <ResultNotice answerResult={answerResult} skipResult={skipResult} hasAnswered={hasAnswered} inputMode={inputMode} />
           {error && !showOfflineFallback ? <ErrorNotice error={error} /> : null}
         </div>
         <ActionRow
