@@ -1,4 +1,5 @@
-import type { DifficultyLevel, Language } from './types-core';
+import { Language } from '../i18n';
+import type { DifficultyLevel } from './types-core';
 
 export interface ProfileResetRequest {
   resetProgress?: boolean;
