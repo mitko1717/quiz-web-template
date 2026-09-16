@@ -83,7 +83,7 @@ export const uk: Record<keyof typeof en, string> = {
 
   nav_stats: 'Статистика',
   nav_settings: 'Налаштування',
-  nav_quiz: 'Вікторина',
+  nav_quiz: 'Квіз',
   nav_daily_challenge: 'Челендж',
   nav_logout: 'Вийти',
   nav_back_quiz: 'Назад до вікторини',
@@ -217,6 +217,8 @@ export const uk: Record<keyof typeof en, string> = {
   achievement_unlocked_close: 'Круто!',
   share_button: "Поділитися",
   share_hook_achievement: "🏆 Розблокував(-ла) досягнення «{achievement}» у {appName}! Спробуй сам: {link}",
+  share_hook_level: "🎯 Я вже на рівні {level} у {appName}! Наздоженеш? {link}",
+  share_hook_streak: "🔥 {streak} правильних поспіль у {appName}! Побий мій рекорд: {link}",
 
   global_stats_label: 'Загальна статистика',
   global_stats_insight_points: 'Очки прозорливості',

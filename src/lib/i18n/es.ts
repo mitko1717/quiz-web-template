@@ -217,6 +217,8 @@ export const es: Record<keyof typeof en, string> = {
   achievement_unlocked_close: '¡Genial!',
   share_button: "Compartir",
   share_hook_achievement: "🏆 ¡Desbloqueé '{achievement}' en {appName}! Pruébalo tú mismo: {link}",
+  share_hook_level: "🎯 ¡Ya estoy en el nivel {level} en {appName}! ¿Puedes alcanzarme? {link}",
+  share_hook_streak: "🔥 ¡{streak} respuestas correctas seguidas en {appName}! Supera mi récord: {link}",
 
   global_stats_label: 'Estadísticas globales',
   global_stats_insight_points: 'Puntos de perspicacia',

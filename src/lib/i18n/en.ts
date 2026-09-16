@@ -215,6 +215,8 @@ export const en = {
   achievement_unlocked_close: 'Nice!',
   share_button: "Share",
   share_hook_achievement: "🏆 Unlocked '{achievement}' in {appName}! Try it yourself: {link}",
+  share_hook_level: "🎯 I'm already on level {level} in {appName}! Can you catch up? {link}",
+  share_hook_streak: "🔥 {streak} correct in a row in {appName}! Beat my record: {link}",
 
   global_stats_label: 'Global stats',
   global_stats_insight_points: 'Insight points',

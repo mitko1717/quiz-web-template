@@ -6,10 +6,14 @@ import { DifficultySelector } from "@/components/DifficultySelector";
 import { QuestionCard } from "@/components/QuestionCard";
 import { Button } from "@/components/button";
 import { Modal } from "@/components/common/Modal";
-import { useProfileQuery, useUpdateProfileDifficultyMutation, useQuiz } from "@/hooks";
+import { useQuiz } from "@/hooks/useQuiz";
+import { useProfileQuery, useUpdateProfileDifficultyMutation } from "@/hooks/useProfile";
+import { useReferralLink } from "@/hooks/useReferralLink";
+import { shareViaTelegram } from "@/lib/share";
 import { DashboardHeader } from "./DashboardHeader";
 import { useI18n } from "@/components/I18nProvider";
-import { AdaptiveDifficultySuggestion, type DifficultyLevel } from "@/lib";
+import { AdaptiveDifficultySuggestion, type DifficultyLevel } from "@/lib/types";
+import { topicConfig } from "@/lib/topic.config";
 import { MoreGamesSection } from "./MoreGamesSection";
 
 // Each entry is the streak-threshold table used the Nth time the MOVE_UP suggestion fires on a
@@ -38,6 +42,7 @@ export function QuizPlayground() {
   const profileQuery = useProfileQuery(token);
   const updateDifficultyMutation = useUpdateProfileDifficultyMutation(token);
   const allowReverseMode = profileQuery.data?.allowReverseMode ?? true;
+  const referralLink = useReferralLink(profileQuery.data);
 
   const {
     difficulty,
@@ -80,8 +85,11 @@ export function QuizPlayground() {
   const unlockNotifiedLevelsRef = useRef<Set<DifficultyLevel>>(new Set());
   const previousUnlockedMapRef = useRef<Map<DifficultyLevel, boolean> | null>(null);
   const downNotifiedLevelsRef = useRef<Set<DifficultyLevel>>(new Set());
+  const shareStreakRef = useRef(0);
+  const lastProcessedShareKeyRef = useRef<string | null>(null);
   const [suggestedDifficulty, setSuggestedDifficulty] = useState<DifficultyLevel | null>(null);
   const [suggestionKind, setSuggestionKind] = useState<SuggestionKind>("up");
+  const [shareStreakCount, setShareStreakCount] = useState<number | null>(null);
 
   useEffect(() => {
     appliedProfileDifficultyRef.current = false;
@@ -107,6 +115,8 @@ export function QuizPlayground() {
     suggestionCountByLevelRef.current = new Map();
     lastProcessedAnswerKeyRef.current = null;
     downNotifiedLevelsRef.current = new Set();
+    shareStreakRef.current = 0;
+    lastProcessedShareKeyRef.current = null;
   }, [difficulty]);
 
   // TRIGGER A: fires the moment a level genuinely transitions locked -> unlocked (server-confirmed
@@ -137,11 +147,13 @@ export function QuizPlayground() {
     }
   }, [stats]);
 
-  // TRIGGER B: client-side streak counter drives WHEN to even check (progressive threshold
-  // table, resets to 0 on any wrong answer). The server's difficultySuggestion (MOVE_UP,
-  // last-10-attempt accuracy) plus a fresh unlocked-check still gate whether we actually show
-  // it — this is the "you're doing great, the next level is already open, want to try it?"
-  // notification for a level the player already unlocked earlier but hasn't moved to.
+  // TRIGGER B/C/SHARE: a single answer-driven effect handles three independent things that
+  // all key off "was this answer correct, and what's the running streak":
+  //   B: progressive streak table + server MOVE_UP + unlock re-check -> "try next level" modal
+  //   C: server MOVE_DOWN signal -> "drop down?" modal (fires on any answer, not just correct)
+  //   SHARE: every time the streak hits a multiple of shareStreakThresholdByDifficulty[difficulty]
+  //          -> a lightweight, dismissible "share your streak" modal (repeats every threshold
+  //          multiple, unlike B/C which are gated to fire once per escalation)
   useEffect(() => {
     if (!answerResult) return;
 
@@ -151,8 +163,17 @@ export function QuizPlayground() {
 
     if (!answerResult.correct) {
       sessionCorrectStreakRef.current = 0;
+      shareStreakRef.current = 0;
     } else {
       sessionCorrectStreakRef.current += 1;
+      shareStreakRef.current += 1;
+
+      const shareThreshold = profileQuery.data?.shareStreakThresholdByDifficulty?.[difficulty];
+      const shareKey = `${difficulty}:${shareStreakRef.current}`;
+      if (shareThreshold && shareStreakRef.current % shareThreshold === 0 && lastProcessedShareKeyRef.current !== shareKey) {
+        lastProcessedShareKeyRef.current = shareKey;
+        setShareStreakCount(shareStreakRef.current);
+      }
     }
 
     if (answerResult.correct) {
@@ -180,9 +201,6 @@ export function QuizPlayground() {
       }
     }
 
-    // TRIGGER C: server signals MOVE_DOWN (last-10-attempt accuracy <= 40%) — no lower-level
-    // unlock check needed, since a lower difficulty is always already unlocked. Shown once per
-    // level per session, same as the unlock notice.
     const previousDifficulty = (difficulty - 1) as DifficultyLevel;
     if (
       difficultySuggestion === AdaptiveDifficultySuggestion.MOVE_DOWN &&
@@ -193,11 +211,27 @@ export function QuizPlayground() {
       setSuggestionKind("down");
       setSuggestedDifficulty(previousDifficulty);
     }
-  }, [answerResult, difficulty, difficultySuggestion, question?.itemId, refetchStats]);
+  }, [answerResult, difficulty, difficultySuggestion, profileQuery.data?.shareStreakThresholdByDifficulty, question?.itemId, refetchStats]);
 
   const closeSuggestionModal = useCallback(() => {
     setSuggestedDifficulty(null);
   }, []);
+
+  const closeShareStreakModal = useCallback(() => {
+    setShareStreakCount(null);
+  }, []);
+
+  const handleShareLevel = useCallback(async () => {
+    if (!referralLink) return;
+    const text = t('share_hook_level', { level: difficulty, appName: topicConfig.appName, link: referralLink });
+    await shareViaTelegram(text);
+  }, [difficulty, referralLink, t]);
+
+  const handleShareStreak = useCallback(async () => {
+    if (!referralLink || shareStreakCount === null) return;
+    const text = t('share_hook_streak', { streak: shareStreakCount, appName: topicConfig.appName, link: referralLink });
+    await shareViaTelegram(text);
+  }, [referralLink, shareStreakCount, t]);
 
   const shouldShowSuggestionModal = suggestedDifficulty !== null;
 
@@ -253,7 +287,50 @@ export function QuizPlayground() {
                 </Button>
               ) : null}
             </div>
+            {suggestionKind === "up" ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => void handleShareLevel()}
+                disabled={!referralLink}
+                className="w-full rounded-lg uppercase tracking-[0.1em]"
+              >
+                {t("share_button")}
+              </Button>
+            ) : null}
             <MoreGamesSection token={token} />
+          </div>
+        }
+      />
+
+      <Modal
+        isOpen={shareStreakCount !== null}
+        onClose={closeShareStreakModal}
+        closeLabel={t("common_dismiss")}
+        title={t("difficulty_label")}
+        description={shareStreakCount !== null ? t("question_suggestion_up") : ""}
+        footer={
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-center">
+            <Button
+              type="button"
+              variant="suggestionNeutral"
+              size="sm"
+              onClick={closeShareStreakModal}
+              className="w-full rounded-lg uppercase tracking-[0.1em] sm:w-auto"
+            >
+              {t("common_dismiss")}
+            </Button>
+            <Button
+              type="button"
+              variant="suggestionAccent"
+              size="sm"
+              onClick={() => void handleShareStreak()}
+              disabled={!referralLink}
+              className="w-full rounded-lg uppercase tracking-[0.1em] sm:w-auto"
+            >
+              {t("share_button")}
+            </Button>
           </div>
         }
       />
