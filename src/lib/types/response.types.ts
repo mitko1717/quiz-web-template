@@ -1,5 +1,6 @@
-import { Language, AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizInputMode, type DifficultyLevel } from './types-core';
+import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizInputMode, type DifficultyLevel } from './types-core';
 import type { UnlockedAchievement } from './achievement.types';
+import { Language } from '..';
 
 export interface AuthResponse {
   accessToken: string;
@@ -23,6 +24,7 @@ export interface ProfileResponse {
   referralLink: string | null;
   allowReverseMode: boolean;
   hintCostByDifficulty: Record<DifficultyLevel, number>;
+  shareStreakThresholdByDifficulty: Record<DifficultyLevel, number>;
 }
 
 export interface ProfileLanguageResponse {

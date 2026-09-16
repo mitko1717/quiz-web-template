@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { Toaster } from "@/components/toast";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { TelegramProvider } from "@/providers/TelegramProvider";
-import { topicConfig } from "@/lib/topic.config";
+import { topicConfig } from "@/lib";
 import { I18nProvider } from "@/components/I18nProvider";
 import { AuthGate } from "@/components/AuthGate";
 

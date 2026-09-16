@@ -1,11 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useAchievementsQuery } from "@/hooks/useAchievements";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
-import { useGlobalStatsQuery, useProfileQuery } from "@/hooks/useProfile";
-import { useAnswerStatsQuery } from "@/hooks/useProgress";
-import type { DifficultyLevel } from "@/lib/types";
+import { useAchievementsQuery, useAnswerStatsQuery, useGlobalStatsQuery, useProfileQuery, useNetworkStatus } from "@/hooks";
+import type { DifficultyLevel } from "@/lib";
 
 export function useStatsPageState(token: string) {
   const { isOnline } = useNetworkStatus();

@@ -2,11 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/apiClient";
-import { queryKeys } from "@/lib/queryKeys";
-import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope } from "@/lib/quiz-mode-preferences";
-import { useAnswerStatsQuery, useProgressForLevelQuery } from "@/hooks/useProgress";
-import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizScope, QuizInputMode, type AnswerResponse, type DifficultyLevel, type HintResponse, type ProgressResponse, type QuestionResponse, type SkipResponse, type UnlockedAchievement, type UserAnswerStatsResponse } from "@/lib/types";
+import { useAnswerStatsQuery, useProgressForLevelQuery } from "@/hooks";
+import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope, queryKeys, apiClient } from "@/lib";
+import { AdaptiveDifficultySuggestion, HintType, QuestionDirection, QuizScope, QuizInputMode, type AnswerResponse, type DifficultyLevel, type HintResponse, type ProgressResponse, type QuestionResponse, type SkipResponse, type UnlockedAchievement, type UserAnswerStatsResponse } from "@/lib";
 import { useI18n } from "@/components/I18nProvider";
 
 type QuizError = string | null;

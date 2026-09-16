@@ -1,5 +1,4 @@
 export type DifficultyLevel = 1 | 2 | 3 | 4 | 5;
-export type Language = 'en' | 'es' | 'uk';
 
 export enum QuizInputMode {
   MULTIPLE_CHOICE = 'multiple_choice',

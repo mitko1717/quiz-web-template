@@ -1,12 +1,8 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/apiClient";
-import { queryKeys } from "@/lib/queryKeys";
-import type { AuthMode } from "@/lib/types";
-import { resolveReferralContext } from "@/lib/auth-referral";
-import { topicConfig } from "@/lib/topic.config";
-import { useI18n } from "@/components/I18nProvider";
+import { apiClient, topicConfig, type AuthMode, resolveReferralContext, queryKeys } from "@/lib";
+import { useI18n } from "@/providers/I18nProvider";
 
 const DEVICE_ID_KEY = `${topicConfig.slug}-device-id`;
 const AUTH_SESSION_KEY = `${topicConfig.slug}-auth-session`;

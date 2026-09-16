@@ -6,8 +6,8 @@ import { Input } from "@/components/common/input";
 import { SectionLabel, BodyText } from "@/components/common/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
 import { useI18n } from "@/components/I18nProvider";
-import { useAdminGames } from "@/hooks/useAdminGames";
-import type { AdminGame, CreateGamePayload, LocalizedText } from "@/lib/types";
+import { useAdminGames } from "@/hooks";
+import type { AdminGame, CreateGamePayload, LocalizedText } from "@/lib";
 
 type LocalizedDraft = { en: string; es: string; uk: string };
 

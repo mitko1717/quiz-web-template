@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/button";
-import type { DifficultyLevel, DifficultyProgressionResponse } from "@/lib/types";
+import type { DifficultyLevel, DifficultyProgressionResponse } from "@/lib";
 import { useI18n } from "@/components/I18nProvider";
 
 const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];

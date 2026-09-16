@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/button";
 import { useI18n } from "@/components/I18nProvider";
-import type { DifficultyLevel, ProgressResponse } from "@/lib/types";
+import type { DifficultyLevel, ProgressResponse } from "@/lib";
 
 type HintButtonProps = {
   hintCost: number;

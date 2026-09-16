@@ -1,11 +1,9 @@
 "use client";
 
-import { Button } from "@/components/button";
-import { topicConfig } from "@/lib/topic.config";
-import { QuestionDirection, QuizScope, QuizInputMode } from "@/lib/types";
-import { useI18n } from "@/components/I18nProvider";
-import { TranslationKey } from "@/lib/i18n";
 import { ReactNode } from "react";
+import { Button } from "@/components/button";
+import { QuestionDirection, QuizScope, QuizInputMode, topicConfig, TranslationKey } from "@/lib";
+import { useI18n } from "@/components/I18nProvider";
 
 type QuizModeControlsProps = {
   inputMode: QuizInputMode;

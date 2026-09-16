@@ -215,6 +215,8 @@ export const uk: Record<keyof typeof en, string> = {
   stats_detail_close: 'Закрити',
   achievement_unlocked_title: 'Досягнення розблоковано!',
   achievement_unlocked_close: 'Круто!',
+  share_button: "Поділитися",
+  share_hook_achievement: "🏆 Розблокував(-ла) досягнення «{achievement}» у {appName}! Спробуй сам: {link}",
 
   global_stats_label: 'Загальна статистика',
   global_stats_insight_points: 'Очки прозорливості',

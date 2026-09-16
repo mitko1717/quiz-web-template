@@ -11,9 +11,8 @@ import { OfflineStateHint } from "@/components/common/Skeleton";
 import { AnswerOption } from "./AnswerOption";
 import { CardSection } from "./types/CardSection";
 import { useI18n } from "@/components/I18nProvider";
-import { HintType, QuestionDirection, QuizInputMode, Topic } from "@/lib/types";
 import { QuizModeControls } from "@/components/QuizModeControls";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useNetworkStatus } from "@/hooks";
 import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
 import type {
   ActionRowProps,
@@ -29,9 +28,7 @@ import type {
   QuestionHeadingProps,
   ResultNoticeProps
 } from "./types/QuestionCard.types";
-import { topicConfig } from "@/lib/topic.config";
-import { TranslationKey } from "@/lib/i18n";
-import { parsePromptToken } from "@/lib/prompt-token";
+import { TranslationKey, topicConfig, parsePromptToken, HintType, QuestionDirection, QuizInputMode, Topic } from "@/lib";
 
 // Shared by QuestionHeading/AnswerOptionsList/ResultNotice — a value may be an i18n key
 // (e.g. a prompt-token label, or a mapper-emitted enum like planets_value_type_terrestrial).

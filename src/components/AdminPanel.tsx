@@ -5,11 +5,10 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/common/input";
 import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
-import { useAdminPanel } from "@/hooks/useAdminPanel";
+import { useAdminPanel } from "@/hooks";
 import { Pagination } from "@/components/common/Pagination";
 import { useI18n } from "@/components/I18nProvider";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
-import type { AdminQuizConfigResponse, DifficultyLevel } from "@/lib/types";
 import type {
   AdminPanelProps,
   DifficultyNumberEditorProps,
@@ -21,8 +20,7 @@ import type {
   UserDetailPanelProps,
   UserListPanelProps
 } from "./types/AdminPanel.types";
-import { topicConfig } from "@/lib/topic.config";
-import { formatPercent } from "@/lib/utils";
+import { topicConfig, formatPercent, type AdminQuizConfigResponse, type DifficultyLevel } from "@/lib";
 
 const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
 

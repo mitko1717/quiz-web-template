@@ -1,6 +1,6 @@
 import { PageWrapper } from "@/components/PageWrapper";
 import { SettingsPageContent } from "@/components/SettingsPageContent";
-import { topicConfig } from "@/lib/topic.config";
+import { topicConfig } from "@/lib";
 
 export const metadata = { title: `Settings - ${topicConfig.appName}` };
 

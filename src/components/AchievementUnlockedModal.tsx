@@ -3,7 +3,9 @@
 import { Button } from "@/components/button";
 import { Modal } from "@/components/common/Modal";
 import { useI18n } from "@/components/I18nProvider";
-import type { UnlockedAchievement } from "@/lib/types";
+import { useProfileQuery, useReferralLink } from "@/hooks";
+import { useAuthContext } from "@/components/AuthGate";
+import { topicConfig, shareViaTelegram, type UnlockedAchievement } from "@/lib";
 
 interface AchievementUnlockedModalProps {
   achievement: UnlockedAchievement | null;
@@ -12,6 +14,15 @@ interface AchievementUnlockedModalProps {
 
 export function AchievementUnlockedModal({ achievement, onClose }: AchievementUnlockedModalProps) {
   const { t } = useI18n();
+  const { token } = useAuthContext();
+  const profileQuery = useProfileQuery(token);
+  const referralLink = useReferralLink(profileQuery.data);
+
+  const handleShare = async () => {
+    if (!achievement || !referralLink) return;
+    const text = t('share_hook_achievement', { achievement: achievement.name, appName: topicConfig.appName, link: referralLink });
+    await shareViaTelegram(text);
+  };
 
   return (
     <Modal
@@ -21,9 +32,12 @@ export function AchievementUnlockedModal({ achievement, onClose }: AchievementUn
       title={t('achievement_unlocked_title')}
       maxWidthClassName="max-w-sm"
       footer={(
-        <div className="flex justify-end">
-          <Button type="button" variant="primary" onClick={onClose}>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="ghost" onClick={onClose}>
             {t('achievement_unlocked_close')}
+          </Button>
+          <Button type="button" variant="primary" onClick={() => void handleShare()} disabled={!referralLink}>
+            {t('share_button')}
           </Button>
         </div>
       )}

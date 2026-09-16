@@ -3,7 +3,7 @@
 import { useAuthContext } from "@/components/AuthGate";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { UserStatsPanel } from "@/components/UserStatsPanel";
-import { useStatsPageState } from "@/hooks/useStatsPageState";
+import { useStatsPageState } from "@/hooks";
 
 export function StatsPageContent() {
   const { token, authMode, username, setPreferredLanguage } = useAuthContext();

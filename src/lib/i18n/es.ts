@@ -215,6 +215,8 @@ export const es: Record<keyof typeof en, string> = {
   stats_detail_close: 'Cerrar',
   achievement_unlocked_title: '¡Logro Desbloqueado!',
   achievement_unlocked_close: '¡Genial!',
+  share_button: "Compartir",
+  share_hook_achievement: "🏆 ¡Desbloqueé '{achievement}' en {appName}! Pruébalo tú mismo: {link}",
 
   global_stats_label: 'Estadísticas globales',
   global_stats_insight_points: 'Puntos de perspicacia',

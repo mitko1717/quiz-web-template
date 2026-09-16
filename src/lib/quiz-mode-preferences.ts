@@ -1,5 +1,4 @@
-import { QuestionDirection, QuizScope, QuizInputMode } from "@/lib/types";
-import { topicConfig } from "@/lib/topic.config";
+import { QuestionDirection, QuizScope, QuizInputMode, topicConfig } from "@/lib";
 
 const INPUT_MODE_KEY = "quiz.inputMode";
 const QUESTION_DIRECTION_KEY = "quiz.questionDirection";

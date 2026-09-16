@@ -11,13 +11,9 @@ import { RefreshIcon } from "@/components/icons";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "./common/Skeleton";
 import { apiClient } from "@/lib/apiClient";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queryKeys } from "@/lib/queryKeys";
-import { useProfileQuery } from "@/hooks/useProfile";
-import { Topic, type DailyChallengeAnswerResponse, type UnlockedAchievement } from "@/lib/types";
-import { topicConfig } from "@/lib/topic.config";
-import { TranslationKey } from "@/lib/i18n";
-import { parsePromptToken } from "@/lib/prompt-token";
+import { useProfileQuery, useNetworkStatus } from "@/hooks";
+import { parsePromptToken, topicConfig, TranslationKey, Topic, type DailyChallengeAnswerResponse, type UnlockedAchievement } from "@/lib";
 import { MoreGamesSection } from "./MoreGamesSection";
 import { AchievementUnlockedModal } from "@/components/AchievementUnlockedModal";
 

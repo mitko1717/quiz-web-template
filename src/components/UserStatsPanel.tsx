@@ -7,7 +7,7 @@ import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/button";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
 import { RefreshIcon } from "@/components/icons";
-import { AchievementScope, type AchievementProgressResponse, type DifficultyLevel, type UserAnswerStatsByDifficulty } from "@/lib/types";
+import { formatPercent, topicConfig, AchievementScope, type AchievementProgressResponse, type DifficultyLevel, type UserAnswerStatsByDifficulty } from "@/lib";
 import type {
   ActiveDifficultyPanelProps,
   DifficultyStatsTableProps,
@@ -22,9 +22,7 @@ import type {
   UnlockLevelsGridProps,
   UserStatsPanelProps
 } from "./types/UserStatsPanel.types";
-import { formatPercent } from "@/lib/utils";
 import { Accordion } from "./common/Accordion";
-import { topicConfig } from "@/lib/topic.config";
 
 function PanelShell({ children, variant = "default" }: PanelShellProps) {
   return (

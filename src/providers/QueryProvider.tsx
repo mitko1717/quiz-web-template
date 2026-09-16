@@ -3,7 +3,7 @@
 import { ReactNode, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { isLikelyNetworkError } from '@/hooks/useNetworkStatus';
+import { isLikelyNetworkError } from '@/hooks';
 
 const DEFAULT_STALE_TIME_MS = 20_000;
 const DEFAULT_GC_TIME_MS = 5 * 60_000;

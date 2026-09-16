@@ -6,4 +6,6 @@ export * from "@/hooks/useAdminGames";
 export * from "@/hooks/useAdminPanel";
 export * from "@/hooks/useAuth";
 export * from "@/hooks/usePublicGames";
+export * from "@/hooks/useReferralLink";
 export * from "@/hooks/useQuiz";
+export * from "@/hooks/useStatsPageState";

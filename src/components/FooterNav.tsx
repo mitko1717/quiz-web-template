@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { ChartIcon, SettingsIcon, CalendarIcon, HomeIcon, ShieldIcon } from "@/components/icons";
-import type { AuthMode } from "@/lib/types";
+import type { AuthMode } from "@/lib";
 
 type FooterNavProps = {
   authMode: AuthMode;

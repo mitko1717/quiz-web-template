@@ -1,10 +1,9 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/apiClient";
 import { toast } from "@/components/toast";
 import { useI18n } from "@/components/I18nProvider";
-import type { AdminGame, CreateGamePayload, UpdateGamePayload } from "@/lib/types";
+import  { apiClient, type AdminGame, type CreateGamePayload, type UpdateGamePayload } from "@/lib";
 
 function toErrorMessage(cause: unknown, fallback: string): string {
   return cause instanceof Error ? cause.message : fallback;

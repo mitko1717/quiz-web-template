@@ -213,6 +213,8 @@ export const en = {
   stats_detail_close: 'Close',
   achievement_unlocked_title: 'Achievement Unlocked!',
   achievement_unlocked_close: 'Nice!',
+  share_button: "Share",
+  share_hook_achievement: "🏆 Unlocked '{achievement}' in {appName}! Try it yourself: {link}",
 
   global_stats_label: 'Global stats',
   global_stats_insight_points: 'Insight points',

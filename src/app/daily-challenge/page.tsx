@@ -1,6 +1,6 @@
 import { DailyChallengePageContent } from "@/components/DailyChallengePageContent";
 import { PageWrapper } from "@/components/PageWrapper";
-import { topicConfig } from "@/lib/topic.config";
+import { topicConfig } from "@/lib";
 
 export const metadata = { title: `Daily Challenge - ${topicConfig.appName}` };
 

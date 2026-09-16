@@ -8,20 +8,16 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Modal } from "@/components/common/Modal";
 import { AdminPanel } from "@/components/AdminPanel";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
-import { LANGUAGE_FLAGS } from "@/lib/constants/language-flags";
 import { useI18n } from "@/components/I18nProvider";
 import { Button } from "@/components/button";
 import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
 import { SignInPanel } from "@/components/SignInPanel";
 import { QuizModeControls } from "@/components/QuizModeControls";
-import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope } from "@/lib/quiz-mode-preferences";
-import { QuestionDirection, QuizScope, QuizInputMode, Language } from "@/lib/types";
-import { useProfileQuery, useResetProfileMutation } from "@/hooks/useProfile";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope, QuestionDirection, QuizScope, QuizInputMode, Language, topicConfig, shareViaTelegram, LANGUAGE_FLAGS } from "@/lib";
+import { useProfileQuery, useResetProfileMutation, useReferralLink, useNetworkStatus } from "@/hooks";
 import { useTelegram } from "@/providers/TelegramProvider";
 import { toast } from "@/components/toast";
 import { CheckIcon } from "@/components/icons";
-import { topicConfig } from "@/lib/topic.config";
 
 export function SettingsPageContent() {
   const { token, authMode, logout, setPreferredLanguage } = useAuthContext();
@@ -49,13 +45,7 @@ export function SettingsPageContent() {
     return () => window.clearTimeout(timeoutId);
   }, [copied]);
 
-  const referralLink = useMemo(() => {
-    if (profileQuery.data?.referralLink) return profileQuery.data.referralLink;
-    if (!profileQuery.data?.refCode) return null;
-    if (topicConfig.telegramBotUsername) return `https://t.me/${topicConfig.telegramBotUsername}?start=ref_${encodeURIComponent(profileQuery.data.refCode)}`;
-    if (typeof window === "undefined") return null;
-    return `${window.location.origin}/?ref=${encodeURIComponent(profileQuery.data.refCode)}`;
-  }, [profileQuery.data?.refCode, profileQuery.data?.referralLink]);
+  const referralLink = useReferralLink(profileQuery.data);
 
   const runReset = async () => {
     setError(null);
@@ -140,26 +130,8 @@ export function SettingsPageContent() {
 
   const shareReferralLink = async () => {
     if (!referralLink) return;
-
     const shareMessage = `${t("settings_referral_share_text", { appName: topicConfig.appName })}\n\n${referralLink}`;
-    const telegramShareUrl = `https://t.me/share/url?text=${encodeURIComponent(shareMessage)}`;
-    const telegramWebApp = typeof window !== "undefined" ? (window as { Telegram?: { WebApp?: { openTelegramLink?: (url: string) => void } } }).Telegram?.WebApp : undefined;
-
-    try {
-      if (telegramWebApp?.openTelegramLink) {
-        telegramWebApp.openTelegramLink(telegramShareUrl);
-        return;
-      }
-
-      if (navigator.share) {
-        await navigator.share({ title: t("settings_referral_title"), text: shareMessage });
-        return;
-      }
-    } catch {
-      return;
-    }
-
-    window.open(telegramShareUrl, "_blank", "noopener,noreferrer");
+    await shareViaTelegram(shareMessage);
   };
 
   return (

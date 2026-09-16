@@ -2,12 +2,11 @@
 
 import { useCallback, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/apiClient";
-import { queryKeys } from "@/lib/queryKeys";
 import { toast } from "@/components/toast";
-import type { AdminGameplayConfigSchemaResponse, AdminQuizConfigResponse, AdminUserStatsDetailsResponse, AdminUsersStatsResponse } from "@/lib/types";
+import { queryKeys, apiClient } from "@/lib";
+import type { AdminGameplayConfigSchemaResponse, AdminQuizConfigResponse, AdminUserStatsDetailsResponse, AdminUsersStatsResponse } from "@/lib";
 import { useI18n } from "@/components/I18nProvider";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useNetworkStatus } from "@/hooks";
 
 function toErrorMessage(cause: unknown, fallback: string): string {
   if (cause instanceof Error) return cause.message;
