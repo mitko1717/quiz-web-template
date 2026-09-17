@@ -203,6 +203,7 @@ export function QuizPlayground() {
 
     const previousDifficulty = (difficulty - 1) as DifficultyLevel;
     if (
+      !answerResult.correct &&
       difficultySuggestion === AdaptiveDifficultySuggestion.MOVE_DOWN &&
       previousDifficulty >= 1 &&
       !downNotifiedLevelsRef.current.has(difficulty)
