@@ -218,7 +218,9 @@ export const uk: Record<keyof typeof en, string> = {
   share_button: "Поділитися",
   share_hook_achievement: "🏆 Розблокував(-ла) досягнення «{achievement}» у {appName}! Спробуй сам: {link}",
   share_hook_level: "🎯 Я вже на рівні {level} у {appName}! Наздоженеш? {link}",
-  share_hook_streak: "🔥 {streak} правильних поспіль у {appName}! Побий мій рекорд: {link}",
+  share_hook_streak: "🔥 {streak} правильних поспіль на рівні {level} у {appName}! Побий мій рекорд: {link}",
+  share_streak_modal_title: "🔥 Стрік!",
+  share_streak_modal_desc: "{streak} правильних поспіль на рівні {level}!",
   share_hook_daily_perfect: "✅ Ідеальний результат {total}/{total} у щоденному челенджі {appName}! Зможеш повторити? {link}",
 
   global_stats_label: 'Загальна статистика',

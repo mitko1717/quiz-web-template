@@ -230,11 +230,18 @@ export function QuizPlayground() {
 
   const handleShareStreak = useCallback(async () => {
     if (!referralLink || shareStreakCount === null) return;
-    const text = t('share_hook_streak', { streak: shareStreakCount, appName: topicConfig.appName, link: referralLink });
+    const text = t('share_hook_streak', { streak: shareStreakCount, level: difficulty, appName: topicConfig.appName, link: referralLink });
     await shareViaTelegram(text);
-  }, [referralLink, shareStreakCount, t]);
+  }, [difficulty, referralLink, shareStreakCount, t]);
 
   const shouldShowSuggestionModal = suggestedDifficulty !== null;
+
+  const streakModalNextLevel = ((): DifficultyLevel | null => {
+    if (shareStreakCount === null || difficulty >= 5) return null;
+    const nextDifficulty = (difficulty + 1) as DifficultyLevel;
+    const isUnlocked = stats?.progression.levels.find((lvl) => lvl.difficultyLevel === nextDifficulty)?.unlocked ?? false;
+    return isUnlocked ? nextDifficulty : null;
+  })();
 
   return (
     <section className="w-full space-y-2.5 sm:space-y-3">
@@ -309,8 +316,8 @@ export function QuizPlayground() {
         isOpen={shareStreakCount !== null}
         onClose={closeShareStreakModal}
         closeLabel={t("common_dismiss")}
-        title={t("difficulty_label")}
-        description={shareStreakCount !== null ? t("question_suggestion_up") : ""}
+        title={t("share_streak_modal_title")}
+        description={shareStreakCount !== null ? t("share_streak_modal_desc", { streak: shareStreakCount, level: difficulty }) : ""}
         footer={
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-center">
             <Button
@@ -322,9 +329,23 @@ export function QuizPlayground() {
             >
               {t("common_dismiss")}
             </Button>
+            {streakModalNextLevel !== null ? (
+              <Button
+                type="button"
+                variant="suggestionAccent"
+                size="sm"
+                onClick={() => {
+                  handleDifficultyChange(streakModalNextLevel);
+                  closeShareStreakModal();
+                }}
+                className="w-full rounded-lg uppercase tracking-[0.1em] sm:w-auto"
+              >
+                {t("question_suggestion_try_level", { level: streakModalNextLevel })}
+              </Button>
+            ) : null}
             <Button
               type="button"
-              variant="suggestionAccent"
+              variant="ghost"
               size="sm"
               onClick={() => void handleShareStreak()}
               disabled={!referralLink}

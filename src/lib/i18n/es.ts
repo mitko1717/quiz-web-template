@@ -218,7 +218,9 @@ export const es: Record<keyof typeof en, string> = {
   share_button: "Compartir",
   share_hook_achievement: "🏆 ¡Desbloqueé '{achievement}' en {appName}! Pruébalo tú mismo: {link}",
   share_hook_level: "🎯 ¡Ya estoy en el nivel {level} en {appName}! ¿Puedes alcanzarme? {link}",
-  share_hook_streak: "🔥 ¡{streak} respuestas correctas seguidas en {appName}! Supera mi récord: {link}",
+  share_hook_streak: "🔥 ¡{streak} respuestas correctas seguidas en el nivel {level} en {appName}! Supera mi récord: {link}",
+  share_streak_modal_title: "🔥 ¡Racha!",
+  share_streak_modal_desc: "¡{streak} respuestas correctas seguidas en el nivel {level}!",
   share_hook_daily_perfect: "✅ ¡Perfecto {total}/{total} en el reto de hoy de {appName}! ¿Puedes igualarlo? {link}",
 
   global_stats_label: 'Estadísticas globales',
