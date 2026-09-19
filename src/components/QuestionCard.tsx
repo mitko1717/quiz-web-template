@@ -88,10 +88,10 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
   return (
     <div className="flex items-center gap-1">
       <span
-        className="inline-flex h-8 items-center rounded-full border border-accent-greenDim/50 bg-accent-green/10 px-1.5 text-[10px] font-medium uppercase tracking-[0.06em] text-accent-green"
+        className="inline-flex min-h-8 flex-col items-center justify-center gap-0 rounded-full border border-accent-greenDim/50 bg-accent-green/10 px-1.5 py-1 text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-accent-green"
         title={t('question_scope_chip_label', { scope: scopeLabel })}
       >
-        {scopeLabel}
+        {scopeLabel.split(' ').map((word, i) => <span key={`${word}-${i}`}>{word}</span>)}
       </span>
       <Button
         type="button"
@@ -103,7 +103,7 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
         onClick={onOpen}
         className="flex h-8 w-8 items-center justify-center rounded-full border-accent-greenDim/60 p-0 text-sm text-accent-green sm:h-10 sm:w-10"
       >
-        <ModeIcon />
+        <ModeIcon className="h-5 w-5" />
       </Button>
     </div>
   );
