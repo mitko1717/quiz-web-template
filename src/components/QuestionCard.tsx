@@ -82,16 +82,35 @@ function HintTrigger({ disabled, pending, hasResult, onOpen }: HintTriggerProps)
   );
 }
 
+function splitScopeLabel(label: string): string[] {
+  const words = label.split(' ').filter(Boolean);
+  const lines: string[] = [];
+  let carry = '';
+  for (const w of words) {
+    if (w.length <= 2) {
+      carry = carry ? `${carry} ${w}` : w;
+      continue;
+    }
+    lines.push(carry ? `${carry} ${w}` : w);
+    carry = '';
+  }
+  if (carry) {
+    if (lines.length) lines[lines.length - 1] += ` ${carry}`;
+    else lines.push(carry);
+  }
+  return lines;
+}
+
 function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
   const { t } = useI18n();
 
   return (
     <div className="flex items-center gap-1">
       <span
-        className="inline-flex min-h-8 flex-col items-center justify-center gap-0 rounded-full border border-accent-greenDim/50 bg-accent-green/10 px-2 py-1 text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-accent-green"
+        className="inline-flex min-h-8 shrink-0 flex-col items-center justify-center gap-0 rounded-full text-center border border-accent-greenDim/50 bg-accent-green/10 px-2 py-1 text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-accent-green"
         title={t('question_scope_chip_label', { scope: scopeLabel })}
       >
-        {scopeLabel.split(' ').map((word, i) => <span key={`${word}-${i}`}>{word}</span>)}
+        {splitScopeLabel(scopeLabel).map((line, i) => <span key={`${line}-${i}`} className="whitespace-nowrap">{line}</span>)}
       </span>
       <Button
         type="button"
