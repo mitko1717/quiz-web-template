@@ -73,7 +73,7 @@ function HintTrigger({ disabled, pending, hasResult, onOpen }: HintTriggerProps)
       disabled={disabled}
       onClick={onOpen}
       className={[
-        "flex h-8 w-8 items-center justify-center rounded-full p-0 text-lg sm:h-10 sm:w-10",
+        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full !p-0 text-lg sm:h-11 sm:w-11",
         hasResult ? "border-pastel-amber/70 bg-pastel-amber/15 text-pastel-amber" : "border-pastel-amber/45 text-pastel-amber"
       ].join(" ")}
     >
@@ -88,7 +88,7 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
   return (
     <div className="flex items-center gap-1">
       <span
-        className="inline-flex min-h-8 flex-col items-center justify-center gap-0 rounded-full border border-accent-greenDim/50 bg-accent-green/10 px-2 py-1 text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-accent-green"
+        className="inline-flex min-h-10 flex-col items-center justify-center gap-0 rounded-full border border-accent-greenDim/50 bg-accent-green/10 px-2 py-1 text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-accent-green"
         title={t('question_scope_chip_label', { scope: scopeLabel })}
       >
         {scopeLabel.split(' ').map((word, i) => <span key={`${word}-${i}`}>{word}</span>)}
@@ -101,9 +101,9 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
         title={t('question_mode_open')}
         disabled={disabled}
         onClick={onOpen}
-        className="flex h-10 w-10 items-center justify-center rounded-full border-accent-greenDim/60 p-0 text-sm text-accent-green sm:h-11 sm:w-11"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-accent-greenDim/60 !p-0 text-sm text-accent-green sm:h-11 sm:w-11"
       >
-        <ModeIcon className="!h-5 !w-5 sm:h-6 sm:w-6" />
+        <ModeIcon className="!h-6 !w-6 shrink-0 sm:!h-7 sm:!w-7" />
       </Button>
     </div>
   );
