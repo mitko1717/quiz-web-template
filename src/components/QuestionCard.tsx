@@ -73,7 +73,7 @@ function HintTrigger({ disabled, pending, hasResult, onOpen }: HintTriggerProps)
       disabled={disabled}
       onClick={onOpen}
       className={[
-        "flex h-10 w-10 items-center justify-center rounded-full p-0 text-lg",
+        "flex h-8 w-8 items-center justify-center rounded-full p-0 text-lg sm:h-10 sm:w-10",
         hasResult ? "border-pastel-amber/70 bg-pastel-amber/15 text-pastel-amber" : "border-pastel-amber/45 text-pastel-amber"
       ].join(" ")}
     >
@@ -86,9 +86,9 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
   const { t } = useI18n();
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1">
       <span
-        className="inline-flex h-8 items-center rounded-full border border-accent-greenDim/50 bg-accent-green/10 px-2.5 text-[11px] font-medium uppercase tracking-[0.08em] text-accent-green"
+        className="inline-flex h-8 items-center rounded-full border border-accent-greenDim/50 bg-accent-green/10 px-1.5 text-[10px] font-medium uppercase tracking-[0.06em] text-accent-green"
         title={t('question_scope_chip_label', { scope: scopeLabel })}
       >
         {scopeLabel}
@@ -101,7 +101,7 @@ function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
         title={t('question_mode_open')}
         disabled={disabled}
         onClick={onOpen}
-        className="flex h-10 w-10 items-center justify-center rounded-full border-accent-greenDim/60 p-0 text-sm text-accent-green"
+        className="flex h-8 w-8 items-center justify-center rounded-full border-accent-greenDim/60 p-0 text-sm text-accent-green sm:h-10 sm:w-10"
       >
         <ModeIcon />
       </Button>
@@ -159,7 +159,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   }
 
   return (
-    <div className="mb-2.5 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-1.5 sm:mb-4 sm:gap-2">
+    <div className="mb-2.5 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-1 sm:mb-4 sm:gap-2">
       <div className="min-w-0">
         <h2 className="break-words text-lg font-semibold leading-snug text-ink-100 sm:mt-1 sm:text-2xl">
           {prompt}
