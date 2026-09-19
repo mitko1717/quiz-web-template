@@ -20,9 +20,7 @@ import type {
   UserDetailPanelProps,
   UserListPanelProps
 } from "./types/AdminPanel.types";
-import { topicConfig, formatPercent, type AdminQuizConfigResponse, type DifficultyLevel } from "@/lib";
-
-const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
+import { topicConfig, formatPercent, type AdminQuizConfigResponse, type DifficultyLevel, LEVELS } from "@/lib";
 
 function Surface({ children, title, subtitle, action }: SurfaceProps) {
   return (

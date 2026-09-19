@@ -8,7 +8,7 @@ export function DashboardHeader({ dailyStreak, totalInsightPoints = null, onLang
   const { t } = useI18n();
 
   return (
-      <header className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-base-600 bg-base-800 px-3 py-2 sm:px-4">
+      <header className="w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-base-600 bg-base-800 px-3 py-1.5 sm:px-4">
         <div className="flex min-w-0 items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">

@@ -3,9 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/button";
 import type { DifficultyLevel, DifficultyProgressionResponse } from "@/lib";
+import { LEVELS } from "@/lib";
 import { useI18n } from "@/components/I18nProvider";
-
-const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
 
 interface DifficultySelectorProps {
   value: DifficultyLevel;
@@ -128,7 +127,7 @@ export function DifficultySelector({ value, onChange, progression, disabled = fa
                   onClick={() => onChange(level)}
                   disabled={buttonDisabled}
                   className={[
-                    "relative min-h-10 overflow-hidden px-2 py-1.5",
+                    "relative min-h-9 overflow-hidden px-2 py-1",
                     isSlider
                       ? compactLocale
                         ? "w-[min(58vw,172px)] shrink-0 snap-start lg:w-auto lg:max-w-none lg:shrink lg:snap-none"
@@ -153,7 +152,7 @@ export function DifficultySelector({ value, onChange, progression, disabled = fa
                   </div>
                   {!unlocked && required > 0 ? (
                     <div className="relative z-[1]">
-                      <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 text-xs sm:text-sm">
+                      <div className="mt-1 flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 text-xs sm:text-sm">
                         <span className={showProgressPulse ? "difficulty-progress-count-pop font-bold text-pastel-amber" : "font-bold text-pastel-amber"}>
                           {t("difficulty_left_to_unlock", { count: leftToUnlock })}
                         </span>

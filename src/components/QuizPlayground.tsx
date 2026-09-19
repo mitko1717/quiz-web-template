@@ -12,7 +12,7 @@ import { useReferralLink } from "@/hooks/useReferralLink";
 import { shareViaTelegram } from "@/lib/share";
 import { DashboardHeader } from "./DashboardHeader";
 import { useI18n } from "@/components/I18nProvider";
-import { AdaptiveDifficultySuggestion, type DifficultyLevel } from "@/lib/types";
+import { AdaptiveDifficultySuggestion, LEVELS, type DifficultyLevel } from "@/lib/types";
 import { topicConfig } from "@/lib/topic.config";
 import { MoreGamesSection } from "./MoreGamesSection";
 
@@ -31,8 +31,6 @@ function getRequiredStreak(difficulty: DifficultyLevel, timesShownThisLevel: num
   const tableIndex = Math.min(timesShownThisLevel, HIGHER_LEVEL_SUGGESTION_STREAK_TABLES.length - 1);
   return HIGHER_LEVEL_SUGGESTION_STREAK_TABLES[tableIndex][difficulty];
 }
-
-const ALL_LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
 
 type SuggestionKind = "up" | "down";
 
@@ -135,7 +133,7 @@ export function QuizPlayground() {
     previousUnlockedMapRef.current = currentMap;
     if (!previousMap) return; // first snapshot — nothing to diff against yet, avoids a false-positive on load
 
-    for (const level of ALL_LEVELS) {
+    for (const level of LEVELS) {
       const wasUnlocked = previousMap.get(level) ?? false;
       const isUnlocked = currentMap.get(level) ?? false;
       if (!wasUnlocked && isUnlocked && !unlockNotifiedLevelsRef.current.has(level)) {

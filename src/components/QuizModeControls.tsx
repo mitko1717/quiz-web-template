@@ -46,7 +46,7 @@ export function QuizModeControls(props: QuizModeControlsProps) {
             size="md"
             disabled={disabled}
             onClick={() => onInputModeChange(QuizInputMode.FREE_TEXT)}
-            className="min-h-11 rounded-lg px-2.5 py-2 text-sm"
+            className="min-h-10 rounded-lg px-.5 py-1 text-sm"
           >
             {t("question_input_mode_free_text")}
           </Button>

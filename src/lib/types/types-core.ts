@@ -1,4 +1,5 @@
 export type DifficultyLevel = 1 | 2 | 3 | 4 | 5;
+export const LEVELS: DifficultyLevel[] = [1, 2, 3, 4, 5];
 
 export enum QuizInputMode {
   MULTIPLE_CHOICE = 'multiple_choice',
