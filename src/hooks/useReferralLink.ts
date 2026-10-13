@@ -2,10 +2,11 @@
 
 import { useMemo } from "react";
 import { topicConfig, type ProfileResponse } from "@/lib";
+import { isSafeExternalLink } from "@/lib/url-safety";
 
 export function useReferralLink(profileData: ProfileResponse | undefined): string | null {
   return useMemo(() => {
-    if (profileData?.referralLink) return profileData.referralLink;
+    if (isSafeExternalLink(profileData?.referralLink)) return profileData.referralLink;
     if (!profileData?.refCode) return null;
     if (topicConfig.telegramBotUsername) return `https://t.me/${topicConfig.telegramBotUsername}?start=ref_${encodeURIComponent(profileData.refCode)}`;
     if (typeof window === "undefined") return null;

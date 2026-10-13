@@ -3,6 +3,7 @@
 import { CardSection } from "@/components/types/CardSection";
 import { useI18n } from "@/components/I18nProvider";
 import { useOtherGamesQuery } from "@/hooks";
+import { isSafeExternalLink, isSafeImageUrl } from "@/lib/url-safety";
 
 export function MoreGamesSection({ token }: { token?: string }) {
   const { t } = useI18n();
@@ -15,15 +16,15 @@ export function MoreGamesSection({ token }: { token?: string }) {
     <CardSection>
       <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-500">{t("more_games_title")}</p>
       <div className="mt-3 space-y-2">
-        {games.map((game) => (
+        {games.filter((game): game is typeof game & { tgBotLink: string } => isSafeExternalLink(game.tgBotLink)).map((game) => (
           <a
             key={game.slug}
-            href={game.tgBotLink ?? "#"}
+            href={game.tgBotLink}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-xl border border-base-600 bg-base-700/30 p-2.5 transition hover:bg-base-700/50"
           >
-            {game.logo ? (
+            {isSafeImageUrl(game.logo) ? (
               <img src={game.logo} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
             ) : (
               <div className="h-10 w-10 shrink-0 rounded-lg bg-base-600" aria-hidden="true" />
