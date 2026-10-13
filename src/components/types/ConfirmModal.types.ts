@@ -9,5 +9,6 @@ export interface ConfirmModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   confirmDisabled?: boolean;
+  tone?: "default" | "danger";
   children?: ReactNode;
 }

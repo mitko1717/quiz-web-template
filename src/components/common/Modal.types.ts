@@ -10,4 +10,5 @@ export interface ModalProps {
   children?: ReactNode;
   footer?: ReactNode;
   maxWidthClassName?: string;
+  centered?: boolean;
 }

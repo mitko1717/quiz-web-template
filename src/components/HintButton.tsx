@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/button";
+import { LightbulbIcon } from "@/components/icons";
 import { useI18n } from "@/components/I18nProvider";
-import type { DifficultyLevel, ProgressResponse } from "@/lib";
+import type { ProgressResponse } from "@/lib";
 
 type HintButtonProps = {
   hintCost: number;
@@ -49,23 +49,24 @@ export function HintButton({ hintCost, hasUsedHintThisQuestion, progress, totalI
   const useLabel = pending ? t("question_hint_using") : hasUsedHintThisQuestion ? t("question_hint_use_another") : t("question_hint_use");
 
   return (
-    <div className="min-w-0 rounded-xl border border-pastel-amber/35 bg-pastel-amber/10 p-3 text-sm text-ink-200">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
+    <div className="min-w-0 rounded-2xl bg-pastel-amber/10 p-3 text-sm ring-1 ring-inset ring-pastel-amber/25">
+      <div className="flex items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pastel-amber/15 text-pastel-amber shadow-[0_0_16px_color-mix(in_srgb,var(--color-pastel-amber)_25%,transparent)]">
+          <LightbulbIcon className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
           <p className="font-semibold text-pastel-amber">{t("question_hint_title")}</p>
-          <p className="mt-1 text-xs text-ink-300">{costLabel}</p>
+          <p className="mt-0.5 text-xs text-ink-300">{costLabel}</p>
         </div>
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          className="w-full border-pastel-amber/60 text-pastel-amber hover:border-pastel-amber hover:text-pastel-amber sm:w-auto"
-          onClick={() => void onUseHint()}
-          disabled={buttonDisabled}
-        >
-          {useLabel}
-        </Button>
       </div>
+      <button
+        type="button"
+        onClick={() => void onUseHint()}
+        disabled={buttonDisabled}
+        className="mt-3 w-full rounded-xl bg-pastel-amber px-3 py-2.5 text-sm font-semibold text-base-900 shadow-[0_0_16px_color-mix(in_srgb,var(--color-pastel-amber)_30%,transparent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-pastel-amber/35 disabled:shadow-none disabled:brightness-100"
+      >
+        {useLabel}
+      </button>
     </div>
   );
 }

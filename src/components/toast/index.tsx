@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { CheckIcon, XIcon } from "@/components/icons";
 import type { ToastEntry, ToastItemProps, ToastType } from "./toast.types";
 
 export type { ToastType } from "./toast.types";
@@ -15,9 +16,15 @@ toast.success = (message: string) => toast(message, "success");
 toast.error = (message: string) => toast(message, "error");
 
 const TONE: Record<ToastType, string> = {
-  success: "border-pastel-mint/40 bg-pastel-mint/10 text-pastel-mint",
-  error: "border-pastel-coral/40 bg-pastel-coral/10 text-pastel-coral",
-  info: "border-base-600 bg-base-700/60 text-ink-200",
+  success: "ring-pastel-mint/40",
+  error: "ring-pastel-coral/40",
+  info: "ring-base-600/50",
+};
+
+const ICON_TONE: Record<ToastType, string> = {
+  success: "bg-pastel-mint text-base-900",
+  error: "bg-pastel-coral text-base-900",
+  info: "bg-accent-green/20 text-accent-green",
 };
 
 function ToastItem({ entry, onRemove }: ToastItemProps) {
@@ -27,8 +34,14 @@ function ToastItem({ entry, onRemove }: ToastItemProps) {
   }, [onRemove]);
 
   return (
-    <div className={["rounded-xl border px-4 py-3 text-sm shadow-lg transition-all", TONE[entry.type]].join(" ")} role="status">
-      {entry.message}
+    <div
+      className={["flex items-center gap-2.5 rounded-2xl bg-base-800/95 px-3.5 py-3 text-sm text-ink-100 shadow-lg ring-1 ring-inset backdrop-blur-md transition-all", TONE[entry.type]].join(" ")}
+      role="status"
+    >
+      <span className={["flex h-5 w-5 shrink-0 items-center justify-center rounded-full", ICON_TONE[entry.type]].join(" ")}>
+        {entry.type === "success" ? <CheckIcon className="h-3 w-3" /> : entry.type === "error" ? <XIcon className="h-3 w-3" /> : <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+      </span>
+      <span className="min-w-0">{entry.message}</span>
     </div>
   );
 }

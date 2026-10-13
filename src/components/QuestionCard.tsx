@@ -265,7 +265,7 @@ function HintNotice({ hintResult }: HintNoticeProps) {
   const costText = hintResult.usedFreeHint ? t('question_hint_free_used') : t('question_hint_points_spent', { points: hintResult.insightPointsSpent });
 
   return (
-    <div className="mt-4 rounded-xl border border-pastel-amber/45 bg-pastel-amber/10 p-3 text-sm text-ink-200">
+    <div className="mt-3 rounded-xl bg-pastel-amber/10 p-3 text-sm text-ink-300 ring-1 ring-inset ring-pastel-amber/30">
       <p className="font-semibold text-pastel-amber">
         {hintResult.type === HintType.REMOVE_OPTION ? t('question_hint_removed_option') : t('question_hint_text_clue')}
       </p>
@@ -354,7 +354,7 @@ function ModeModal({
 
 function ErrorNotice({ error }: ErrorNoticeProps) {
   return (
-    <div className="mt-3 rounded-xl border border-pastel-coral/50 bg-pastel-coral/10 p-2.5 text-sm text-pastel-coral sm:mt-5 sm:p-3">
+    <div className="mt-3 rounded-xl bg-pastel-coral/10 p-2.5 text-sm text-pastel-coral ring-1 ring-inset ring-pastel-coral/30 sm:p-3">
       {error}
     </div>
   );

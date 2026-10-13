@@ -258,6 +258,7 @@ export function SettingsPageContent() {
         onConfirm={handleConfirm}
         onCancel={handleCancelConfirm}
         confirmDisabled={submitting}
+        tone="danger"
       />
 
       <Modal

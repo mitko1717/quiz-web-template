@@ -11,7 +11,7 @@ export function LoadingSpinner({ size = "md", className = "" }: LoadingSpinnerPr
   return (
     <span
       aria-hidden="true"
-      className={["inline-block animate-spin rounded-full border-base-500 border-t-accent-green", sizeClass, className].join(" ")}
+      className={["inline-block animate-spin rounded-full border-base-600 border-t-accent-green", sizeClass, className].join(" ")}
     />
   );
 }

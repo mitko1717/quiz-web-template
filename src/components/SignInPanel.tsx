@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { useAuthContext } from "@/components/AuthGate";
 import { Button } from "@/components/button";
-import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
+import { BodyText } from "@/components/common/SectionLabel";
+import { UserIcon } from "@/components/icons";
 import { useI18n } from "@/components/I18nProvider";
 import { useTelegram } from "@/providers/TelegramProvider";
 
@@ -172,11 +173,15 @@ export function SignInPanel() {
 
   if (isTelegram) {
     return (
-      <section className="w-full rounded-2xl border border-base-600 bg-base-800 p-4 sm:p-5">
-        <SectionLabel>{t("auth_signin_section_label")}</SectionLabel>
-        <h2 className="mt-2 text-lg font-semibold text-ink-100">{t("auth_signin_section_title")}</h2>
+      <section className="w-full rounded-2xl bg-base-800/60 p-3 ring-1 ring-inset ring-base-600/40 sm:p-4">
+<div className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent-green/15 text-accent-green">
+            <UserIcon className="h-4 w-4" />
+          </span>
+          <h2 className="min-w-0 flex-1 text-base font-semibold text-ink-100">{t("auth_signin_section_title")}</h2>
+        </div>
         <BodyText>{t("auth_telegram_identity_active")}</BodyText>
-        <p className="mt-3 rounded-lg border border-base-600 bg-base-700/45 px-3 py-2 text-sm text-ink-200">
+        <p className="mt-3 rounded-xl bg-base-700/40 px-3 py-2 text-sm text-ink-300">
           {t("auth_current_state")}: <span className="font-semibold text-ink-100">{authStateLabel}</span>
         </p>
         <p className="mt-3 text-sm text-ink-300">{t("auth_telegram_external_hidden")}</p>
@@ -185,7 +190,7 @@ export function SignInPanel() {
   }
 
   return (
-    <section className="w-full rounded-2xl border border-base-600 bg-base-800 p-4 sm:p-5">
+    <section className="w-full rounded-2xl bg-base-800/60 p-3 ring-1 ring-inset ring-base-600/40 sm:p-4">
       <Script
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
@@ -199,11 +204,15 @@ export function SignInPanel() {
         onError={() => setAppleScriptError(true)}
       />
 
-      <SectionLabel>{t("auth_signin_section_label")}</SectionLabel>
-      <h2 className="mt-2 text-lg font-semibold text-ink-100">{t("auth_signin_section_title")}</h2>
+<div className="flex items-center gap-2.5">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent-green/15 text-accent-green">
+          <UserIcon className="h-4 w-4" />
+        </span>
+        <h2 className="min-w-0 flex-1 text-base font-semibold text-ink-100">{t("auth_signin_section_title")}</h2>
+      </div>
       <BodyText>{t("auth_signin_section_desc")}</BodyText>
 
-      <p className="mt-3 rounded-lg border border-base-600 bg-base-700/45 px-3 py-2 text-sm text-ink-200">
+      <p className="mt-3 rounded-xl bg-base-700/40 px-3 py-2 text-sm text-ink-300">
         {t("auth_current_state")}: <span className="font-semibold text-ink-100">{authStateLabel}</span>
       </p>
 
@@ -236,7 +245,7 @@ export function SignInPanel() {
         <p className="mt-3 text-sm text-ink-300">{t("auth_already_linked")}</p>
       )}
 
-      {providerError ? <pre className="edge-safe-scroll mt-3 overflow-x-auto rounded-lg border border-pastel-coral/40 bg-pastel-coral/10 p-3 text-xs text-pastel-coral">{providerError}</pre> : null}
+      {providerError ? <pre className="edge-safe-scroll mt-3 overflow-x-auto rounded-lg bg-pastel-coral/10 p-3 text-xs text-pastel-coral ring-1 ring-inset ring-pastel-coral/30">{providerError}</pre> : null}
       {linkingProvider === "google" ? <p className="mt-3 text-sm text-ink-300">{t("auth_google_linking")}</p> : null}
     </section>
   );

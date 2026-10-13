@@ -13,6 +13,7 @@ export function ConfirmModal({
   onConfirm,
   onCancel,
   confirmDisabled = false,
+  tone = "default",
   children,
 }: ConfirmModalProps) {
   return (
@@ -23,11 +24,11 @@ export function ConfirmModal({
       title={title}
       description={description}
       footer={
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-center">
-          <Button variant="ghost" onClick={onCancel} className="w-full sm:w-auto">
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="ghost" onClick={onCancel} className="w-full">
             {cancelLabel}
           </Button>
-          <Button variant="secondary" onClick={onConfirm} disabled={confirmDisabled} className="w-full sm:w-auto">
+          <Button variant={tone === "danger" ? "danger" : "primary"} onClick={onConfirm} disabled={confirmDisabled} className="w-full">
             {confirmLabel}
           </Button>
         </div>
