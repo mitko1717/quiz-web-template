@@ -21,22 +21,23 @@ type AdsgramBannerProps = {
   placement: string;
 };
 
-const MIN_INTERVAL_MS = 2 * 60 * 1000;
+const MIN_INTERVAL_MS = 5 * 60 * 1000;
+const LAST_SHOWN_AT_KEY = "adsgram_last_shown_at";
 
-// Each placement (home, daily challenge, hint popup) throttles itself independently,
-// at least 2 minutes apart — so visiting one place doesn't block ads on another.
-function canShowNow(placementKey: string): boolean {
+// One shared timer across every placement (home, daily challenge, hint popup) —
+// showing an ad anywhere starts a 5-minute cooldown for all of them.
+function canShowNow(): boolean {
   try {
-    const lastShownAt = Number(sessionStorage.getItem(`adsgram_last_shown_${placementKey}`) ?? "0");
+    const lastShownAt = Number(sessionStorage.getItem(LAST_SHOWN_AT_KEY) ?? "0");
     return Date.now() - lastShownAt >= MIN_INTERVAL_MS;
   } catch {
     return true;
   }
 }
 
-function markShown(placementKey: string): void {
+function markShown(): void {
   try {
-    sessionStorage.setItem(`adsgram_last_shown_${placementKey}`, String(Date.now()));
+    sessionStorage.setItem(LAST_SHOWN_AT_KEY, String(Date.now()));
   } catch {
     // sessionStorage unavailable — skip throttling, better than crashing.
   }
@@ -50,13 +51,13 @@ export function AdsgramBanner({ blockId, className = "", label = "", onReward, p
 
   useEffect(() => {
     if (!resolvedBlockId || !sdkReady || sdkFailed || shownRef.current) return;
-    if (!canShowNow(placement)) return;
+    if (!canShowNow()) return;
     if (!window.Adsgram) {
       setSdkFailed(true);
       return;
     }
     shownRef.current = true;
-    markShown(placement);
+    markShown();
     try {
       const controller = window.Adsgram.init({ blockId: resolvedBlockId });
       controller
