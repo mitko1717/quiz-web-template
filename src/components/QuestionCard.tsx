@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/button";
 import { HintButton } from "@/components/HintButton";
+import { AdsgramBanner } from "@/components/AdsgramBanner";
 import { ModeIcon } from "@/components/icons";
 import { Input } from "@/components/common/input";
 import { Modal } from "@/components/common/Modal";
@@ -327,6 +328,7 @@ function HintModal({ isOpen, onClose, hintCost, totalInsightPoints, currentProgr
           totalInsightPoints={totalInsightPoints}
         />
         <HintNotice hintResult={hintResult} />
+        {isOpen ? <AdsgramBanner placement="hint-popup" /> : null}
       </div>
     </Modal>
   );

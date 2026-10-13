@@ -3,7 +3,6 @@
 import { Button } from "@/components/button";
 import { useI18n } from "@/components/I18nProvider";
 import type { DifficultyLevel, ProgressResponse } from "@/lib";
-import { AdsgramBanner } from "@/components/AdsgramBanner";
 
 type HintButtonProps = {
   hintCost: number;
@@ -66,9 +65,6 @@ export function HintButton({ hintCost, hasUsedHintThisQuestion, progress, totalI
         >
           {useLabel}
         </Button>
-      </div>
-      <div className="mt-2">
-        <AdsgramBanner placement="hint-popup" />
       </div>
     </div>
   );
