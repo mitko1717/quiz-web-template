@@ -29,18 +29,6 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "no-store, no-cache, max-age=0, must-revalidate" },
           { key: "Pragma", value: "no-cache" },
           { key: "Expires", value: "0" },
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://accounts.google.com https://appleid.cdn-apple.com https://sad.adsgram.ai",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              `connect-src 'self' ${normalizeEnvUrl(process.env.NEXT_PUBLIC_API_BASE_URL)} https://accounts.google.com https://appleid.apple.com https://sad.adsgram.ai https://api.adsgram.ai`,
-              "frame-src https://accounts.google.com https://appleid.cdn-apple.com",
-              "frame-ancestors https://web.telegram.org https://*.telegram.org",
-            ].join("; "),
-          },
         ],
       },
     ];

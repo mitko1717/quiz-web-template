@@ -8,6 +8,8 @@ import { topicConfig } from "@/lib";
 import { I18nProvider } from "@/components/I18nProvider";
 import { AuthGate } from "@/components/AuthGate";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: topicConfig.appName,
   description: `${topicConfig.appName} quiz`,
