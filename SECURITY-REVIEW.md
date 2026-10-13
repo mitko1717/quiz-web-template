@@ -1,57 +1,56 @@
 # Frontend security review
 
-Reviewed on 2026-10-13. This review covers the frontend repository and the four
-clone paths configured in `scripts/clones.json`; it does not certify backend
-behavior or deployment-layer controls.
+Re-verified on 2026-10-13 against the previous frontend review. This covers
+repository source and the four clone paths configured in `scripts/clones.json`;
+it does not certify backend behavior or deployed headers.
 
 ## Checklist
 
+Changed statuses are marked **changed** in the table. All other rows retain
+their previous status.
+
 | # | Status | File:line | Comment |
 |---:|:---:|---|---|
-| 1 | ✅ | `src/lib/topic.config.ts:31-33`; `.gitignore:33-34`; `README.md:25` | Reviewed public environment configuration. `NEXT_PUBLIC_TELEGRAM_ADMIN_USER_IDS` contains user IDs, which are identifiers rather than credentials. No bot-token env key or exposed bot token was identified. `.env` and `.env.local` are ignored; `.env.example` is referenced by the README but absent in this checkout. |
-| 2 | ⚠️ | `scripts/clones.json:2-6`; `src/components/AuthGate.tsx:71-72` | Ran the requested keyword search over all refs in this repository and the four configured, accessible clones. No actual credential was confirmed and no `.env` paths appeared in available history. A keyword search cannot prove no differently named or obfuscated secret was committed; remote and archived refs were not inspected. Remove the prefilled `admin`/`admin` values and run secret scanning over all remote/archived refs; revoke and rotate any confirmed credential. |
-| 3 | ⚠️ | `src/hooks/useAuth.ts:8,24-26,167` | Access and refresh tokens are stored in `localStorage`, where injected scripts can read them. No explicit Mini App-specific rationale for this choice was found. Prefer an `HttpOnly`, `Secure`, appropriately `SameSite` refresh-token cookie and short-lived in-memory access tokens if the engine supports it; otherwise document the constraint and maintain strong XSS controls. |
-| 4 | ✅ | `src/app/admin/page.tsx:9-24`; `src/components/AuthGate.tsx:229-232`; `src/components/AdminPageContent.tsx:49-50` | The `/admin` UI is gated by auth mode and the profile-derived admin flag. This is UI gating only; actual authorization must be enforced by the engine, which is outside this repository's scope. |
-| 5 | ✅ | `src/components/QuestionCard.tsx:297`; `src/components/SignInPanel.tsx:96` | No `dangerouslySetInnerHTML` use was found. API-backed text is rendered as JSX text. The `innerHTML` use only clears the Google button container; it does not inject untrusted HTML. |
-| 6 | ✅ | `src/lib/i18n/index.ts:14-21`; `src/components/DailyChallengePageContent.tsx:134-140` | Translation interpolation returns strings rendered as React text nodes, which React escapes. No unsafe HTML interpolation was found. |
-| 7 | ⚠️ | `next.config.ts:24-34` | No CSP was found in repository source or deployment configuration. Add a restrictive CSP at the deployment boundary or in Next headers; account for required API, image, and script origins, including Adsgram and any third-party sign-in providers. |
-| 8 | ⚠️ | `src/components/SignInPanel.tsx:189-200`; `src/components/AdsgramBanner.tsx:77-82` | The inspected external `next/script` URLs are fixed HTTPS URLs for Google, Apple, and Adsgram, not user- or environment-controlled. The source pins host/path, not script contents or integrity hashes. No Telegram WebApp SDK script was identified in the inspected script references; confirm the deployed Telegram integration's script-loading mechanism. |
-| 9 | ✅ | `src/components/AdsgramBanner.tsx:46-63` | Adsgram's block ID comes from the optional prop or `NEXT_PUBLIC_ADSGRAM_BLOCK_ID`, not a URL parameter or user input. It is passed as an SDK option and does not alter the script URL. |
-| 10 | ⚠️ | `src/components/MoreGamesSection.tsx:18-27`; `src/hooks/useReferralLink.ts:8-12`; `src/lib/share.ts:2-18` | API-provided `game.tgBotLink` is rendered as an external anchor without URL validation (although `noopener noreferrer` is present). Validate links against an explicit HTTPS host allowlist before rendering. Referral links were observed as displayed/copied/shared rather than navigated; the share URL is built on fixed `https://t.me`. |
-| 11 | ✅ | `src/components/AuthGate.tsx:106-122`; `src/lib/api/auth.ts:24-35`; `src/hooks/useAuth.ts:140-153` | The client passes Telegram `initData` to the engine login endpoint and only persists tokens after that mutation succeeds. It does not treat mere init-data presence as authentication. Server-side signature and freshness validation must be verified in the engine audit. |
-| 12 | ⚠️ | `next.config.ts:24-34` | No `X-Frame-Options` or CSP `frame-ancestors` policy was found in this repository. Configure an anti-framing policy at the deployment boundary that is compatible with the actual Telegram Mini App embedding model; verify deployed headers. |
-| 13 | ❌ | `package.json:18`; `package-lock.json:14` | `npm audit` reported 15 vulnerabilities: 14 high and 1 critical (0 moderate, 0 low); `npm outdated` reported 11 outdated packages. The direct Next.js dependency is `16.3.0`; audit reported affected Next.js advisories, including critical RCE and high SSRF advisories. Update Next.js and the lockfile to a patched release, then rerun the audit and review remaining advisories individually. |
-| 14 | ✅ | `src/lib/topic.config.ts:4-6,18-24` | Required `NEXT_PUBLIC_TOPIC_SLUG` and `NEXT_PUBLIC_FIELD_DISPLAY_NAME` values throw when missing; import/build-time evaluation therefore fails loudly where this config module is loaded. Other topic settings have defaults. |
-| 15 | ⚠️ | `src/lib/http.ts:50-68`; `src/lib/api/quiz.ts:5-23`; `src/lib/api/daily-challenge.ts:4-16`; `src/lib/types/response.types.ts:5-8` | Login, quiz/hint, and daily-challenge responses are read by browser-side code. The login response includes access and refresh tokens as expected. Static types do not strip extra runtime fields. No live deployment or authorized test account was available to inspect actual Network-tab payloads. Inspect these flows against the engine and ensure responses contain only data required by the current user. |
+| 1 | ✅ unchanged | `src/lib/topic.config.ts:18-24,31-33`; `.gitignore:33-34` | Public configuration, including `NEXT_PUBLIC_TELEGRAM_ADMIN_USER_IDS`, contains identifiers/settings rather than credentials. No bot token was identified. `.env` and `.env.local` are ignored; `.env.example` is referenced by README but absent from this checkout. |
+| 2 | ⚠️ unchanged | `scripts/clones.json:2-6`; `src/components/AuthGate.tsx:71-72` | No credential was confirmed in tracked files or local history of this repo and the four accessible clones. Search coverage is not exhaustive of remote/archived refs or obfuscated secrets. The form still pre-fills `admin`/`admin`; remove these values and run a full secret scan over all refs. |
+| 3 | ✅ **changed from ⚠️** | `src/hooks/useAuth.ts:10-16,31,173-186` | The code now documents keeping tokens in `localStorage` as an accepted Mini App tradeoff, including the engine change that an HttpOnly cookie would require. The comment also cites CSP protection, but overstates it: `script-src` permits `'unsafe-inline'` (item 7). `localStorage` remains readable to any script that executes in the origin; this is an accepted, documented risk, not a claim that WebView or CSP prevents token theft. |
+| 4 | ✅ unchanged | `src/app/admin/page.tsx:8-24`; `src/components/AuthGate.tsx:229-240`; `src/components/AdminPageContent.tsx:49-50` | Admin UI is gated by auth mode/profile role. Actual authorization must still be enforced by the engine, which is outside this frontend review. |
+| 5 | ✅ unchanged | `src/components/SignInPanel.tsx:111`; `src/components/QuestionCard.tsx:297` | No `dangerouslySetInnerHTML` was found. `innerHTML` is used only to clear the Google button container; API text is rendered as React text. |
+| 6 | ✅ unchanged | `src/lib/i18n/index.ts:14-21`; `src/components/DailyChallengePageContent.tsx:134-140` | Interpolated translation strings render as React text, which is escaped. No unsafe HTML interpolation was found. |
+| 7 | ⚠️ unchanged | `next.config.ts:33-42` | A CSP header is now configured, but `script-src` includes `'unsafe-inline'`, weakening the XSS protection and invalidating the token-storage comment's claim of a restrictive script policy. `img-src https:` is also broad. Prefer nonce/hash-based scripts and narrow source lists; verify headers on the deployed host. |
+| 8 | ⚠️ **changed from ✅** | `src/components/SignInPanel.tsx:189-200`; `src/components/AdsgramBanner.tsx:77-82` | Google, Apple, and Adsgram scripts use fixed HTTPS URLs, not user/env-controlled URLs. Their source host/path is fixed, but contents are not integrity-pinned; no Telegram WebApp SDK script reference was found. Verify the deployed Telegram script-loading mechanism and assess the third-party script trust boundary. |
+| 9 | ✅ unchanged | `src/components/AdsgramBanner.tsx:46-63,77-82` | The block ID comes from the optional prop or `NEXT_PUBLIC_ADSGRAM_BLOCK_ID`; it does not come from a URL or user input and does not affect the fixed script URL. |
+| 10 | ✅ **changed from ⚠️** | `src/lib/url-safety.ts:1-23`; `src/components/MoreGamesSection.tsx:6,19-28`; `src/hooks/useReferralLink.ts:5,9-13` | Outbound links now require HTTPS and an exact/subdomain match to the Telegram host allowlist. More Games filters links before rendering; referral links are validated and fallbacks use fixed `t.me` or the current origin. |
+| 11 | ✅ unchanged | `src/components/AuthGate.tsx:106-122`; `src/lib/api/auth.ts:24-35`; `src/hooks/useAuth.ts:151-157` | Client sends Telegram `initData` to the engine and persists tokens only after login succeeds; mere presence is not treated as authentication. Server-side HMAC/freshness validation remains engine scope. |
+| 12 | ✅ **changed from ⚠️** | `next.config.ts:24-42` | The configured CSP includes `frame-ancestors https://web.telegram.org https://*.telegram.org` for `/:path*`. This closes the source-configuration gap. Verify deployed headers and that the allowed origins match the Telegram clients in use. |
+| 13 | ⚠️ **changed from ❌** | `package.json:17-18,29`; `package-lock.json:13-14,25` | Next.js is upgraded to `16.4.0`; audit fell from 15 findings (14 high, 1 critical) to **10 high, 0 critical** (**5 high, 0 critical** with `--omit=dev`). Findings are in `eslint-config-next` and `@telegram-apps/sdk-react` dependency branches, including vulnerable transitives, so they are not merely two direct-package advisories. `npm outdated` lists 10 packages. Update compatible dependency branches or document/track deferred upstream fixes; rerun the audit. |
+| 14 | ✅ unchanged | `src/lib/topic.config.ts:4-6,18-24` | Required topic slug and display name throw when missing; other settings have defaults. |
+| 15 | ⚠️ unchanged | `src/lib/http.ts:50-68`; `src/lib/api/auth.ts:12-50`; `src/lib/api/quiz.ts:5-23`; `src/lib/api/daily-challenge.ts:4-16`; `src/lib/types/response.types.ts:5-8` | Auth, quiz/hint, and daily-challenge JSON flows reach browser code; login tokens are expected. Types do not strip extra runtime fields. No live deployment or authorized account was available for Network-tab verification. Inspect actual engine responses and limit them to data needed by the current user. |
 
-## Highest-priority actions
+## Highest-priority follow-up
 
-1. **Patch Next.js:** Upgrade `next@16.3.0` and update the lockfile to a patched
-   release; rerun `npm audit` and address remaining high advisories.
-2. **Add a CSP:** Restrict scripts and connections to required origins, including
-   the configured API and the fixed Adsgram, Google, and Apple script hosts.
-3. **Add anti-framing controls:** Set `frame-ancestors` (and compatible
-   `X-Frame-Options`, if appropriate) in the deployed response headers, after
-   confirming Telegram's required embedding behavior.
-4. **Review token persistence:** Prefer an HttpOnly refresh cookie and
-   short-lived in-memory access token if supported; otherwise document why
-   `localStorage` is required for this Mini App and keep XSS controls strong.
-5. **Validate outbound game links:** Validate API-provided `tgBotLink` values
-   against an explicit HTTPS host allowlist before rendering navigable links.
+1. Tighten CSP by replacing `'unsafe-inline'` with nonce/hash-based script
+   authorization where feasible, and narrow broad source directives.
+2. Resolve or explicitly track the remaining **10 high** audit findings; the
+   current Next.js upgrade removed the critical finding but did not close all
+   high findings.
+3. Verify deployed CSP and `frame-ancestors` response headers from Telegram and
+   confirm that embedding works only from intended Telegram origins.
+4. Locate and verify the deployed Telegram WebApp SDK loader; review third-party
+   script integrity/trust for Google, Apple, and Adsgram.
+5. Inspect authorized login, hint, and daily-challenge Network responses for
+   excess user or internal data.
 
 ## Scope and limitations
 
-- The history search covered all refs in this repository and the four
-  clone paths configured in `scripts/clones.json`; remote and archived refs
-  beyond those local checkouts were not inspected. The search found no
-  confirmed credential, but keyword searches are not exhaustive secret scans.
-- `.env` and `.env.local` are ignored and untracked; their values were not
-  disclosed. The referenced `.env.example` was absent from this checkout.
-- The engine is outside this repository, so backend authorization,
-  Telegram `initData` HMAC/freshness validation, and response minimization
-  cannot be confirmed here.
-- No live deployment or authorized test account was available for browser
-  Network-tab inspection or verification of deployment-layer CSP and
-  anti-framing headers.
-- Dependency audit and outdated-package results reflect the registry and
-  dependency tree at review time.
+- The history review covered local refs for this repository and the four
+  configured, accessible clone paths. Remote/archived refs were not fetched;
+  keyword searches cannot prove the absence of every possible secret.
+- `.env` and `.env.local` are ignored and untracked; values were not disclosed.
+- No live deployment, authorized test account, or browser Network capture was
+  available. Backend authorization, Telegram init-data validation, response
+  minimization, deployed headers, and the deployed Telegram script loader
+  therefore remain unverified.
+- Audit counts are the current `npm audit` results at re-verification time;
+  dependency findings include transitive packages within the named dependency
+  branches.
