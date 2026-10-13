@@ -3,7 +3,7 @@
 import { type ReactNode, useDeferredValue, useState } from "react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/common/input";
-import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
+import { RefreshIcon } from "@/components/icons";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
 import { useAdminPanel } from "@/hooks";
 import { Pagination } from "@/components/common/Pagination";
@@ -24,11 +24,11 @@ import { topicConfig, formatPercent, type AdminQuizConfigResponse, type Difficul
 
 function Surface({ children, title, subtitle, action }: SurfaceProps) {
   return (
-    <section className="rounded-2xl border border-base-600 bg-base-800 p-3.5 sm:p-4">
-      <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <SectionLabel>{title}</SectionLabel>
-          {subtitle ? <BodyText>{subtitle}</BodyText> : null}
+    <section className="rounded-2xl bg-base-700/25 p-3 ring-1 ring-inset ring-base-600/40">
+      <div className="mb-2.5 flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-ink-100">{title}</p>
+          {subtitle ? <p className="mt-0.5 text-xs text-ink-500">{subtitle}</p> : null}
         </div>
         {action}
       </div>
@@ -38,14 +38,14 @@ function Surface({ children, title, subtitle, action }: SurfaceProps) {
 }
 
 function VerticalStack({ children }: { children: ReactNode }) {
-  return <div className="space-y-2">{children}</div>;
+  return <div className="space-y-3">{children}</div>;
 }
 
 function MetricCard({ label, value, tone = "text-ink-100" }: MetricCardProps) {
   return (
-    <div className="rounded-xl border border-base-600 bg-base-700/40 p-1">
-      <p className="text-xs uppercase tracking-[0.12em] text-ink-500">{label}</p>
-      <p className={["mt-1 text-lg font-semibold", tone].join(" ")}>{value}</p>
+    <div className="min-w-0 rounded-xl bg-base-700/40 px-2.5 py-2">
+      <p className="truncate text-[11px] text-ink-500">{label}</p>
+      <p className={["mt-0.5 truncate text-base font-semibold tabular-nums", tone].join(" ")}>{value}</p>
     </div>
   );
 }
@@ -54,7 +54,7 @@ function UserListSkeleton() {
   return (
     <div className="space-y-2" aria-busy="true">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-base-600 bg-base-700/35 p-1">
+        <div key={i} className="rounded-xl bg-base-700/35 p-2.5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0 flex-1">
               <SkeletonText className="w-40" />
@@ -74,10 +74,10 @@ function UserListSkeleton() {
 function UserDetailSkeleton() {
   return (
     <div className="space-y-2" aria-busy="true">
-      <div className="grid gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => <SkeletonBlock key={i} className="h-20 rounded-xl" />)}
       </div>
-      <div className="grid gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => <SkeletonBlock key={i} className="h-20 rounded-xl" />)}
       </div>
       <SkeletonText className="w-36" />
@@ -125,16 +125,23 @@ function UserListPanel({ users, selectedUser, search, setSearch, loadingUsers, u
       title={t("admin_users_title")}
       subtitle={users ? t("admin_users_subtitle", { first: firstItem, last: lastItem, total: users.totalUsers }) : undefined}
     >
-      <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center">
+      <div className="mb-2 flex items-center gap-1.5">
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("admin_search_placeholder")}
-          className="w-full text-sm sm:min-w-[200px] sm:flex-1"
+          className="min-w-0 flex-1"
         />
-        <Button variant="ghost" className="w-full sm:w-auto" onClick={onReload} disabled={loadingUsers || deferredSearch !== search}>
-          {t("common_refresh")}
-        </Button>
+        <button
+          type="button"
+          onClick={onReload}
+          disabled={loadingUsers || deferredSearch !== search}
+          aria-label={t("common_refresh")}
+          title={t("common_refresh")}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-green/10 text-accent-green transition-colors hover:bg-accent-green/20 disabled:opacity-50"
+        >
+          <RefreshIcon className="block h-4 w-4 shrink-0" spinning={loadingUsers} />
+        </button>
       </div>
       {usersError ? <p className="mb-2 text-sm text-pastel-coral">{usersError}</p> : null}
       {loadingUsers && !users ? <UserListSkeleton /> : null}
@@ -142,26 +149,34 @@ function UserListPanel({ users, selectedUser, search, setSearch, loadingUsers, u
       <div className="space-y-1">
         {users?.items.map((i) => {
           const active = selectedUser?.summary.userId === i.userId;
+          const name = i.displayName ?? i.tgDisplayName ?? i.tgUsername ?? i.email ?? i.deviceId ?? i.userId;
 
           return (
-            <Button
+            <button
               key={i.userId}
               type="button"
-              variant={active ? "adminRowActive" : "adminRowIdle"}
-              size="md"
+              aria-pressed={active}
               onClick={() => onSelectUser(i.userId)}
-              className={["w-full p-1 text-left font-normal text-sm"].join(" ")}
+              className={[
+                "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm transition-colors",
+                active ? "bg-accent-green/10 ring-1 ring-inset ring-accent-green/40" : "bg-base-700/30 hover:bg-base-700/55",
+              ].join(" ")}
             >
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="font-semibold text-ink-100">{i.displayName ?? i.tgDisplayName ?? i.tgUsername ?? i.email ?? i.deviceId ?? i.userId}</p>
-                </div>
-                <div className="text-left text-sm text-ink-300 sm:text-right">
-                  <p>{i.insightPointsTotal} {t('admin_points_short')}</p>
-                  <p>{formatPercent(i.accuracy)}</p>
-                </div>
-              </div>
-            </Button>
+              <span
+                aria-hidden="true"
+                className={[
+                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold uppercase",
+                  active ? "bg-accent-green text-base-900" : "bg-base-600/70 text-ink-300",
+                ].join(" ")}
+              >
+                {String(name).charAt(0)}
+              </span>
+              <span className="min-w-0 flex-1 truncate font-semibold text-ink-100">{name}</span>
+              <span className="shrink-0 text-right text-xs leading-tight tabular-nums">
+                <span className="block text-ink-100">{i.insightPointsTotal} {t('admin_points_short')}</span>
+                <span className="block text-ink-500">{formatPercent(i.accuracy)}</span>
+              </span>
+            </button>
           );
         })}
       </div>
@@ -181,7 +196,7 @@ function UserDetailPanel({ selectedUser, loading, error }: UserDetailPanelProps)
       {!loading && !selectedUser ? <p className="text-sm text-ink-300">{t("admin_select_user")}</p> : null}
       {selectedUser ? (
         <div className="space-y-2">
-          <div className="grid gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
             <MetricCard
               label={t("admin_user")}
               value={
@@ -196,7 +211,7 @@ function UserDetailPanel({ selectedUser, loading, error }: UserDetailPanelProps)
             <MetricCard label={t("stats_accuracy")} value={formatPercent(selectedUser.summary.accuracy)} />
             <MetricCard label={t("stats_best_streak")} value={selectedUser.summary.bestStreakOverall} />
           </div>
-          <div className="grid gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
             <MetricCard label={t("stats_answers")} value={selectedUser.summary.totalAttempts} />
             <MetricCard label={t("stats_correct")} value={selectedUser.summary.correctAttempts} tone="text-pastel-mint" />
             <MetricCard label={t("stats_wrong")} value={selectedUser.summary.wrongAttempts} tone="text-pastel-coral" />
@@ -206,7 +221,7 @@ function UserDetailPanel({ selectedUser, loading, error }: UserDetailPanelProps)
             <p className="mb-2 text-sm font-semibold text-ink-100">{t("admin_by_difficulty")}</p>
             <div className="grid gap-2 md:hidden">
               {selectedUser.byDifficulty.map((row: DifficultyRow) => (
-                <div key={row.difficultyLevel} className="rounded-xl border border-base-600 bg-base-700/40 p-2 text-sm text-ink-200">
+                <div key={row.difficultyLevel} className="rounded-xl bg-base-700/40 p-2.5 text-sm text-ink-300">
                   <div className="mb-2 flex items-center justify-between">
                     <p className="font-semibold text-ink-100">{t("difficulty_level", { level: row.difficultyLevel })}</p>
                     <p className="text-ink-300">{formatPercent(row.accuracy)}</p>
@@ -233,7 +248,7 @@ function UserDetailPanel({ selectedUser, loading, error }: UserDetailPanelProps)
                 </TableHead>
                 <TableBody>
                   {selectedUser.byDifficulty.map((row: DifficultyRow) => (
-                    <TableRow key={row.difficultyLevel} className="border border-base-600 bg-base-700/40 text-ink-200">
+                    <TableRow key={row.difficultyLevel} className="bg-base-700/40 text-ink-300">
                       <TableCell className="font-semibold text-ink-100">{row.difficultyLevel}</TableCell>
                       <TableCell>{row.totalAttempts}</TableCell>
                       <TableCell>{row.correctAttempts}</TableCell>
@@ -487,7 +502,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
             const current = draft.unlockThresholds?.[lvl] ?? 5;
             
             return (
-              <div key={lvl} className="rounded-xl border border-base-600 bg-base-700/40 p-2">
+              <div key={lvl} className="rounded-xl bg-base-700/40 p-2.5">
                 <p className="mb-1 text-xs font-medium text-ink-500">
                   {t("difficulty_level", { level: fromLvl })} <span className="text-accent-green">→</span> {t("difficulty_level", { level: lvl })}
                 </p>
@@ -503,7 +518,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
                     setDraft((d) => ({ ...d, unlockThresholds: { ...(d.unlockThresholds ?? {}), [lvl]: v } }));
                   }}
                 />
-                <p className="mt-2 text-[10px] text-ink-400">{t("admin_unlock_correct_caption", { value: current, level: fromLvl })}</p>
+                <p className="mt-2 text-[10px] text-ink-500">{t("admin_unlock_correct_caption", { value: current, level: fromLvl })}</p>
               </div>
             );
           })}

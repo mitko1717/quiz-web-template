@@ -7,7 +7,7 @@ import { useI18n } from "@/components/I18nProvider";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { CardSection } from "@/components/types/CardSection";
 import { Button } from "@/components/button";
-import { ArrowRightIcon, CheckIcon, StarIcon, XIcon } from "@/components/icons";
+import { ArrowRightIcon, CheckIcon, StarIcon } from "@/components/icons";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "./common/Skeleton";
 import { AnswerOption } from "./AnswerOption";
@@ -154,7 +154,6 @@ export function DailyChallengePageContent() {
               answerResult={visibleAnswerResult}
               onSelect={setSelectedOption}
             />
-            <AnswerFeedback answerResult={visibleAnswerResult} />
 
             <div className="mt-3">
               {hasAnswered ? (
@@ -325,30 +324,5 @@ function QuestionOptions({ options, selectedOption, submitting, hasAnswered, ans
         );
       })}
     </div>
-  );
-}
-
-function AnswerFeedback({ answerResult }: { answerResult: DailyChallengeAnswerResponse | null }) {
-  const { t } = useI18n();
-  if (!answerResult) return null;
-
-  const localizeOption = (value: string): string => {
-    const resolved = t(value as TranslationKey);
-    return resolved && resolved !== value ? resolved : value;
-  };
-
-  return (
-    <p
-      role="status"
-      className={[
-        "mt-3 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium",
-        answerResult.correct ? "bg-pastel-mint/12 text-pastel-mint" : "bg-pastel-coral/12 text-pastel-coral",
-      ].join(" ")}
-    >
-      <span className={["flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-base-900", answerResult.correct ? "bg-pastel-mint" : "bg-pastel-coral"].join(" ")}>
-        {answerResult.correct ? <CheckIcon className="h-3 w-3" /> : <XIcon className="h-3 w-3" />}
-      </span>
-      {answerResult.correct ? t("daily_challenge_answer_correct") : t("daily_challenge_answer_wrong", { answer: localizeOption(answerResult.correctAnswer) })}
-    </p>
   );
 }

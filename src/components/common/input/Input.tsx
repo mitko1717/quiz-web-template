@@ -9,7 +9,7 @@ export function Input({ label, id, className = "", ...props }: InputProps) {
     <input
       id={id}
       className={[
-        "w-full rounded-xl border border-base-600 bg-base-800 px-3 py-2.5 text-ink-100 outline-none transition-colors focus:border-accent-greenDim",
+        "w-full rounded-xl bg-base-900/50 px-3 py-2 text-ink-100 outline-none ring-1 ring-inset ring-base-600/50 transition-shadow placeholder:text-ink-500 focus:ring-accent-green/60",
         className,
       ].join(" ").trim()}
       {...props}

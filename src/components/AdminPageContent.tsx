@@ -4,11 +4,12 @@ import { useState } from "react";
 import { AdminPanel } from "@/components/AdminPanel";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { Button } from "@/components/button";
-import { SectionLabel } from "@/components/common/SectionLabel";
 import { useAuthContext } from "@/components/AuthGate";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ShieldIcon } from "@/components/icons";
 import { useTelegram } from "@/providers/TelegramProvider";
+import { topicConfig } from "@/lib";
 import { AdminGamesPanel } from "./AdminGamesPanel";
 
 export function AdminPageContent() {
@@ -26,25 +27,25 @@ export function AdminPageContent() {
 
   return (
     <>
-      <section className="w-full space-y-6">
-        <div className="rounded-2xl border border-base-600 bg-base-800 p-4 sm:p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-            <div>
-              <SectionLabel>{t('admin_page_label')}</SectionLabel>
-              <p className="mt-1 text-sm text-ink-300">
-                {t('quiz_signed_in_as')} <span className="font-semibold text-ink-100">{username ?? t('quiz_local_admin')}</span>
-              </p>
-            </div>
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
-              <LanguageSwitcher onChange={setPreferredLanguage} compact trigger="icon" />
-              {!isTelegram ? (
-                <Button className="w-full sm:w-auto" variant="secondary" size="md" onClick={openLogoutModal}>
-                  {t('common_sign_out')}
-                </Button>
-              ) : null}
-            </div>
+      <section className="w-full space-y-3">
+        <div className="flex items-center gap-2.5 rounded-2xl bg-base-800/60 p-3 ring-1 ring-inset ring-base-600/40">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pastel-amber/15 text-pastel-amber">
+            <ShieldIcon />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-base font-semibold text-ink-100">{t('admin_page_label', { appName: topicConfig.appName })}</p>
+            <p className="truncate text-xs text-ink-500">
+              {t('quiz_signed_in_as')} <span className="font-semibold text-ink-300">{username ?? t('quiz_local_admin')}</span>
+            </p>
           </div>
+          <LanguageSwitcher onChange={setPreferredLanguage} compact trigger="icon" />
         </div>
+
+        {!isTelegram ? (
+          <Button className="w-full sm:w-auto" variant="ghost" size="sm" onClick={openLogoutModal}>
+            {t('common_sign_out')}
+          </Button>
+        ) : null}
 
         <AdminPanel token={token} authMode={authMode} pageSize={5} />
         <AdminGamesPanel token={token} enabled={Boolean(token)} />

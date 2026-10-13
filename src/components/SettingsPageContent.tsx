@@ -211,7 +211,7 @@ export function SettingsPageContent() {
 
         {isAdmin ? (
           <SettingsSection>
-            <SectionHeader tone="amber" icon={<ShieldIcon />} title={t("admin_page_label")} />
+            <SectionHeader tone="amber" icon={<ShieldIcon />} title={t("admin_page_label", { appName: topicConfig.appName })} />
             <Button type="button" variant="secondary" className="mt-3 w-full sm:w-auto" onClick={() => setIsAdminSettingsModalOpen(true)}>
               {t("quiz_admin_panel")}
             </Button>
@@ -265,6 +265,7 @@ export function SettingsPageContent() {
         isOpen={isAdminSettingsModalOpen}
         onClose={() => setIsAdminSettingsModalOpen(false)}
         closeLabel={t("common_dismiss")}
+        title={t("quiz_admin_panel")}
         showTopRightCloseButton
         maxWidthClassName="max-w-7xl"
       >

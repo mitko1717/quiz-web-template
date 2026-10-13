@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/common/input";
-import { SectionLabel, BodyText } from "@/components/common/SectionLabel";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
+import { PencilIcon, TrashIcon } from "@/components/icons";
 import { useI18n } from "@/components/I18nProvider";
 import { useAdminGames } from "@/hooks";
 import type { AdminGame, CreateGamePayload, LocalizedText } from "@/lib";
@@ -79,7 +78,7 @@ function LocalizedFieldGroup({ label, value, onChange }: {
 }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-xs font-medium uppercase tracking-[0.1em] text-ink-500">{label}</p>
+      <p className="text-xs font-medium text-ink-500">{label}</p>
       <div className="grid gap-1.5 sm:grid-cols-3">
         <Input placeholder="EN" value={value.en} onChange={(e) => onChange({ ...value, en: e.target.value })} />
         <Input placeholder="ES" value={value.es} onChange={(e) => onChange({ ...value, es: e.target.value })} />
@@ -121,71 +120,91 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
   };
 
   return (
-    <section className="rounded-2xl border border-base-600 bg-base-800 p-3.5 sm:p-4">
-      <div className="mb-3">
-        <SectionLabel>{t("admin_games_title")}</SectionLabel>
-        <BodyText>{t("admin_games_desc")}</BodyText>
+    <section className="rounded-2xl bg-base-700/25 p-3 ring-1 ring-inset ring-base-600/40">
+      <div className="mb-2.5">
+        <p className="text-sm font-semibold text-ink-100">{t("admin_games_title")}</p>
+        <p className="mt-0.5 text-xs text-ink-500">{t("admin_games_desc")}</p>
       </div>
 
       {gamesError ? <p className="mb-2 text-sm text-pastel-coral">{gamesError}</p> : null}
 
-      <div className="space-y-3">
+      <div className="mb-3">
+        {loadingGames ? (
+          <p className="text-sm text-ink-500">{t("common_loading")}</p>
+        ) : games.length === 0 ? (
+          <p className="text-sm text-ink-500">{t("admin_games_empty")}</p>
+        ) : (
+          <ul className="space-y-1">
+            {games.map((g) => (
+              <li
+                key={g.slug}
+                className={[
+                  "flex items-center gap-2.5 rounded-xl px-2.5 py-2",
+                  editingSlug === g.slug ? "bg-accent-green/10 ring-1 ring-inset ring-accent-green/40" : "bg-base-700/30",
+                ].join(" ")}
+              >
+                <span
+                  aria-label={g.active ? t("admin_games_col_active") : undefined}
+                  className={["h-2 w-2 shrink-0 rounded-full", g.active ? "bg-pastel-mint shadow-[0_0_6px_var(--color-pastel-mint)]" : "bg-ink-500/50"].join(" ")}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-ink-100">{g.name.en}</p>
+                  <p className="truncate text-[11px] text-ink-500">{g.slug} · #{g.sortOrder}</p>
+                </div>
+                <button
+                  type="button"
+                  aria-label={t("admin_games_edit")}
+                  title={t("admin_games_edit")}
+                  onClick={() => startEdit(g)}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-green/10 text-accent-green transition-colors hover:bg-accent-green/20"
+                >
+                  <PencilIcon className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={t("admin_games_delete")}
+                  title={t("admin_games_delete")}
+                  disabled={deletingGame}
+                  onClick={() => void removeGame(g.slug)}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pastel-coral/10 text-pastel-coral transition-colors hover:bg-pastel-coral/20 disabled:opacity-40"
+                >
+                  <TrashIcon className="h-3.5 w-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="space-y-2.5 border-t border-base-600/40 pt-3">
         <Input placeholder={t("admin_games_field_slug")} value={draft.slug} disabled={isEditing} onChange={(e) => set("slug", e.target.value)} />
         <LocalizedFieldGroup label={t("admin_games_field_name")} value={draft.name} onChange={(v) => set("name", v)} />
         <LocalizedFieldGroup label={t("admin_games_field_tagline")} value={draft.tagline} onChange={(v) => set("tagline", v)} />
         <LocalizedFieldGroup label={t("admin_games_field_description")} value={draft.description} onChange={(v) => set("description", v)} />
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-1.5 sm:grid-cols-2">
           <Input placeholder={t("admin_games_field_bot_link")} value={draft.tgBotLink} onChange={(e) => set("tgBotLink", e.target.value)} />
           <Input placeholder={t("admin_games_field_logo")} value={draft.logo} onChange={(e) => set("logo", e.target.value)} />
           <Input placeholder={t("admin_games_field_banner")} value={draft.bannerImage} onChange={(e) => set("bannerImage", e.target.value)} />
           <Input placeholder={t("admin_games_field_sort")} type="number" value={String(draft.sortOrder)} onChange={(e) => set("sortOrder", Number(e.target.value))} />
         </div>
-      </div>
 
-      <label className="mt-2 flex items-center gap-2 text-sm text-ink-200">
-        <input type="checkbox" checked={draft.active} onChange={(e) => set("active", e.target.checked)} />
-        {t("admin_games_field_active")}
-      </label>
+        <label className="flex items-center gap-2 text-sm text-ink-300">
+          <input type="checkbox" className="h-4 w-4 accent-accent-green" checked={draft.active} onChange={(e) => set("active", e.target.checked)} />
+          {t("admin_games_field_active")}
+        </label>
 
-      <div className="mt-3 flex gap-2">
-        <Button type="button" variant="primary" disabled={savingGame || !draft.slug.trim() || !draft.name.en.trim()} onClick={() => void submit()}>
-          {isEditing ? t("admin_games_update") : t("admin_games_create")}
-        </Button>
-        {isEditing ? <Button type="button" variant="ghost" onClick={cancel}>{t("common_dismiss")}</Button> : null}
-      </div>
-
-      <div className="mt-4">
-        {loadingGames ? (
-          <p className="text-sm text-ink-400">{t("common_loading")}</p>
-        ) : games.length === 0 ? (
-          <p className="text-sm text-ink-400">{t("admin_games_empty")}</p>
-        ) : (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>{t("admin_games_col_name")}</TableHeaderCell>
-                <TableHeaderCell>{t("admin_games_col_slug")}</TableHeaderCell>
-                <TableHeaderCell>{t("admin_games_col_active")}</TableHeaderCell>
-                <TableHeaderCell>{t("admin_games_col_actions")}</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {games.map((g) => (
-                <TableRow key={g.slug}>
-                  <TableCell>{g.name.en}</TableCell>
-                  <TableCell>{g.slug}</TableCell>
-                  <TableCell>{g.active ? "✓" : "—"}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1.5">
-                      <Button type="button" variant="ghost" size="sm" onClick={() => startEdit(g)}>{t("admin_games_edit")}</Button>
-                      <Button type="button" variant="ghost" size="sm" disabled={deletingGame} onClick={() => void removeGame(g.slug)}>{t("admin_games_delete")}</Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="primary"
+            className={isEditing ? "w-full" : "col-span-2 w-full"}
+            disabled={savingGame || !draft.slug.trim() || !draft.name.en.trim()}
+            onClick={() => void submit()}
+          >
+            {isEditing ? t("admin_games_update") : t("admin_games_create")}
+          </Button>
+          {isEditing ? <Button type="button" variant="ghost" className="w-full" onClick={cancel}>{t("common_dismiss")}</Button> : null}
+        </div>
       </div>
     </section>
   );

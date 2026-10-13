@@ -26,7 +26,7 @@ interface CellProps extends ComponentPropsWithoutRef<"td"> {
 
 export function Table({ children, className = "", ...props }: BaseProps) {
   return (
-    <table className={["min-w-full border-separate border-spacing-y-2 text-sm", className].join(" ").trim()} {...props}>
+    <table className={["min-w-full border-separate border-spacing-y-1 text-sm", className].join(" ").trim()} {...props}>
       {children}
     </table>
   );
@@ -58,7 +58,7 @@ export function TableRow({ children, className = "", ...props }: RowProps) {
 
 export function TableHeaderCell({ children, className = "", ...props }: HeaderCellProps) {
   return (
-    <th className={["px-3", className].join(" ").trim()} {...props}>
+    <th className={["px-3 pb-1 text-xs font-medium", className].join(" ").trim()} {...props}>
       {children}
     </th>
   );
@@ -66,7 +66,7 @@ export function TableHeaderCell({ children, className = "", ...props }: HeaderCe
 
 export function TableCell({ children, className = "", ...props }: CellProps) {
   return (
-    <td className={["px-3 py-3", className].join(" ").trim()} {...props}>
+    <td className={["px-3 py-2", className].join(" ").trim()} {...props}>
       {children}
     </td>
   );
