@@ -13,7 +13,7 @@ that bag through a single config module (`src/lib/topic.config.ts`), which is dr
 To ship a new theme:
 
 1. Copy this repo.
-2. Set the env vars below.
+2. Set the `NEXT_PUBLIC_*` env vars below, including the topic's Adsgram Block ID if you want to enable its ad banner.
 3. Add the topic's i18n keys (nouns + scope labels).
 4. Deploy.
 
@@ -45,6 +45,7 @@ so changing a theme requires a rebuild/restart — one build serves one topic.
 | `NEXT_PUBLIC_SCOPE_WORLD` | no | `WORLD` | The "all / no filter" scope sentinel |
 | `NEXT_PUBLIC_SCOPES` | no | see below | Scope options shown in the UI |
 | `NEXT_PUBLIC_MAX_ITEM_COUNT` | no | `195` | Upper bound for admin numeric inputs (item pool size) |
+| `NEXT_PUBLIC_ADSGRAM_BLOCK_ID` | no | — | Per-topic Adsgram Block ID from the Adsgram dashboard; leave blank to disable the ad banner for this topic (no build error) |
 
 If `NEXT_PUBLIC_SCOPES` is empty, the scope selector is hidden entirely (topics without scopes).
 
