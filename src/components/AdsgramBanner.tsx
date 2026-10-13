@@ -16,9 +16,11 @@ declare global {
 type AdsgramBannerProps = {
   blockId?: string;
   className?: string;
+  label?: string;
+  onReward?: () => void;
 };
 
-export function AdsgramBanner({ blockId, className = "" }: AdsgramBannerProps) {
+export function AdsgramBanner({ blockId, className = "", label = "🎬 Watch an ad", onReward }: AdsgramBannerProps) {
   const resolvedBlockId = blockId ?? process.env.NEXT_PUBLIC_ADSGRAM_BLOCK_ID ?? "";
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkFailed, setSdkFailed] = useState(false);
@@ -37,6 +39,7 @@ export function AdsgramBanner({ blockId, className = "" }: AdsgramBannerProps) {
       const controller = window.Adsgram.init({ blockId: resolvedBlockId });
       controller
         .show()
+        .then(() => onReward?.())
         .catch(() => {
           // User skipped or ad failed to load — fail silently, no layout shift.
         })
@@ -65,7 +68,7 @@ export function AdsgramBanner({ blockId, className = "" }: AdsgramBannerProps) {
           className
         ].join(" ")}
       >
-        {pending ? "..." : "🎬 Watch an ad"}
+        {pending ? "..." : label}
       </button>
     </>
   );
