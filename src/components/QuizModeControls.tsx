@@ -84,7 +84,7 @@ export function QuizModeControls(props: QuizModeControlsProps) {
       {hasScopes ? (
         <Wrapper>
           <p className="px-2 text-[11px] font-medium uppercase tracking-[0.1em] text-ink-500">{t("question_scope_label")}</p>
-          <p className="mb-1.5 px-2 text-[11px] text-ink-400">{t("question_scope_desc")}</p>
+          <p className="mb-1.5 px-2 text-[11px] text-ink-500">{t("question_scope_desc")}</p>
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
             {scopes.map((scope) => (
               <Button
@@ -107,7 +107,7 @@ export function QuizModeControls(props: QuizModeControlsProps) {
 }
 
 const Wrapper = (props: { children: ReactNode, className?: string }) => (
-  <div className={`rounded-xl border border-base-600 bg-base-700/30 p-1.5 ${props.className ?? ""}`}>
+  <div className={`rounded-xl bg-base-700/30 p-1.5 ${props.className ?? ""}`}>
     {props.children}
   </div>
 );

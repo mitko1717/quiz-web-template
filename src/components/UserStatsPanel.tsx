@@ -1,12 +1,11 @@
 "use client";
-import { useState, type KeyboardEvent } from "react";
-import { BodyText, SectionLabel } from "@/components/common/SectionLabel";
+import { useState, type KeyboardEvent, type ReactNode } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/common/table";
 import { useI18n } from "@/components/I18nProvider";
 import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/button";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "@/components/common/Skeleton";
-import { RefreshIcon } from "@/components/icons";
+import { ArrowRightIcon, CheckIcon, LightbulbIcon, LockIcon, RefreshIcon, StarIcon, XIcon } from "@/components/icons";
 import { formatPercent, topicConfig, AchievementScope, type AchievementProgressResponse, type DifficultyLevel, type UserAnswerStatsByDifficulty } from "@/lib";
 import type {
   ActiveDifficultyPanelProps,
@@ -14,117 +13,133 @@ import type {
   ErrorStateProps,
   GlobalStatsPanelProps,
   HeroPanelProps,
-  PanelShellProps,
   StatPairProps,
   SummaryGridProps,
-  SummaryMetricCardProps,
   UnlockLevelCardProps,
   UnlockLevelsGridProps,
   UserStatsPanelProps
 } from "./types/UserStatsPanel.types";
 import { Accordion } from "./common/Accordion";
 
-function PanelShell({ children, variant = "default" }: PanelShellProps) {
+const ICON_TONES = {
+  accent: "bg-accent-green/15 text-accent-green",
+  mint: "bg-pastel-mint/15 text-pastel-mint",
+  coral: "bg-pastel-coral/15 text-pastel-coral",
+  amber: "bg-pastel-amber/15 text-pastel-amber",
+  sky: "bg-pastel-sky/15 text-pastel-sky",
+} as const;
+
+type IconTone = keyof typeof ICON_TONES;
+
+function Card({ children, className = "", ringClassName = "ring-base-600/40" }: { children: ReactNode; className?: string; ringClassName?: string }) {
   return (
-    <section className={["relative w-full rounded-2xl border bg-base-800 p-4 sm:p-5", variant === "error" ? "border-pastel-coral/50" : "border-base-600"].join(" ")}>
+    <section className={["relative w-full rounded-2xl bg-base-800/60 p-3 ring-1 ring-inset sm:p-4", ringClassName, className].join(" ")}>
       {children}
     </section>
+  );
+}
+
+function CardTitle({ children, action, className = "text-ink-500" }: { children: ReactNode; action?: ReactNode; className?: string }) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <p className={["text-xs font-medium", className].join(" ")}>{children}</p>
+      {action}
+    </div>
+  );
+}
+
+function IconChip({ tone, children, className = "h-8 w-8" }: { tone: IconTone; children: ReactNode; className?: string }) {
+  return (
+    <span className={["flex shrink-0 items-center justify-center rounded-xl", ICON_TONES[tone], className].join(" ")}>
+      {children}
+    </span>
   );
 }
 
 function RefreshButton({ refreshing, onRefresh }: { refreshing: boolean; onRefresh: () => void }) {
   const { t } = useI18n();
   return (
-    <Button
+    <button
       type="button"
-      variant="ghost"
-      size="sm"
       onClick={onRefresh}
       disabled={refreshing}
       aria-label={t('common_refresh')}
       title={t('common_refresh')}
-      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-accent-greenDim/45 bg-accent-green/10 p-0 leading-none text-accent-green"
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent-green/10 text-accent-green transition-colors hover:bg-accent-green/20 disabled:opacity-60"
     >
-      <RefreshIcon spinning={refreshing} />
-    </Button>
-  );
-}
-
-function LoadingState() {
-  return (
-    <PanelShell>
-      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-2xl border border-accent-greenDim/25 bg-base-700/30 p-4">
-          <SkeletonText className="w-28" />
-          <SkeletonBlock className="mt-3 h-12 w-28" />
-          <SkeletonText className="mt-3 w-36" />
-          <SkeletonText className="mt-4 w-full" />
-          <SkeletonText className="mt-2 w-3/4" />
-          <div className="mt-4 rounded-xl border border-base-600/80 bg-base-900/30 p-4">
-            <SkeletonText className="w-40" />
-            <SkeletonText className="mt-3 w-3/4" />
-            <SkeletonBlock className="mt-4 h-3 w-full rounded-full" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-base-600 bg-base-700/50 p-3">
-              <SkeletonText className="w-20" />
-              <SkeletonBlock className="mt-2 h-6 w-12" />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="mt-4 rounded-2xl border border-accent-greenDim/25 bg-accent-green/5 p-4">
-        <SkeletonText className="w-40" />
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {Array.from({ length: 6 }).map((_, i) => <SkeletonBlock key={i} className="h-12" />)}
-        </div>
-      </div>
-      <div className="mt-4 grid gap-2 md:hidden">
-        {Array.from({ length: 5 }).map((_, i) => <SkeletonBlock key={i} className="h-28 rounded-xl" />)}
-      </div>
-      <div className="mt-4 hidden space-y-2 md:block">
-        {Array.from({ length: 6 }).map((_, i) => <SkeletonBlock key={i} className="h-11 rounded-xl" />)}
-      </div>
-    </PanelShell>
-  );
-}
-
-function ErrorState({ error }: ErrorStateProps) {
-  return (
-    <PanelShell variant="error">
-      <div className="rounded-xl border border-pastel-coral/40 bg-pastel-coral/10 p-4 text-sm text-pastel-coral">
-        {error}
-      </div>
-    </PanelShell>
+      <RefreshIcon className="block h-4 w-4 shrink-0" spinning={refreshing} />
+    </button>
   );
 }
 
 function ProgressBar({ progress, tone }: { progress: number; tone: "accent" | "muted" }) {
   const percentage = Math.min(100, Math.max(0, progress * 100));
-  
+
   return (
-    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-base-600">
-      <div className={["h-full rounded-full transition-all duration-300", tone === "accent" ? "bg-accent-green" : "bg-base-400"].join(" ")}  style={{ width: `${percentage}%` }} />
+    <div className="h-1.5 w-full overflow-hidden rounded-full bg-base-600/70">
+      <div
+        className={[
+          "h-full rounded-full transition-all duration-500",
+          tone === "accent" ? "bg-accent-green shadow-[0_0_8px_color-mix(in_srgb,var(--color-accent-green)_60%,transparent)]" : "bg-ink-500/60",
+        ].join(" ")}
+        style={{ width: `${percentage}%` }}
+      />
     </div>
   );
 }
 
-function SummaryMetricCard({ label, value, valueClassName }: SummaryMetricCardProps) {
+function LoadingState() {
   return (
-    <div className="rounded-xl border border-base-600 bg-base-700/50 p-3 text-ink-200">
-      <p className="text-xs uppercase tracking-[0.12em] text-ink-500">{label}</p>
-      <p className={["mt-1 text-lg font-semibold", valueClassName].join(" ")}>{value}</p>
+    <div className="space-y-2.5" aria-busy="true">
+      <Card>
+        <SkeletonText className="w-24" />
+        <SkeletonBlock className="mt-3 h-12 w-40" />
+        <SkeletonText className="mt-3 w-3/4" />
+        <SkeletonBlock className="mt-4 h-1.5 w-full rounded-full" />
+      </Card>
+      <div className="grid grid-cols-2 gap-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Card key={i}>
+            <SkeletonBlock className="h-8 w-8 rounded-xl" />
+            <SkeletonBlock className="mt-2 h-6 w-12" />
+          </Card>
+        ))}
+      </div>
+      <Card>
+        <SkeletonText className="w-32" />
+        <div className="mt-3 space-y-2">
+          {Array.from({ length: 3 }).map((_, i) => <SkeletonBlock key={i} className="h-14 rounded-xl" />)}
+        </div>
+      </Card>
     </div>
+  );
+}
+
+function ErrorState({ error }: ErrorStateProps) {
+  return (
+    <Card ringClassName="ring-pastel-coral/50">
+      <p className="text-sm text-pastel-coral">{error}</p>
+    </Card>
   );
 }
 
 function StatPair({ label, value }: StatPairProps) {
   return (
-    <div>
-      <p className="text-xs text-ink-500">{label}</p>
-      <p className="text-lg font-semibold text-ink-100">{value}</p>
+    <div className="min-w-0">
+      <p className="truncate text-[11px] text-ink-500">{label}</p>
+      <p className="text-base font-semibold tabular-nums text-ink-100">{value}</p>
+    </div>
+  );
+}
+
+function MetricTile({ tone, icon, label, value }: { tone: IconTone; icon: ReactNode; label: string; value: number }) {
+  return (
+    <div className="flex min-w-0 items-center gap-2.5 rounded-2xl bg-base-800/60 p-3 ring-1 ring-inset ring-base-600/40">
+      <IconChip tone={tone}>{icon}</IconChip>
+      <div className="min-w-0 leading-tight">
+        <p className="truncate text-[11px] text-ink-500">{label}</p>
+        <p className="text-lg font-bold tabular-nums text-ink-100">{value}</p>
+      </div>
     </div>
   );
 }
@@ -133,9 +148,9 @@ function GlobalStatsPanel({ stats }: GlobalStatsPanelProps) {
   const { t } = useI18n();
 
   return (
-    <div className="mb-4 rounded-2xl border border-base-600 bg-base-700/40 p-4">
-      <SectionLabel>{t('global_stats_label')}</SectionLabel>
-      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+    <Card>
+      <CardTitle>{t('global_stats_label')}</CardTitle>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatPair label={t('global_stats_insight_points')} value={stats.totalInsightPoints} />
         <StatPair label={t('global_stats_best_streak')} value={stats.bestStreakOverall} />
         <StatPair label={t('global_stats_answers')} value={stats.totalAttempts} />
@@ -143,18 +158,18 @@ function GlobalStatsPanel({ stats }: GlobalStatsPanelProps) {
       </div>
 
       {stats.byTopic.length > 0 ? (
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-3 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
           {stats.byTopic.map((topic) => (
-            <div key={topic.topicId} className="rounded-xl border border-base-600 bg-base-900/30 p-3 text-xs text-ink-300">
-              <p className="text-ink-500">{topic.name}</p>
-              <p className="mt-1 text-ink-100">
+            <div key={topic.topicId} className="flex items-center justify-between gap-2 rounded-xl bg-base-700/40 px-3 py-2 text-xs">
+              <p className="truncate text-ink-300">{topic.name}</p>
+              <p className="shrink-0 tabular-nums text-ink-100">
                 {topic.correctAttempts}/{topic.totalAttempts} · {formatPercent(topic.accuracy)}
               </p>
             </div>
           ))}
         </div>
       ) : null}
-    </div>
+    </Card>
   );
 }
 
@@ -186,7 +201,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
         aria-label={t('achievements_play_game')}
         title={t('achievements_play_game')}
         onClick={(e) => e.stopPropagation()}
-        className="group inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-accent-greenDim/50 bg-accent-green/10 text-sm text-accent-green transition-all duration-200 hover:scale-110 hover:border-accent-greenDim hover:bg-accent-green/20 hover:shadow-[0_0_10px_rgba(34,197,94,0.45)]"
+        className="group inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-green/10 text-sm transition-all duration-200 hover:scale-110 hover:bg-accent-green/20 hover:shadow-[0_0_10px_color-mix(in_srgb,var(--color-accent-green)_45%,transparent)]"
       >
         <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5">🚀</span>
       </a>
@@ -200,23 +215,28 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
     const progress = threshold === 0 ? 1 : Math.min(1, currentValue / threshold);
 
     return (
-      <div key={a.achievementId} className={["rounded-xl border p-2", unlocked ? "border-accent-greenDim/40 bg-accent-green/10" : "border-base-600 bg-base-700/35"].join(" ")}>
+      <div
+        key={a.achievementId}
+        className={["rounded-xl p-2.5", unlocked ? "bg-accent-green/10 ring-1 ring-inset ring-accent-green/30" : "bg-base-700/40"].join(" ")}
+      >
         <div className="flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5">
             <p className="truncate text-sm font-semibold text-ink-100">{a.name ? `${a.name.charAt(0).toUpperCase()}${a.name.slice(1)}` : a.name}</p>
             {a.gameLink && !isCurrentGameLink(a.gameLink) ? <GameLinkButton href={a.gameLink} /> : null}
           </div>
-          <p className={["shrink-0", unlocked ? "text-xs text-accent-green" : "text-xs text-ink-500"].join(" ")}>
-            {unlocked ? t('achievements_unlocked') : `${currentValue}/${threshold}`}
-          </p>
+          {unlocked ? (
+            <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-accent-green">
+              <CheckIcon className="h-3.5 w-3.5" />
+              {t('achievements_unlocked')}
+            </span>
+          ) : (
+            <span className="shrink-0 text-xs tabular-nums text-ink-500">{currentValue}/{threshold}</span>
+          )}
         </div>
 
-        {a.description ? <p className="mt-1 text-xs text-ink-400">{a.description}</p> : null}
-        <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-base-600">
-          <div 
-            className={["h-full rounded-full transition-all duration-300", unlocked ? "bg-accent-green" : "bg-base-400"].join(" ")} 
-            style={{ width: `${Math.min(100, Math.max(0, progress * 100))}%` }}
-          />
+        {a.description ? <p className="mt-1 text-xs text-ink-500">{a.description}</p> : null}
+        <div className="mt-2">
+          <ProgressBar progress={progress} tone={unlocked ? "accent" : "muted"} />
         </div>
       </div>
     );
@@ -229,7 +249,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
       id: AchievementScope.GLOBAL,
       title: t('achievements_label'),
       content: (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
           {globalAchievements.map(renderAchievement)}
         </div>
       )
@@ -254,7 +274,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
             id: topicId,
             title: group.name,
             content: (
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 scrollbar-hide">
+              <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3 scrollbar-hide">
                 {group.achievements.map(renderAchievement)}
               </div>
             )
@@ -265,7 +285,7 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
   }
 
   return (
-    <div className="mb-4 overflow-hidden rounded-2xl border border-base-600 bg-base-700/40">
+    <div className="overflow-hidden rounded-2xl bg-base-800/60 ring-1 ring-inset ring-base-600/40">
       <Accordion items={items} className="max-h-[460px] min-h-[52px] scrollbar-hide" />
     </div>
   );
@@ -274,25 +294,30 @@ function AchievementsPanel({ achievements }: { achievements: AchievementProgress
 function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
   const { t } = useI18n();
   const nextUnlock = stats.progression.nextDifficultyToUnlock;
-  const nextUnlockStatus = nextUnlock ? stats.progression.levels.find((row) => row.difficultyLevel === nextUnlock) ?? null : null;;
+  const nextUnlockStatus = nextUnlock ? stats.progression.levels.find((row) => row.difficultyLevel === nextUnlock) ?? null : null;
 
   return (
-    <div className="rounded-2xl border border-accent-greenDim/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-accent-green)_18%,transparent),color-mix(in_srgb,var(--color-base-900)_30%,transparent))] p-3">
-      <div className="flex items-center justify-between gap-2">
-        <SectionLabel>{t('stats_label')}</SectionLabel>
-        <RefreshButton refreshing={refreshing} onRefresh={onRefresh} />
-      </div>
-      <div className="mt-2 flex items-center gap-2">
-        <h2 className="text-3xl font-semibold text-ink-100 sm:text-5xl">{stats.totalInsightPoints}</h2>
-        <p className="text-sm font-medium uppercase tracking-[0.12em] text-accent-green">{t('stats_points_suffix')}</p>
-      </div>
-      <BodyText>{t('stats_summary', { answers: stats.totalAttempts, accuracy: formatPercent(stats.accuracy), streak: stats.bestStreakOverall })}</BodyText>
+    <Card className="bg-[radial-gradient(120%_100%_at_0%_0%,color-mix(in_srgb,var(--color-accent-green)_16%,transparent),transparent_60%)]">
+      <CardTitle action={<RefreshButton refreshing={refreshing} onRefresh={onRefresh} />}>{t('stats_label')}</CardTitle>
 
-      <div className="mt-4 rounded-xl border border-base-600/80 bg-base-900/30 p-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.12em] text-ink-500">{t('stats_progress_next')}</p>
-            <p className="mt-1 text-sm text-ink-200">
+      <div className="mt-2 flex items-center gap-3">
+        <IconChip tone="amber" className="h-12 w-12 rounded-2xl shadow-[0_0_18px_color-mix(in_srgb,var(--color-pastel-amber)_30%,transparent)]">
+          <StarIcon className="h-6 w-6" />
+        </IconChip>
+        <div className="min-w-0">
+          <p className="text-3xl font-bold leading-none tabular-nums text-ink-100 sm:text-4xl">{stats.totalInsightPoints}</p>
+          <p className="mt-1 text-xs font-medium text-ink-500">{t('stats_points_suffix')}</p>
+        </div>
+      </div>
+      <p className="mt-3 text-sm text-ink-300">
+        {t('stats_summary', { answers: stats.totalAttempts, accuracy: formatPercent(stats.accuracy), streak: stats.bestStreakOverall })}
+      </p>
+
+      <div className="mt-3 border-t border-base-600/40 pt-3">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs text-ink-500">{t('stats_progress_next')}</p>
+            <p className="mt-0.5 text-sm text-ink-300">
               {nextUnlockStatus
                 ? t('stats_unlock_desc', {
                     level: nextUnlockStatus.difficultyLevel,
@@ -303,15 +328,16 @@ function HeroPanel({ stats, refreshing, onRefresh }: HeroPanelProps) {
             </p>
           </div>
           {nextUnlockStatus ? (
-            <p className="text-sm font-semibold text-ink-100">
+            <p className="shrink-0 text-sm font-semibold tabular-nums text-ink-100">
               {nextUnlockStatus.correctAnswersTowardsUnlock}/{nextUnlockStatus.requiredCorrectAnswers}
             </p>
           ) : null}
         </div>
-
-        <ProgressBar progress={nextUnlockStatus?.progress ?? 1} tone="accent" />
+        <div className="mt-2">
+          <ProgressBar progress={nextUnlockStatus?.progress ?? 1} tone="accent" />
+        </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -319,11 +345,11 @@ function SummaryGrid({ stats }: SummaryGridProps) {
   const { t } = useI18n();
 
   return (
-    <div className="grid grid-cols-2 gap-2 text-sm">
-      <SummaryMetricCard label={t('stats_correct')} value={stats.correctAttempts} valueClassName="text-pastel-mint" />
-      <SummaryMetricCard label={t('stats_wrong')} value={stats.wrongAttempts} valueClassName="text-pastel-coral" />
-      <SummaryMetricCard label={t('stats_skips')} value={stats.skipCount} valueClassName="text-pastel-amber" />
-      <SummaryMetricCard label={t('stats_hints_used')} value={stats.hintsUsedCount} valueClassName="text-ink-100" />
+    <div className="grid grid-cols-2 gap-2 lg:content-start">
+      <MetricTile tone="mint" icon={<CheckIcon className="h-4 w-4" />} label={t('stats_correct')} value={stats.correctAttempts} />
+      <MetricTile tone="coral" icon={<XIcon className="h-3.5 w-3.5" />} label={t('stats_wrong')} value={stats.wrongAttempts} />
+      <MetricTile tone="amber" icon={<ArrowRightIcon className="h-4 w-4" />} label={t('stats_skips')} value={stats.skipCount} />
+      <MetricTile tone="sky" icon={<LightbulbIcon className="h-4 w-4" />} label={t('stats_hints_used')} value={stats.hintsUsedCount} />
     </div>
   );
 }
@@ -332,8 +358,8 @@ function ActiveDifficultyPanel({ activeLevel }: ActiveDifficultyPanelProps) {
   const { t } = useI18n();
 
   return (
-    <div className="mt-4 rounded-2xl border border-accent-greenDim/40 bg-accent-green/10 p-4">
-      <p className="text-xs uppercase tracking-[0.12em] text-accent-green">{t('stats_current_focus')}</p>
+    <Card ringClassName="ring-accent-green/30" className="bg-accent-green/5">
+      <CardTitle className="text-accent-green">{t('stats_current_focus')}</CardTitle>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatPair label={t('stats_level')} value={activeLevel.difficultyLevel} />
         <StatPair label={t('stats_points')} value={activeLevel.insightPoints} />
@@ -342,7 +368,7 @@ function ActiveDifficultyPanel({ activeLevel }: ActiveDifficultyPanelProps) {
         <StatPair label={t('stats_accuracy')} value={formatPercent(activeLevel.accuracy)} />
         <StatPair label={t('stats_streak')} value={`${activeLevel.currentStreak} / ${t('stats_best_streak').toLowerCase()} ${activeLevel.bestStreak}`} />
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -357,38 +383,43 @@ function DifficultyStatsTable({ stats, activeDifficulty, onOpenDetails }: Diffic
   }
 
   return (
-    <div className="mt-4">
-      <p className="mb-2 text-xs text-ink-400">{t('stats_details_hint')}</p>
-      <div className="grid gap-2 md:hidden">
-        {stats.byDifficulty.map((row) => (
-          <button
-            key={row.difficultyLevel}
-            type="button"
-            onClick={() => onOpenDetails(row.difficultyLevel)}
-            className={[
-              "rounded-xl border bg-base-700/45 p-3 text-left text-sm text-ink-200 transition-colors hover:border-accent-greenDim/70 hover:bg-base-700/60",
-              row.difficultyLevel === activeDifficulty ? "border-accent-greenDim/70" : "border-base-600"
-            ].join(" ")}
-            aria-label={t('stats_detail_open_for_level', { level: row.difficultyLevel })}
-          >
-            <div className="mb-2 flex items-center justify-between">
-              <p className="font-semibold text-ink-100">{t('difficulty_level', { level: row.difficultyLevel })}</p>
-              <p className="text-xs text-ink-400">{formatPercent(row.accuracy)}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <p>{t('stats_points')}: {row.insightPoints}</p>
-              <p>{t('stats_answers')}: {row.totalAttempts}</p>
-              <p>{t('stats_correct')}: {row.correctAttempts}</p>
-              <p>{t('stats_wrong')}: {row.wrongAttempts}</p>
-              <p>{t('stats_skips')}: {row.skipCount}</p>
-              <p>{t('stats_hints_used')}: {row.hintsUsedCount}</p>
-              <p>{t('stats_best_streak')}: {row.bestStreak}</p>
-            </div>
-          </button>
-        ))}
+    <Card>
+      <CardTitle>{t('stats_details_hint')}</CardTitle>
+      <div className="mt-3 grid gap-1.5 md:hidden">
+        {stats.byDifficulty.map((row) => {
+          const active = row.difficultyLevel === activeDifficulty;
+          return (
+            <button
+              key={row.difficultyLevel}
+              type="button"
+              onClick={() => onOpenDetails(row.difficultyLevel)}
+              className={[
+                "rounded-xl p-3 text-left text-sm transition-colors",
+                active
+                  ? "bg-accent-green/10 ring-1 ring-inset ring-accent-green/40"
+                  : "bg-base-700/40 hover:bg-base-700/60",
+              ].join(" ")}
+              aria-label={t('stats_detail_open_for_level', { level: row.difficultyLevel })}
+            >
+              <div className="mb-2 flex items-center justify-between">
+                <p className={["font-semibold", active ? "text-accent-green" : "text-ink-100"].join(" ")}>{t('difficulty_level', { level: row.difficultyLevel })}</p>
+                <span className="rounded-full bg-base-600/60 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-ink-100">{formatPercent(row.accuracy)}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+                <p><span className="text-ink-500">{t('stats_points')}:</span> <span className="tabular-nums text-ink-100">{row.insightPoints}</span></p>
+                <p><span className="text-ink-500">{t('stats_answers')}:</span> <span className="tabular-nums text-ink-100">{row.totalAttempts}</span></p>
+                <p><span className="text-ink-500">{t('stats_correct')}:</span> <span className="tabular-nums text-pastel-mint">{row.correctAttempts}</span></p>
+                <p><span className="text-ink-500">{t('stats_wrong')}:</span> <span className="tabular-nums text-pastel-coral">{row.wrongAttempts}</span></p>
+                <p><span className="text-ink-500">{t('stats_skips')}:</span> <span className="tabular-nums text-ink-100">{row.skipCount}</span></p>
+                <p><span className="text-ink-500">{t('stats_hints_used')}:</span> <span className="tabular-nums text-ink-100">{row.hintsUsedCount}</span></p>
+                <p><span className="text-ink-500">{t('stats_best_streak')}:</span> <span className="tabular-nums text-ink-100">{row.bestStreak}</span></p>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
-      <div className="edge-safe-scroll hidden overflow-x-auto md:block">
+      <div className="hidden overflow-x-auto md:mt-3 md:block">
         <Table>
           <TableHead>
             <TableRow className="text-left text-ink-500">
@@ -413,8 +444,8 @@ function DifficultyStatsTable({ stats, activeDifficulty, onOpenDetails }: Diffic
                 tabIndex={0}
                 aria-label={t('stats_detail_open_for_level', { level: row.difficultyLevel })}
                 className={[
-                  "cursor-pointer rounded-xl border border-base-600 bg-base-700/45 text-ink-200 transition-colors hover:border-accent-greenDim/70 hover:bg-base-700/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-greenDim",
-                  row.difficultyLevel === activeDifficulty ? "outline outline-1 outline-accent-greenDim" : "",
+                  "cursor-pointer rounded-xl bg-base-700/40 text-ink-300 transition-colors hover:bg-base-700/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-greenDim",
+                  row.difficultyLevel === activeDifficulty ? "outline outline-1 outline-accent-green/50" : "",
                 ].join(" ")}
               >
                 <TableCell className="font-semibold text-ink-100">{row.difficultyLevel}</TableCell>
@@ -431,7 +462,7 @@ function DifficultyStatsTable({ stats, activeDifficulty, onOpenDetails }: Diffic
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -477,17 +508,22 @@ function DifficultyStatsDetailModal({ row, isOpen, onClose }: DifficultyStatsDet
 
 function UnlockLevelCard({ level }: UnlockLevelCardProps) {
   const { t } = useI18n();
-  
+
   return (
-    <div className={["rounded-xl border p-1.5", level.unlocked ? "border-accent-greenDim/40 bg-accent-green/10" : "border-base-600 bg-base-700/35"].join(" ")}>
+    <div className={["rounded-xl p-2.5", level.unlocked ? "bg-accent-green/10 ring-1 ring-inset ring-accent-green/30" : "bg-base-700/40"].join(" ")}>
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-semibold text-ink-100">{t('difficulty_level', { level: level.difficultyLevel })}</p>
-        <p className={level.unlocked ? "text-xs text-accent-green" : "text-xs text-ink-500"}>
-          {level.unlocked ? t('stats_unlock_open') : t('stats_unlock_locked')}
-        </p>
+        {level.unlocked ? (
+          <CheckIcon className="h-4 w-4 shrink-0 text-accent-green" />
+        ) : (
+          <LockIcon className="h-3.5 w-3.5 shrink-0 text-ink-500" />
+        )}
+        <span className="sr-only">{level.unlocked ? t('stats_unlock_open') : t('stats_unlock_locked')}</span>
       </div>
-      <ProgressBar progress={level.progress} tone={level.unlocked ? "accent" : "muted"} />
-      <p className="mt-2 text-xs text-ink-400">
+      <div className="mt-2">
+        <ProgressBar progress={level.progress} tone={level.unlocked ? "accent" : "muted"} />
+      </div>
+      <p className="mt-1.5 text-[11px] text-ink-500">
         {level.difficultyLevel === 1
           ? t('stats_starter_level')
           : t('stats_unlock_progress', { current: level.correctAnswersTowardsUnlock, required: level.requiredCorrectAnswers, previous: level.difficultyLevel - 1 })}
@@ -497,12 +533,17 @@ function UnlockLevelCard({ level }: UnlockLevelCardProps) {
 }
 
 function UnlockLevelsGrid({ stats }: UnlockLevelsGridProps) {
+  const { t } = useI18n();
+
   return (
-    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-      {stats.progression.levels.map((level) => (
-        <UnlockLevelCard key={level.difficultyLevel} level={level} />
-      ))}
-    </div>
+    <Card>
+      <CardTitle>{t('difficulty_label')}</CardTitle>
+      <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-5">
+        {stats.progression.levels.map((level) => (
+          <UnlockLevelCard key={level.difficultyLevel} level={level} />
+        ))}
+      </div>
+    </Card>
   );
 }
 
@@ -525,19 +566,16 @@ export function UserStatsPanel({ stats, globalStats, achievements, loading, erro
   const detailRow = detailDifficulty === null ? null : stats.byDifficulty.find((row) => row.difficultyLevel === detailDifficulty) ?? null;
 
   return (
-    <PanelShell>
-      <div className="absolute right-6 top-6 z-10 sm:right-8 sm:top-8">
-        <RefreshButton refreshing={refreshing} onRefresh={onRefresh} />
-      </div>
-      {globalStats ? <GlobalStatsPanel stats={globalStats} /> : null}
-      {achievements ? <AchievementsPanel achievements={achievements} /> : null}
-
-      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+    <div className="space-y-2.5">
+      <div className="grid gap-2.5 lg:grid-cols-[1.2fr_0.8fr]">
         <HeroPanel stats={stats} refreshing={refreshing} onRefresh={onRefresh} />
         <SummaryGrid stats={stats} />
       </div>
 
       {activeLevel ? <ActiveDifficultyPanel activeLevel={activeLevel} /> : null}
+      {globalStats ? <GlobalStatsPanel stats={globalStats} /> : null}
+      {achievements ? <AchievementsPanel achievements={achievements} /> : null}
+
       <DifficultyStatsTable
         stats={stats}
         activeDifficulty={activeDifficulty}
@@ -546,7 +584,7 @@ export function UserStatsPanel({ stats, globalStats, achievements, loading, erro
       <UnlockLevelsGrid stats={stats} />
       {detailRow ? <DifficultyStatsDetailModal row={detailRow} isOpen={detailRow !== null} onClose={() => setDetailDifficulty(null)} /> : null}
 
-      {error ? <p className="mt-4 text-xs text-pastel-coral">{t('stats_refresh_warning', { error })}</p> : null}
-    </PanelShell>
+      {error ? <p className="text-xs text-pastel-coral">{t('stats_refresh_warning', { error })}</p> : null}
+    </div>
   );
 }

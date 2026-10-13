@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState, type ReactNode } from "react";
+import { ChevronRightIcon } from "@/components/icons";
 
 export interface AccordionItem {
   id: string;
@@ -33,7 +34,7 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
             key={item.id}
             className={[
               "flex min-h-0 flex-col overflow-hidden",
-              "border-b border-base-600 last:border-b-0",
+              "border-b border-base-600/40 last:border-b-0",
               "transition-[flex-grow] duration-500 ease-in-out",
               isActive ? "flex-1" : "flex-none",
             ].join(" ")}
@@ -52,17 +53,17 @@ export function Accordion({ items, defaultActiveId, className = "", contentClass
                 "transition-colors duration-200",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-greenDim",
                 isActive
-                  ? "bg-base-700/60 text-ink-100"
-                  : "bg-base-800 text-ink-400 hover:bg-base-700/40 hover:text-ink-200",
+                  ? "bg-base-700/40 text-ink-100"
+                  : "bg-transparent text-ink-500 hover:bg-base-700/30 hover:text-ink-300",
               ].join(" ")}
             >
-              <span className="min-w-0 truncate whitespace-nowrap text-xs font-semibold uppercase tracking-[0.12em]">
+              <span className="min-w-0 truncate whitespace-nowrap text-sm font-semibold">
                 {item.title}
               </span>
 
-              <span className="text-lg leading-none">
-                {isActive ? "×" : "+"}
-              </span>
+              <ChevronRightIcon
+                className={["h-4 w-4 shrink-0 transition-transform duration-300", isActive ? "rotate-90 text-accent-green" : ""].join(" ")}
+              />
             </button>
 
             <div

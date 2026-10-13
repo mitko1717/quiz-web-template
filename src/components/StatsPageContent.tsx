@@ -10,7 +10,7 @@ export function StatsPageContent() {
   const statsPage = useStatsPageState(token);
 
   return (
-    <section className="w-full space-y-4 sm:space-y-5">
+    <section className="w-full space-y-2.5 sm:space-y-3">
       <DashboardHeader
         authMode={authMode}
         username={username}

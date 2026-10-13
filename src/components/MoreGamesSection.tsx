@@ -3,6 +3,7 @@
 import { CardSection } from "@/components/types/CardSection";
 import { useI18n } from "@/components/I18nProvider";
 import { useOtherGamesQuery } from "@/hooks";
+import { ChevronRightIcon } from "@/components/icons";
 import { isSafeExternalLink, isSafeImageUrl } from "@/lib/url-safety";
 
 export function MoreGamesSection({ token }: { token?: string }) {
@@ -14,25 +15,26 @@ export function MoreGamesSection({ token }: { token?: string }) {
 
   return (
     <CardSection>
-      <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-500">{t("more_games_title")}</p>
-      <div className="mt-3 space-y-2">
+      <p className="text-xs font-medium text-ink-500">{t("more_games_title")}</p>
+      <div className="mt-2.5 space-y-1.5">
         {games.filter((game): game is typeof game & { tgBotLink: string } => isSafeExternalLink(game.tgBotLink)).map((game) => (
           <a
             key={game.slug}
             href={game.tgBotLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 rounded-xl border border-base-600 bg-base-700/30 p-2.5 transition hover:bg-base-700/50"
+            className="flex items-center gap-3 rounded-xl bg-base-700/40 p-2.5 transition-colors hover:bg-base-700/60"
           >
             {isSafeImageUrl(game.logo) ? (
-              <img src={game.logo} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+              <img src={game.logo} alt="" className="h-10 w-10 shrink-0 rounded-xl object-cover" />
             ) : (
-              <div className="h-10 w-10 shrink-0 rounded-lg bg-base-600" aria-hidden="true" />
+              <div className="h-10 w-10 shrink-0 rounded-xl bg-base-600" aria-hidden="true" />
             )}
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-ink-100">{game.name}</p>
-              {game.tagline ? <p className="truncate text-xs text-ink-400">{game.tagline}</p> : null}
+              {game.tagline ? <p className="truncate text-xs text-ink-500">{game.tagline}</p> : null}
             </div>
+            <ChevronRightIcon className="h-4 w-4 shrink-0 text-ink-500" />
           </a>
         ))}
       </div>
