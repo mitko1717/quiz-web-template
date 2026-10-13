@@ -9,7 +9,7 @@ export default function DailyChallengePage() {
   return (
     <PageWrapper>
       <DailyChallengePageContent />
-      <AdsgramBanner className="mt-4" />
+      <AdsgramBanner className="mt-4" placement="daily-challenge" />
     </PageWrapper>
   );
 }

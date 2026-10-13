@@ -68,7 +68,7 @@ export function HintButton({ hintCost, hasUsedHintThisQuestion, progress, totalI
         </Button>
       </div>
       <div className="mt-2">
-        <AdsgramBanner />
+        <AdsgramBanner placement="hint-popup" />
       </div>
     </div>
   );

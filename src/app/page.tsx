@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <PageWrapper>
       <QuizPlayground />
-      <AdsgramBanner className="mt-4" />
+      <AdsgramBanner className="mt-4" placement="home" />
     </PageWrapper>
   );
 }

@@ -18,10 +18,9 @@ type AdsgramBannerProps = {
   className?: string;
   label?: string;
   onReward?: () => void;
+  placement: string;
 };
 
-const SESSION_SHOWN_KEY = "adsgram_shown_this_session";
-const LAST_SHOWN_AT_KEY = "adsgram_last_shown_at";
 const MIN_INTERVAL_MS = 2 * 60 * 1000;
 
 function isInsideTelegram(): boolean {
@@ -30,29 +29,26 @@ function isInsideTelegram(): boolean {
   return Boolean(tg?.initData);
 }
 
-// Only one ad across the whole app per Mini App session, at least 2 minutes apart —
-// several AdsgramBanner instances can be mounted on the same page (hint popup, daily
-// challenge, home), so this guard lives outside React state to cover all of them.
-function canShowNow(): boolean {
+// Each placement (home, daily challenge, hint popup) throttles itself independently,
+// at least 2 minutes apart — so visiting one place doesn't block ads on another.
+function canShowNow(placementKey: string): boolean {
   try {
-    if (sessionStorage.getItem(SESSION_SHOWN_KEY)) return false;
-    const lastShownAt = Number(sessionStorage.getItem(LAST_SHOWN_AT_KEY) ?? "0");
+    const lastShownAt = Number(sessionStorage.getItem(`adsgram_last_shown_${placementKey}`) ?? "0");
     return Date.now() - lastShownAt >= MIN_INTERVAL_MS;
   } catch {
     return true;
   }
 }
 
-function markShown(): void {
+function markShown(placementKey: string): void {
   try {
-    sessionStorage.setItem(SESSION_SHOWN_KEY, "1");
-    sessionStorage.setItem(LAST_SHOWN_AT_KEY, String(Date.now()));
+    sessionStorage.setItem(`adsgram_last_shown_${placementKey}`, String(Date.now()));
   } catch {
     // sessionStorage unavailable — skip throttling, better than crashing.
   }
 }
 
-export function AdsgramBanner({ blockId, className = "", label = "", onReward }: AdsgramBannerProps) {
+export function AdsgramBanner({ blockId, className = "", label = "", onReward, placement }: AdsgramBannerProps) {
   const resolvedBlockId = blockId ?? process.env.NEXT_PUBLIC_ADSGRAM_BLOCK_ID ?? "";
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkFailed, setSdkFailed] = useState(false);
@@ -65,13 +61,13 @@ export function AdsgramBanner({ blockId, className = "", label = "", onReward }:
 
   useEffect(() => {
     if (!resolvedBlockId || !sdkReady || sdkFailed || !inTelegram || shownRef.current) return;
-    if (!canShowNow()) return;
+    if (!canShowNow(placement)) return;
     if (!window.Adsgram) {
       setSdkFailed(true);
       return;
     }
     shownRef.current = true;
-    markShown();
+    markShown(placement);
     try {
       const controller = window.Adsgram.init({ blockId: resolvedBlockId });
       controller
@@ -83,7 +79,7 @@ export function AdsgramBanner({ blockId, className = "", label = "", onReward }:
     } catch {
       setSdkFailed(true);
     }
-  }, [resolvedBlockId, sdkReady, sdkFailed, inTelegram, onReward]);
+  }, [resolvedBlockId, sdkReady, sdkFailed, inTelegram, onReward, placement]);
 
   if (!resolvedBlockId || sdkFailed || !inTelegram) return null;
 
