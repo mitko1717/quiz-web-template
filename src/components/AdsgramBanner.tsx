@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
 declare global {
@@ -20,56 +20,40 @@ type AdsgramBannerProps = {
   onReward?: () => void;
 };
 
-export function AdsgramBanner({ blockId, className = "", label = "🎬 Watch an ad", onReward }: AdsgramBannerProps) {
+export function AdsgramBanner({ blockId, className = "", label = "", onReward }: AdsgramBannerProps) {
   const resolvedBlockId = blockId ?? process.env.NEXT_PUBLIC_ADSGRAM_BLOCK_ID ?? "";
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkFailed, setSdkFailed] = useState(false);
-  const [pending, setPending] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  const shownRef = useRef(false);
 
-  if (!resolvedBlockId || sdkFailed || hidden) return null;
-
-  const handleShow = () => {
+  useEffect(() => {
+    if (!resolvedBlockId || !sdkReady || sdkFailed || shownRef.current) return;
     if (!window.Adsgram) {
       setSdkFailed(true);
       return;
     }
-    setPending(true);
+    shownRef.current = true;
     try {
       const controller = window.Adsgram.init({ blockId: resolvedBlockId });
       controller
         .show()
         .then(() => onReward?.())
         .catch(() => {
-          // User skipped or ad failed to load — fail silently, no layout shift.
-        })
-        .finally(() => setPending(false));
+          // Ad failed to load or was dismissed — fail silently, no layout shift.
+        });
     } catch {
       setSdkFailed(true);
-      setPending(false);
     }
-  };
+  }, [resolvedBlockId, sdkReady, sdkFailed, onReward]);
+
+  if (!resolvedBlockId || sdkFailed) return null;
 
   return (
-    <>
-      <Script
-        src="https://adsgram.ai/js/adsgram-ad.js"
-        strategy="afterInteractive"
-        onReady={() => setSdkReady(true)}
-        onError={() => setSdkFailed(true)}
-      />
-      <button
-        type="button"
-        disabled={!sdkReady || pending}
-        onClick={handleShow}
-        className={[
-          "w-full rounded-xl border border-base-600 bg-base-700/40 px-3 py-2 text-center text-xs text-ink-300",
-          "transition-colors hover:bg-base-700/60 disabled:cursor-not-allowed disabled:opacity-50",
-          className
-        ].join(" ")}
-      >
-        {pending ? "..." : label}
-      </button>
-    </>
+    <Script
+      src="https://adsgram.ai/js/adsgram-ad.js"
+      strategy="afterInteractive"
+      onReady={() => setSdkReady(true)}
+      onError={() => setSdkFailed(true)}
+    />
   );
 }
