@@ -78,6 +78,8 @@ export const uk: Record<keyof typeof en, string> = {
   quiz_switch_account: 'Змінити акаунт',
   quiz_open_stats: 'Відкрити статистику',
   header_daily_streak: 'Щоденна серія: {days} дн.',
+  header_streak_label: 'Серія',
+  header_streak_days: '{days} дн.',
   header_daily_challenge_open: 'Сьогоднішній челендж',
   header_daily_challenge_done: 'Сьогоднішній челендж виконано',
 

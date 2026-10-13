@@ -104,9 +104,9 @@ export function LanguageSwitcher({ onChange, disabled = false, compact = false, 
           aria-label={t('lang_label')}
           title={t('lang_label')}
           onClick={() => setIsOpen((prev) => !prev)}
-          className="inline-flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-base-600 bg-base-700/45 text-ink-200 transition-colors hover:border-accent-greenDim hover:text-ink-100 [&::-webkit-details-marker]:hidden"
+          className="inline-flex h-13 w-12 cursor-pointer items-center justify-center rounded-2xl bg-base-800/80 text-ink-300 ring-1 ring-inset ring-base-600/50 transition-colors hover:text-accent-green"
         >
-          <GlobeIcon className="h-4 w-4" />
+          <GlobeIcon className="h-5 w-5" />
         </button>
         {isOpen && popoverStyle
           ? createPortal(

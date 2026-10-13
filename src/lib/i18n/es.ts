@@ -78,6 +78,8 @@ export const es: Record<keyof typeof en, string> = {
   quiz_switch_account: 'Cambiar de cuenta',
   quiz_open_stats: 'Abrir estadísticas',
   header_daily_streak: 'Racha diaria: {days} d.',
+  header_streak_label: 'Racha',
+  header_streak_days: '{days} d',
   header_daily_challenge_open: 'Desafío de hoy',
   header_daily_challenge_done: 'Desafío de hoy completado',
 

@@ -76,6 +76,8 @@ export const en = {
   quiz_switch_account: 'Switch account',
   quiz_open_stats: 'Open statistics',
   header_daily_streak: 'Daily streak: {days}d',
+  header_streak_label: 'Streak',
+  header_streak_days: '{days} d',
   header_daily_challenge_open: "Today's challenge",
   header_daily_challenge_done: "Today's challenge done",
 

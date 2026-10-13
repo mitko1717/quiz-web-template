@@ -20,9 +20,7 @@ type NavItem = {
 
 export function FooterNav({ authMode }: FooterNavProps) {
   const pathname = usePathname();
-  const { t, language } = useI18n();
-  const compactLocale = language !== "en";
-  const navItemTrackingClass = language === "uk" ? "tracking-[0.015em]" : "tracking-[0.03em]";
+  const { t } = useI18n();
 
   const items: NavItem[] = [
     { href: "/", label: t("nav_quiz"), icon: <HomeIcon />, match: (path) => path === "/" },
@@ -38,7 +36,7 @@ export function FooterNav({ authMode }: FooterNavProps) {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-base-600 bg-base-800/95 backdrop-blur-sm"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-base-600/40 bg-base-900/85 backdrop-blur-md"
       style={{
         paddingBottom: "max(var(--app-content-safe-area-bottom), 10px)",
         paddingLeft: "var(--app-horizontal-safe-left)",
@@ -46,7 +44,7 @@ export function FooterNav({ authMode }: FooterNavProps) {
       }}
     >
       <ul
-        className="mx-auto grid max-w-5xl gap-1 px-0.5 py-1.5"
+        className="mx-auto grid max-w-5xl px-1 pt-1"
         style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
       >
         {items.map((i) => {
@@ -55,18 +53,23 @@ export function FooterNav({ authMode }: FooterNavProps) {
             <li key={i.href}>
               <Link
                 href={i.href}
-                className={[
-                  "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl border px-0.5 py-1 transition-colors",
-                  compactLocale ? "text-[9.5px] font-semibold" : "text-[10px] font-semibold uppercase",
-                  navItemTrackingClass,
-                  active
-                    ? "border-accent-greenDim bg-accent-green/20 text-accent-green"
-                    : "border-transparent bg-base-700/55 text-ink-300 hover:border-base-600 hover:text-ink-100",
-                ].join(" ")}
                 aria-current={active ? "page" : undefined}
+                className={[
+                  "relative flex min-h-12 flex-col items-center justify-center gap-1 text-[10.5px] font-medium leading-none transition-colors",
+                  active ? "text-accent-green" : "text-ink-500 hover:text-ink-300",
+                ].join(" ")}
               >
-                {i.icon}
-                <span className="max-w-full text-center leading-tight whitespace-nowrap">{i.label}</span>
+                <span
+                  aria-hidden="true"
+                  className={[
+                    "absolute top-0 h-0.5 w-8 rounded-full bg-accent-green transition-opacity",
+                    active ? "opacity-100 shadow-[0_0_10px_color-mix(in_srgb,var(--color-accent-green)_70%,transparent)]" : "opacity-0",
+                  ].join(" ")}
+                />
+                <span className={active ? "drop-shadow-[0_0_6px_color-mix(in_srgb,var(--color-accent-green)_60%,transparent)]" : ""}>
+                  {i.icon}
+                </span>
+                <span className="max-w-full truncate whitespace-nowrap px-0.5">{i.label}</span>
               </Link>
             </li>
           );
