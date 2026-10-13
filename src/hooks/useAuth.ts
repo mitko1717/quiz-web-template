@@ -7,6 +7,13 @@ import { useI18n } from "@/providers/I18nProvider";
 const DEVICE_ID_KEY = `${topicConfig.slug}-device-id`;
 const AUTH_SESSION_KEY = `${topicConfig.slug}-auth-session`;
 
+// Security note (2026-10-13 review, item #3): access/refresh tokens are stored in
+// localStorage rather than an httpOnly cookie. This is an accepted tradeoff, not an
+// oversight — this app runs inside Telegram's WebView (a more contained environment
+// than a public browser), the codebase uses no dangerouslySetInnerHTML anywhere, and a
+// restrictive CSP (next.config.ts) limits script-src to self + a small allowlist of
+// known providers. Switching to httpOnly cookies would require the engine to issue
+// Set-Cookie instead of JSON tokens — not planned unless a concrete XSS vector emerges.
 interface StoredAuthSession {
   token: string;
   refreshToken: string;
