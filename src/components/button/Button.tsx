@@ -20,7 +20,7 @@ const VARIANT_CLASSES = {
   dailyOptionSelected: "border border-accent-greenDim bg-accent-green/10 text-ink-100 disabled:opacity-40",
   difficultyActive: "border border-accent-green/70 bg-accent-green/15 text-accent-green shadow-[0_0_14px_color-mix(in_srgb,var(--color-accent-green)_30%,transparent)] disabled:opacity-40",
   difficultyOpen: "border border-base-600/60 bg-base-700/50 text-ink-300 hover:border-accent-greenDim hover:text-ink-100 disabled:opacity-40",
-  difficultyLocked: "border border-base-600/40 bg-base-700/25 text-ink-500 disabled:opacity-60",
+  difficultyLocked: "border border-base-600/40 bg-base-700/25 text-ink-500 disabled:opacity-75",
   inputModeActive: "border border-accent-green/70 bg-accent-green/15 text-accent-green shadow-[0_0_12px_color-mix(in_srgb,var(--color-accent-green)_25%,transparent)] disabled:opacity-40",
   inputModeIdle: "border border-base-600/40 bg-base-700/40 text-ink-300 hover:text-ink-100 disabled:opacity-40",
 } as const;

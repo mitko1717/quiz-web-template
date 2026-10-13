@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/button";
 import { Modal } from "@/components/common/Modal";
-import { ChevronRightIcon, LockIcon } from "@/components/icons";
+import { CheckIcon, ChevronRightIcon, LockIcon } from "@/components/icons";
 import type { DifficultyLevel, DifficultyProgressionResponse } from "@/lib";
 import { LEVELS } from "@/lib";
 import { useI18n } from "@/components/I18nProvider";
@@ -215,40 +215,51 @@ function DifficultyCards({ value, onChange, progression, disabled = false, layou
                   "relative overflow-hidden px-3 py-2.5 text-left text-sm",
                   isSlider
                     ? compactLocale
-                      ? "w-[min(40vw,150px)] shrink-0 snap-start lg:w-auto lg:shrink lg:snap-none"
-                      : "w-[min(36vw,140px)] shrink-0 snap-start lg:w-auto lg:shrink lg:snap-none"
+                      ? "w-[min(58vw,180px)] shrink-0 snap-start lg:w-auto lg:shrink lg:snap-none"
+                      : "w-[min(52vw,160px)] shrink-0 snap-start lg:w-auto lg:shrink lg:snap-none"
                     : "",
                   showUnlockMotion ? "difficulty-unlock-glow" : "",
                   showProgressPulse ? "difficulty-progress-bump" : "",
                 ].join(" ")}
               >
                 <div className="relative z-[1] flex items-center justify-between gap-1.5">
-                  <span className="block truncate">{t("difficulty_level", { level })}</span>
-                  {!unlocked ? (
+                  <span className="block truncate font-semibold">{t("difficulty_level", { level })}</span>
+                  {unlocked ? (
+                    <span
+                      className={[
+                        "inline-flex shrink-0 items-center gap-1 rounded-full bg-accent-green/15 px-1.5 py-0.5 font-semibold text-accent-green",
+                        compactLocale ? "text-[9px]" : "text-[9px] uppercase tracking-[0.06em]",
+                      ].join(" ")}
+                    >
+                      <CheckIcon className="h-2.5 w-2.5" />
+                      {t("difficulty_open")}
+                    </span>
+                  ) : (
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-base-600/70 text-ink-300">
                       <LockIcon className="h-3 w-3" />
+                      <span className="sr-only">{t("difficulty_locked")}</span>
                     </span>
-                  ) : null}
+                  )}
                 </div>
                 {!unlocked && required > 0 ? (
-                  <div className="relative z-[1] mt-2">
-                    <div className="h-1 overflow-hidden rounded-full bg-base-600/70">
+                  <div className="relative z-[1] mt-1.5">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[11px]">
+                      <span className={["font-bold text-pastel-amber", showProgressPulse ? "difficulty-progress-count-pop" : ""].join(" ")}>
+                        {t("difficulty_left_to_unlock", { count: leftToUnlock })}
+                      </span>
+                      <span className={["font-semibold tabular-nums text-ink-300", showProgressPulse ? "difficulty-progress-count-pop" : ""].join(" ")}>
+                        {t("difficulty_unlock_progress", { current: towards, required })}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-base-600/70">
                       <div
                         className={[
-                          "h-full rounded-full bg-accent-green transition-all duration-500",
+                          "h-full rounded-full bg-gradient-to-r from-pastel-amber to-accent-green shadow-[0_0_8px_color-mix(in_srgb,var(--color-accent-green)_50%,transparent)] transition-all duration-500",
                           showProgressPulse ? "difficulty-progress-fill-sheen" : "",
                         ].join(" ")}
                         style={{ width: `${progressPct}%` }}
                       />
                     </div>
-                    <p
-                      className={[
-                        "mt-1 text-right text-[11px] font-semibold tabular-nums text-ink-300",
-                        showProgressPulse ? "difficulty-progress-count-pop" : "",
-                      ].join(" ")}
-                    >
-                      {towards}/{required}
-                    </p>
                   </div>
                 ) : showUnlockMotion ? (
                   <span className="relative z-[1] mt-1.5 block text-xs difficulty-unlocked-label">
@@ -258,11 +269,6 @@ function DifficultyCards({ value, onChange, progression, disabled = false, layou
                 {showUnlockMotion ? (
                   <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-r from-pastel-mint/0 via-pastel-mint/20 to-pastel-sky/0 opacity-90 difficulty-unlock-sweep" />
                 ) : null}
-                <span className="sr-only">
-                  {unlocked
-                    ? t("difficulty_open")
-                    : `${t("difficulty_locked")} ${t("difficulty_left_to_unlock", { count: leftToUnlock })}. ${t("difficulty_unlock_progress", { current: towards, required })}`}
-                </span>
               </Button>
             );
           })}
