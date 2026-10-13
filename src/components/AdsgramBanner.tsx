@@ -50,7 +50,7 @@ export function AdsgramBanner({ blockId, className = "", label = "", onReward }:
 
   return (
     <Script
-      src="https://adsgram.ai/js/adsgram-ad.js"
+      src="https://sad.adsgram.ai/js/sad.min.js"
       strategy="afterInteractive"
       onReady={() => setSdkReady(true)}
       onError={() => setSdkFailed(true)}
