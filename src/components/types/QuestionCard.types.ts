@@ -116,6 +116,7 @@ export type ModeTriggerProps = {
   disabled: boolean;
   onOpen: () => void;
   scopeLabel: string;
+  scopeFiltered: boolean;
 };
 
 export interface ModeModalProps {

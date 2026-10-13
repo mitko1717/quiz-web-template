@@ -9,7 +9,7 @@ type CardSectionProps = {
   resultState?: 'correct' | 'wrong' | null;
 };
 
-const BASE_CLASS_NAME = "relative w-full min-w-0 max-w-full overflow-visible rounded-2xl border bg-base-800 p-2 sm:p-4";
+const BASE_CLASS_NAME = "relative w-full min-w-0 max-w-full overflow-visible rounded-2xl bg-base-800/60 p-3 ring-1 ring-inset sm:p-4";
 const TRANSITION_CLASS_NAME = "transition-all duration-300 ease-out";
 const FALLBACK_FROM_CLASS_NAME = "opacity-0 translate-y-3 scale-[0.985]";
 const FALLBACK_TO_CLASS_NAME = "opacity-100 translate-y-0 scale-100";
@@ -18,10 +18,10 @@ export function CardSection({ children, className, transitionKey, resultState = 
   const sectionRef = useRef<HTMLElement | null>(null);
   const resultClassName =
     resultState === 'correct'
-      ? 'border-pastel-mint/80 question-result-correct'
+      ? 'ring-2 ring-pastel-mint/70 shadow-[0_0_22px_color-mix(in_srgb,var(--color-pastel-mint)_18%,transparent)]'
       : resultState === 'wrong'
-        ? 'border-pastel-coral/80 question-result-wrong question-result-shake'
-        : 'border-base-600';
+        ? 'ring-2 ring-pastel-coral/70 shadow-[0_0_22px_color-mix(in_srgb,var(--color-pastel-coral)_18%,transparent)] question-result-shake'
+        : 'ring-base-600/40';
 
   useEffect(() => {
     if (typeof transitionKey === "undefined") return;

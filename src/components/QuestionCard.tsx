@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/button";
 import { HintButton } from "@/components/HintButton";
 import { AdsgramBanner } from "@/components/AdsgramBanner";
-import { ModeIcon } from "@/components/icons";
+import { ArrowRightIcon, LightbulbIcon, ModeIcon } from "@/components/icons";
 import { Input } from "@/components/common/input";
 import { Modal } from "@/components/common/Modal";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -65,67 +65,42 @@ function HintTrigger({ disabled, pending, hasResult, onOpen }: HintTriggerProps)
   const { t } = useI18n();
 
   return (
-    <Button
+    <button
       type="button"
-      variant="ghost"
-      size="sm"
       aria-label={t('question_hint_open')}
       title={t('question_hint_open')}
       disabled={disabled}
       onClick={onOpen}
       className={[
-        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full !p-0 text-xl sm:h-10 sm:w-10",
-        hasResult ? "border-pastel-amber/70 bg-pastel-amber/15 text-pastel-amber" : "border-pastel-amber/45 text-pastel-amber"
+        "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-pastel-amber transition-colors disabled:opacity-40",
+        hasResult
+          ? "bg-pastel-amber/20 shadow-[0_0_12px_color-mix(in_srgb,var(--color-pastel-amber)_35%,transparent)]"
+          : "bg-pastel-amber/10 hover:bg-pastel-amber/20",
       ].join(" ")}
     >
-      <span aria-hidden="true">{pending ? "..." : "?"}</span>
-    </Button>
+      {pending ? <span aria-hidden="true" className="text-sm">…</span> : <LightbulbIcon className="h-5 w-5" />}
+    </button>
   );
 }
 
-function splitScopeLabel(label: string): string[] {
-  const words = label.split(' ').filter(Boolean);
-  const lines: string[] = [];
-  let carry = '';
-  for (const w of words) {
-    if (w.length <= 2) {
-      carry = carry ? `${carry} ${w}` : w;
-      continue;
-    }
-    lines.push(carry ? `${carry} ${w}` : w);
-    carry = '';
-  }
-  if (carry) {
-    if (lines.length) lines[lines.length - 1] += ` ${carry}`;
-    else lines.push(carry);
-  }
-  return lines;
-}
-
-function ModeTrigger({ disabled, onOpen, scopeLabel }: ModeTriggerProps) {
+function ModeTrigger({ disabled, onOpen, scopeLabel, scopeFiltered }: ModeTriggerProps) {
   const { t } = useI18n();
+  const label = `${t('question_mode_open')} · ${t('question_scope_chip_label', { scope: scopeLabel })}`;
 
   return (
-    <div className="flex items-center gap-1">
-      <span
-        className="inline-flex min-h-8 shrink-0 flex-col items-center justify-center gap-0 rounded-full text-center border border-accent-greenDim/50 bg-accent-green/10 px-2 py-1 text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-accent-green"
-        title={t('question_scope_chip_label', { scope: scopeLabel })}
-      >
-        {splitScopeLabel(scopeLabel).map((line, i) => <span key={`${line}-${i}`} className="whitespace-nowrap">{line}</span>)}
-      </span>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        aria-label={t('question_mode_open')}
-        title={t('question_mode_open')}
-        disabled={disabled}
-        onClick={onOpen}
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-accent-greenDim/60 !p-0 text-sm text-accent-green sm:h-10 sm:w-10"
-      >
-        <ModeIcon className="!h-6 !w-6 shrink-0 sm:!h-7 sm:!w-7" />
-      </Button>
-    </div>
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      disabled={disabled}
+      onClick={onOpen}
+      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-green/10 text-accent-green transition-colors hover:bg-accent-green/20 disabled:opacity-40"
+    >
+      <ModeIcon className="h-5 w-5" />
+      {scopeFiltered ? (
+        <span aria-hidden="true" className="absolute right-1 top-1 h-2 w-2 rounded-full bg-pastel-amber shadow-[0_0_6px_var(--color-pastel-amber)]" />
+      ) : null}
+    </button>
   );
 }
 
@@ -388,19 +363,20 @@ function ErrorNotice({ error }: ErrorNoticeProps) {
 function ActionRow({ hasAnswered, submittingAnswer, submitDisabled, skipDisabled, nextDisabled, onSubmitAnswer, onSkipQuestion, onNextQuestion }: ActionRowProps) {
   const { t } = useI18n();
   return (
-    <div className="mt-1.5 rounded-xl border-0 bg-transparent p-0 md:mt-0 md:border md:border-base-600 md:bg-base-700/25 md:p-3">
+    <div className="mt-2 md:mt-0">
       {!hasAnswered ? (
-        <div className="flex flex-col gap-1.5 sm:gap-2">
+        <div className="flex flex-col gap-1">
           <Button className="w-full" type="button" onClick={() => void onSubmitAnswer()} disabled={submitDisabled} variant="primary">
             {submittingAnswer ? <LoadingSpinner size="sm" /> : t('question_submit')}
           </Button>
-          <Button className="w-full" type="button" onClick={() => void onSkipQuestion()} disabled={skipDisabled} variant="secondary">
+          <Button className="w-full" type="button" onClick={() => void onSkipQuestion()} disabled={skipDisabled} variant="subtle" size="sm">
             {t('question_skip')}
           </Button>
         </div>
       ) : (
-        <Button className="w-full" type="button" onClick={() => void onNextQuestion()} disabled={nextDisabled} variant="primary">
+        <Button className="flex w-full items-center justify-center gap-2" type="button" onClick={() => void onNextQuestion()} disabled={nextDisabled} variant="primary">
           {t('question_next')}
+          <ArrowRightIcon className="h-4 w-4" />
         </Button>
       )}
     </div>
@@ -462,6 +438,7 @@ export function QuestionCard({
         disabled={loadingQuestion || submittingAnswer}
         onOpen={() => setModeModalOpen(true)}
         scopeLabel={t((topicConfig.scopes.find((s) => s.value === questionScope)?.labelKey ?? '') as TranslationKey)}
+        scopeFiltered={topicConfig.scopes.length > 0 && questionScope !== topicConfig.scopes[0].value}
       />
       <HintTrigger disabled={hintDisabled} pending={usingHint} hasResult={Boolean(hintResult)} onOpen={() => setHintModalOpen(true)} />
     </>

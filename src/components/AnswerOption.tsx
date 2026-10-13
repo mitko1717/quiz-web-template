@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/button";
+import { CheckIcon, XIcon } from "@/components/icons";
 
 interface AnswerOptionProps {
   label: string;
@@ -12,6 +13,35 @@ interface AnswerOptionProps {
   isNoneOfAbove: boolean;
   isFlagOption?: boolean;
   onSelect: () => void;
+}
+
+function OptionIndicator({ selected, isCorrectAnswer, isWrong }: { selected: boolean; isCorrectAnswer: boolean; isWrong: boolean }) {
+  if (isCorrectAnswer) {
+    return (
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-pastel-mint text-base-900">
+        <CheckIcon className="h-3 w-3" />
+      </span>
+    );
+  }
+
+  if (isWrong) {
+    return (
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-pastel-coral text-base-900">
+        <XIcon className="h-3 w-3" />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={[
+        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+        selected ? "border-accent-green" : "border-ink-500/60",
+      ].join(" ")}
+    >
+      {selected ? <span className="h-2.5 w-2.5 rounded-full bg-accent-green shadow-[0_0_6px_var(--color-accent-green)]" /> : null}
+    </span>
+  );
 }
 
 export function AnswerOption({ label, selected, locked, triedWrong, isCorrectAnswer, isWrongSelection, isNoneOfAbove, isFlagOption, onSelect }: AnswerOptionProps) {
@@ -32,14 +62,16 @@ export function AnswerOption({ label, selected, locked, triedWrong, isCorrectAns
       onClick={onSelect}
       disabled={locked}
       className={[
-        "min-h-10 w-full px-2.5 py-1.5 text-left text-[0.95rem] leading-5 font-semibold transition-colors duration-200 sm:min-h-11 sm:px-3.5 sm:py-2 sm:text-[1.02rem]",
-        isNoneOfAbove && !selected && !isCorrectAnswer && !isWrongSelection ? "border-dashed border-[1.5px] bg-base-700/85 text-ink-200" : "",
-        isNoneOfAbove && selected ? "border-solid border-[1.5px] bg-accent-green/10 text-accent-green" : "",
+        "min-h-11 w-full px-3 py-2 text-left text-[0.95rem] leading-5 font-semibold transition-all duration-200 sm:min-h-12 sm:px-4 sm:text-[1.02rem]",
+        isNoneOfAbove && !selected && !isCorrectAnswer && !isWrongSelection ? "border-dashed border-[1.5px]" : "",
         isCorrectAnswer ? "answer-correct-vivid" : "",
       ].join(" ")}
     >
-      <span className={isFlagOption ? "block min-w-0 break-words text-4xl leading-none" : "block min-w-0 break-words"} aria-hidden={isFlagOption ? "true" : undefined}>
-        {label}
+      <span className="flex min-w-0 items-center gap-3">
+        <OptionIndicator selected={selected} isCorrectAnswer={isCorrectAnswer} isWrong={isWrongSelection || triedWrong} />
+        <span className={isFlagOption ? "block min-w-0 break-words text-4xl leading-none" : "block min-w-0 break-words"} aria-hidden={isFlagOption ? "true" : undefined}>
+          {label}
+        </span>
       </span>
     </Button>
   );

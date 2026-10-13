@@ -256,7 +256,7 @@ export function QuizPlayground() {
           progression={stats?.progression ?? null}
           onChange={handleDifficultyChange}
           disabled={loadingQuestion || submittingAnswer || loadingStats}
-          layout="slider"
+          layout="bar"
         />
       </div>
 
