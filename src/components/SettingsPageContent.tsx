@@ -269,7 +269,7 @@ export function SettingsPageContent() {
         showTopRightCloseButton
         maxWidthClassName="max-w-7xl"
       >
-        <div className="max-h-[78vh] overflow-y-auto pr-1">
+        <div className="max-h-[78vh] min-w-0 overflow-y-auto overflow-x-hidden">
           <AdminPanel token={token} authMode={authMode} canAccess={isAdmin} pageSize={5} />
         </div>
       </Modal>

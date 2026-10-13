@@ -24,7 +24,7 @@ import { topicConfig, formatPercent, type AdminQuizConfigResponse, type Difficul
 
 function Surface({ children, title, subtitle, action }: SurfaceProps) {
   return (
-    <section className="rounded-2xl bg-base-700/25 p-3 ring-1 ring-inset ring-base-600/40">
+    <section className="min-w-0 rounded-2xl bg-base-700/25 p-2.5 ring-1 ring-inset ring-base-600/40 sm:p-3">
       <div className="mb-2.5 flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-ink-100">{title}</p>
@@ -81,7 +81,7 @@ function UserDetailSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => <SkeletonBlock key={i} className="h-20 rounded-xl" />)}
       </div>
       <SkeletonText className="w-36" />
-      <div className="grid gap-2 md:hidden">
+      <div className="grid grid-cols-1 gap-1.5 md:hidden">
         {Array.from({ length: 3 }).map((_, i) => <SkeletonBlock key={i} className="h-24 rounded-xl" />)}
       </div>
       <div className="hidden space-y-2 md:block">
@@ -219,7 +219,7 @@ function UserDetailPanel({ selectedUser, loading, error }: UserDetailPanelProps)
           </div>
           <div>
             <p className="mb-2 text-sm font-semibold text-ink-100">{t("admin_by_difficulty")}</p>
-            <div className="grid gap-2 md:hidden">
+            <div className="grid grid-cols-1 gap-1.5 md:hidden">
               {selectedUser.byDifficulty.map((row: DifficultyRow) => (
                 <div key={row.difficultyLevel} className="rounded-xl bg-base-700/40 p-2.5 text-sm text-ink-300">
                   <div className="mb-2 flex items-center justify-between">
@@ -496,7 +496,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
       <div>
         <ConfigFieldTitle label={t("admin_unlock_title")} />
         <p className="mb-4 text-xs text-ink-500">{t("admin_unlock_desc", { max: topicConfig.maxItemCount })}</p>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {(["2", "3", "4", "5"] as const).map((lvl) => {
             const fromLvl = Number(lvl) - 1;
             const current = draft.unlockThresholds?.[lvl] ?? 5;
@@ -532,7 +532,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
 
       <div>
         <p className="mb-2 text-sm font-semibold text-ink-100">{t("admin_expert_title")}</p>
-        <div className="grid gap-2 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           <ProbabilityEditor label={t("admin_expert_none")} field="expertNoneOfAboveProbability" value={draft.expert.expertNoneOfAboveProbability} onChange={setExpertField} />
           <ProbabilityEditor label={t("admin_expert_trap")} field="expertTrapHistoryProbability" value={draft.expert.expertTrapHistoryProbability} onChange={setExpertField} />
           <ProbabilityEditor label={t("admin_expert_same_item")} field="expertSameItemAllOptionsProbability" value={draft.expert.expertSameItemAllOptionsProbability} onChange={setExpertField} />
@@ -542,7 +542,7 @@ function QuizConfigEditor({ config, schema, saving, error, onSave, onReset }: Qu
       <div>
         <ConfigFieldTitle label={t("admin_daily_streak_title")} />
         <p className="mb-2 text-xs text-ink-500">{t("admin_daily_streak_desc")}</p>
-        <div className="grid gap-2 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           {([
             { day: '7', label: t("admin_daily_streak_day7") },
             { day: '30', label: t("admin_daily_streak_day30") },
@@ -633,7 +633,7 @@ export function AdminPanel({ token, authMode, canAccess, pageSize = 5 }: AdminPa
   return (
     <VerticalStack>
       {showOfflineFallback ? <OfflineStateHint /> : null}
-      <div className="grid gap-2 2xl:grid-cols-[1fr_1.4fr]">
+      <div className="grid grid-cols-1 gap-3 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <UserListPanel
           users={users}
           selectedUser={selectedUser}

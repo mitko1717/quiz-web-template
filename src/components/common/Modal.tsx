@@ -43,7 +43,7 @@ export function Modal({ isOpen, onClose, closeLabel, showTopRightCloseButton = f
       />
       <div
         ref={panelRef}
-        className={`relative z-[1001] w-full overflow-hidden rounded-3xl bg-base-800 p-5 shadow-2xl ring-1 ring-inset ring-base-600/50 sm:p-6 ${maxWidthClassName}`}
+        className={`relative z-[1001] w-full overflow-hidden rounded-3xl bg-base-800 p-4 shadow-2xl ring-1 ring-inset ring-base-600/50 sm:p-6 ${maxWidthClassName}`}
       >
         <div
           aria-hidden="true"

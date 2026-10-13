@@ -79,7 +79,7 @@ function LocalizedFieldGroup({ label, value, onChange }: {
   return (
     <div className="space-y-1.5">
       <p className="text-xs font-medium text-ink-500">{label}</p>
-      <div className="grid gap-1.5 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-3">
         <Input placeholder="EN" value={value.en} onChange={(e) => onChange({ ...value, en: e.target.value })} />
         <Input placeholder="ES" value={value.es} onChange={(e) => onChange({ ...value, es: e.target.value })} />
         <Input placeholder="UK" value={value.uk} onChange={(e) => onChange({ ...value, uk: e.target.value })} />
@@ -120,7 +120,7 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
   };
 
   return (
-    <section className="rounded-2xl bg-base-700/25 p-3 ring-1 ring-inset ring-base-600/40">
+    <section className="min-w-0 rounded-2xl bg-base-700/25 p-2.5 ring-1 ring-inset ring-base-600/40 sm:p-3">
       <div className="mb-2.5">
         <p className="text-sm font-semibold text-ink-100">{t("admin_games_title")}</p>
         <p className="mt-0.5 text-xs text-ink-500">{t("admin_games_desc")}</p>
@@ -181,7 +181,7 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
         <LocalizedFieldGroup label={t("admin_games_field_name")} value={draft.name} onChange={(v) => set("name", v)} />
         <LocalizedFieldGroup label={t("admin_games_field_tagline")} value={draft.tagline} onChange={(v) => set("tagline", v)} />
         <LocalizedFieldGroup label={t("admin_games_field_description")} value={draft.description} onChange={(v) => set("description", v)} />
-        <div className="grid gap-1.5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
           <Input placeholder={t("admin_games_field_bot_link")} value={draft.tgBotLink} onChange={(e) => set("tgBotLink", e.target.value)} />
           <Input placeholder={t("admin_games_field_logo")} value={draft.logo} onChange={(e) => set("logo", e.target.value)} />
           <Input placeholder={t("admin_games_field_banner")} value={draft.bannerImage} onChange={(e) => set("bannerImage", e.target.value)} />
