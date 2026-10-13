@@ -23,12 +23,6 @@ type AdsgramBannerProps = {
 
 const MIN_INTERVAL_MS = 2 * 60 * 1000;
 
-function isInsideTelegram(): boolean {
-  if (typeof window === "undefined") return false;
-  const tg = (window as unknown as { Telegram?: { WebApp?: { initData?: string } } }).Telegram?.WebApp;
-  return Boolean(tg?.initData);
-}
-
 // Each placement (home, daily challenge, hint popup) throttles itself independently,
 // at least 2 minutes apart — so visiting one place doesn't block ads on another.
 function canShowNow(placementKey: string): boolean {
@@ -52,15 +46,10 @@ export function AdsgramBanner({ blockId, className = "", label = "", onReward, p
   const resolvedBlockId = blockId ?? process.env.NEXT_PUBLIC_ADSGRAM_BLOCK_ID ?? "";
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkFailed, setSdkFailed] = useState(false);
-  const [inTelegram, setInTelegram] = useState(false);
   const shownRef = useRef(false);
 
   useEffect(() => {
-    setInTelegram(isInsideTelegram());
-  }, []);
-
-  useEffect(() => {
-    if (!resolvedBlockId || !sdkReady || sdkFailed || !inTelegram || shownRef.current) return;
+    if (!resolvedBlockId || !sdkReady || sdkFailed || shownRef.current) return;
     if (!canShowNow(placement)) return;
     if (!window.Adsgram) {
       setSdkFailed(true);
@@ -79,9 +68,9 @@ export function AdsgramBanner({ blockId, className = "", label = "", onReward, p
     } catch {
       setSdkFailed(true);
     }
-  }, [resolvedBlockId, sdkReady, sdkFailed, inTelegram, onReward, placement]);
+  }, [resolvedBlockId, sdkReady, sdkFailed, onReward, placement]);
 
-  if (!resolvedBlockId || sdkFailed || !inTelegram) return null;
+  if (!resolvedBlockId || sdkFailed) return null;
 
   return (
     <Script
