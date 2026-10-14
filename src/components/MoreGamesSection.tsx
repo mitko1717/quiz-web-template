@@ -4,12 +4,22 @@ import { CardSection } from "@/components/types/CardSection";
 import { useI18n } from "@/components/I18nProvider";
 import { useOtherGamesQuery } from "@/hooks";
 import { ChevronRightIcon } from "@/components/icons";
-import { isSafeExternalLink, isSafeImageUrl } from "@/lib/url-safety";
+import { useEffect, useState } from "react";
+import { isSafeExternalLink, isSafeImageUrl, isSafeWebLink } from "@/lib/url-safety";
 
 export function MoreGamesSection({ token }: { token?: string }) {
   const { t } = useI18n();
   const { data } = useOtherGamesQuery(token);
-  const games = data?.games ?? [];
+  const [inTelegram, setInTelegram] = useState(true);
+  useEffect(() => {
+    const w = window as unknown as { Telegram?: { WebApp?: { initData?: string } } };
+    setInTelegram(Boolean(w.Telegram?.WebApp?.initData));
+  }, []);
+  // Telegram → bot link; plain browser → web version (falls back to bot if none).
+  const games = (data?.games ?? []).map((game) => {
+    const href = !inTelegram && isSafeWebLink(game.webUrl) ? game.webUrl : isSafeExternalLink(game.tgBotLink) ? game.tgBotLink : null;
+    return { ...game, href };
+  }).filter((game): game is typeof game & { href: string } => game.href !== null);
 
   if (games.length === 0) return null;
 
@@ -17,10 +27,10 @@ export function MoreGamesSection({ token }: { token?: string }) {
     <CardSection>
       <p className="text-xs font-medium text-ink-500">{t("more_games_title")}</p>
       <div className="mt-2.5 space-y-1.5">
-        {games.filter((game): game is typeof game & { tgBotLink: string } => isSafeExternalLink(game.tgBotLink)).map((game) => (
+        {games.map((game) => (
           <a
             key={game.slug}
-            href={game.tgBotLink}
+            href={game.href}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-xl bg-base-700/40 p-2.5 transition-colors hover:bg-base-700/60"

@@ -15,6 +15,7 @@ type Draft = {
   name: LocalizedDraft;
   description: LocalizedDraft;
   tgBotLink: string;
+  webUrl: string;
   logo: string;
   bannerImage: string;
   tagline: LocalizedDraft;
@@ -25,7 +26,7 @@ type Draft = {
 const EMPTY_LOCALIZED: LocalizedDraft = { en: "", es: "", uk: "" };
 
 const EMPTY_DRAFT: Draft = {
-  slug: "", name: { ...EMPTY_LOCALIZED }, description: { ...EMPTY_LOCALIZED }, tgBotLink: "", logo: "", bannerImage: "",
+  slug: "", name: { ...EMPTY_LOCALIZED }, description: { ...EMPTY_LOCALIZED }, tgBotLink: "", webUrl: "", logo: "", bannerImage: "",
   tagline: { ...EMPTY_LOCALIZED }, active: true, sortOrder: 0
 };
 
@@ -39,6 +40,7 @@ function toDraft(g: AdminGame): Draft {
     name: toLocalizedDraft(g.name),
     description: toLocalizedDraft(g.description),
     tgBotLink: g.tgBotLink ?? "",
+    webUrl: g.webUrl ?? "",
     logo: g.logo ?? "",
     bannerImage: g.bannerImage ?? "",
     tagline: toLocalizedDraft(g.tagline),
@@ -63,6 +65,7 @@ function draftToPayload(d: Draft): CreateGamePayload {
     name: name ?? { en: "" },
     description: localizedDraftToPayload(d.description),
     tgBotLink: d.tgBotLink.trim() || undefined,
+    webUrl: d.webUrl.trim() || undefined,
     logo: d.logo.trim() || undefined,
     bannerImage: d.bannerImage.trim() || undefined,
     tagline: localizedDraftToPayload(d.tagline),
@@ -183,6 +186,7 @@ export function AdminGamesPanel({ token, enabled }: { token: string; enabled: bo
         <LocalizedFieldGroup label={t("admin_games_field_description")} value={draft.description} onChange={(v) => set("description", v)} />
         <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
           <Input placeholder={t("admin_games_field_bot_link")} value={draft.tgBotLink} onChange={(e) => set("tgBotLink", e.target.value)} />
+          <Input placeholder="Web URL (https://…)" value={draft.webUrl} onChange={(e) => set("webUrl", e.target.value)} />
           <Input placeholder={t("admin_games_field_logo")} value={draft.logo} onChange={(e) => set("logo", e.target.value)} />
           <Input placeholder={t("admin_games_field_banner")} value={draft.bannerImage} onChange={(e) => set("bannerImage", e.target.value)} />
           <Input placeholder={t("admin_games_field_sort")} type="number" value={String(draft.sortOrder)} onChange={(e) => set("sortOrder", Number(e.target.value))} />

@@ -295,6 +295,7 @@ export interface AdminGame {
   name: LocalizedText;
   description: LocalizedText;
   tgBotLink: string | null;
+  webUrl?: string | null;
   logo: string | null;
   bannerImage: string | null;
   tagline: LocalizedText | null;
@@ -307,6 +308,7 @@ export interface CreateGamePayload {
   name: LocalizedText;
   description?: LocalizedText;
   tgBotLink?: string;
+  webUrl?: string;
   logo?: string;
   bannerImage?: string;
   tagline?: LocalizedText;

@@ -16,6 +16,12 @@ function isAllowedHttpsUrl(value: string, allowedHosts: string[]): boolean {
   }
 }
 
+// For web game links (webUrl) — any https URL.
+export function isSafeWebLink(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  try { return new URL(value).protocol === "https:"; } catch { return false; }
+}
+
 // For navigable links (tgBotLink, referral links) — only Telegram's own domains.
 export function isSafeExternalLink(value: string | null | undefined): value is string {
   if (!value) return false;
