@@ -100,8 +100,15 @@ export function AuthGate({ children, adminOnly = false }: AuthGateProps) {
   ) : null;
 
   useEffect(() => {
-    if (!profileQuery.data?.preferredLanguage) return;
-    setLanguage(profileQuery.data.preferredLanguage);
+    const stored = profileQuery.data?.preferredLanguage;
+    if (!stored) return;
+    // Single-language apps (e.g. pdr = uk): persist the supported language once, so backend
+    // language-scoped visibility (achievements, stats, games) matches what the user sees.
+    if (!topicConfig.languages.includes(stored)) {
+      void setPreferredLanguage(topicConfig.languages[0]).catch(() => undefined);
+      return;
+    }
+    setLanguage(stored);
   }, [profileQuery.data?.preferredLanguage, setLanguage]);
 
   useEffect(() => {
