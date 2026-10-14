@@ -44,7 +44,7 @@ export function FooterNav({ authMode }: FooterNavProps) {
       }}
     >
       <ul
-        className="mx-auto grid max-w-5xl px-1 pt-1"
+        className="mx-auto grid max-w-3xl px-1 pt-1"
         style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
       >
         {items.map((i) => {

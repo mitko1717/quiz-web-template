@@ -269,7 +269,7 @@ export function SettingsPageContent() {
         closeLabel={t("common_dismiss")}
         title={t("quiz_admin_panel")}
         showTopRightCloseButton
-        maxWidthClassName="max-w-7xl"
+        maxWidthClassName="max-w-3xl"
       >
         <div className="max-h-[78vh] min-w-0 overflow-y-auto overflow-x-hidden">
           <AdminPanel token={token} authMode={authMode} canAccess={isAdmin} pageSize={5} />
