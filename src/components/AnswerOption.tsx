@@ -61,6 +61,7 @@ export function AnswerOption({ label, selected, locked, triedWrong, isCorrectAns
       size="lg"
       onClick={onSelect}
       disabled={locked}
+      data-answer-option=""
       className={[
         "min-h-11 w-full px-3 py-2 text-left text-[0.95rem] leading-5 font-semibold transition-all duration-200 sm:min-h-12 sm:px-4 sm:text-[1.02rem]",
         isNoneOfAbove && !selected && !isCorrectAnswer && !isWrongSelection ? "border-dashed border-[1.5px]" : "",

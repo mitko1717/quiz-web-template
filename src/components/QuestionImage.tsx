@@ -25,7 +25,7 @@ export function QuestionImage({ publicFields, className = "" }: QuestionImagePro
         alt=""
         decoding="async"
         onError={() => setFailed(true)}
-        className="mx-auto block max-h-[240px] w-full object-contain"
+        className="mx-auto block h-auto max-h-[200px] w-auto max-w-full object-contain"
       />
     </div>
   );
