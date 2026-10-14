@@ -236,7 +236,7 @@ export const en = {
   achievements_unlocked: 'Unlocked',
   achievements_play_game: 'Play this game',
 
-  more_games_title: 'More games',
+  more_games_title: 'More quizzes',
 
   admin_page_label: '{appName} - Admin',
   admin_back_to_quiz: 'Back to quiz',

@@ -238,7 +238,7 @@ export const es: Record<keyof typeof en, string> = {
   achievements_unlocked: 'Desbloqueado',
   achievements_play_game: 'Jugar este juego',
 
-  more_games_title: 'Más juegos',
+  more_games_title: 'Más quizzes',
 
   admin_page_label: '{appName} — Admin',
   admin_back_to_quiz: 'Volver al quiz',

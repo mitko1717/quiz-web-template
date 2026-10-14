@@ -238,7 +238,7 @@ export const uk: Record<keyof typeof en, string> = {
   achievements_unlocked: 'Розблоковано',
   achievements_play_game: 'Грати в цю гру',
 
-  more_games_title: 'Більше ігор',
+  more_games_title: 'Більше квізів',
 
   admin_page_label: '{appName} — Адмін',
   admin_back_to_quiz: 'Назад до вікторини',
