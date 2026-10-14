@@ -148,7 +148,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
           ) : <div />}
           {actions ? <div className="flex shrink-0 gap-1">{actions}</div> : null}
         </div>
-        <h2 className="mt-2 break-words text-left text-lg font-semibold leading-snug text-ink-100 sm:text-2xl">
+        <h2 data-question-text="" className="mt-2 break-words text-left text-lg font-semibold leading-snug text-ink-100 sm:text-2xl">
           {prompt}
         </h2>
       </div>
@@ -158,7 +158,7 @@ function QuestionHeading({ question, actions }: QuestionHeadingProps) {
   return (
     <div className="mb-2.5 grid grid-cols-[minmax(0,3fr)_auto] items-start gap-1 sm:mb-4 sm:gap-2">
       <div className="min-w-0">
-        <h2 className="break-words text-lg font-semibold leading-snug text-ink-100 sm:mt-1 sm:text-2xl">
+        <h2 data-question-text="" className="break-words text-lg font-semibold leading-snug text-ink-100 sm:mt-1 sm:text-2xl">
           {prompt}
           {badge && question.questionDirection !== QuestionDirection.REVERSE ? (
             <span className="ml-2 inline-block align-middle" aria-hidden="true">{badge}</span>
