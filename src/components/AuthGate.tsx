@@ -1,5 +1,7 @@
 "use client";
 import { createContext, ChangeEvent, useContext, useState, useSyncExternalStore } from "react";
+import { queryKeys } from "@/lib/queryKeys";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/common/input";
@@ -123,12 +125,17 @@ export function AuthGate({ children, adminOnly = false }: AuthGateProps) {
     void attemptTelegramLogin();
   }, [authMode, hydrated, isTelegram, loading, loginWithTelegram, t, telegramLoginAttempted]);
 
+  const queryClient = useQueryClient();
+
   const setPreferredLanguage = async (nextLanguage: Language) => {
     if (!token) return;
     const previousLanguage = language;
     setLanguage(nextLanguage);
     try {
       await updateLanguageMutation.mutateAsync(nextLanguage);
+      // Visibility of language-restricted topics (e.g. pdr = uk only) depends on the language.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.achievements(token) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.globalStats(token) });
     } catch {
       setLanguage(previousLanguage);
       throw new Error(t('common_unexpected_error'));
