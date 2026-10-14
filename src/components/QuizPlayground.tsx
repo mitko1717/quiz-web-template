@@ -93,13 +93,17 @@ export function QuizPlayground() {
     appliedProfileDifficultyRef.current = false;
   }, [token]);
 
+  // preferredDifficultyLevel is stored once per account (shared by every quiz), so a level unlocked
+  // in another game must not be applied here unless it's unlocked in this topic too.
   useEffect(() => {
     const preferred = profileQuery.data?.preferredDifficultyLevel;
-    if (!preferred || appliedProfileDifficultyRef.current) return;
+    const progression = stats?.progression;
+    if (!preferred || !progression || appliedProfileDifficultyRef.current) return;
 
-    setDifficulty(preferred);
+    const unlockedHere = progression.levels.find((lvl) => lvl.difficultyLevel === preferred)?.unlocked ?? preferred === 1;
+    setDifficulty(unlockedHere ? preferred : progression.highestUnlockedDifficulty);
     appliedProfileDifficultyRef.current = true;
-  }, [profileQuery.data?.preferredDifficultyLevel, setDifficulty]);
+  }, [profileQuery.data?.preferredDifficultyLevel, stats?.progression, setDifficulty]);
 
   const handleDifficultyChange = useCallback((level: DifficultyLevel) => {
     setDifficulty(level);
