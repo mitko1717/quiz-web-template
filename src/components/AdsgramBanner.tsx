@@ -108,6 +108,13 @@ function isEligible(blockId: string): boolean {
   return Boolean(blockId) && isOnline() && !isBlockDisabled(blockId) && canShowNow();
 }
 
+// Adsgram works only inside Telegram; in a plain browser its SDK shows a blocking
+// "Unable to retrieve launch parameters" alert, so on the web we never load it.
+function isInsideTelegram(): boolean {
+  const w = window as unknown as { Telegram?: { WebApp?: { initData?: string } } };
+  return Boolean(w.Telegram?.WebApp?.initData);
+}
+
 export function AdsgramBanner({ blockId, onReward, placement }: AdsgramBannerProps) {
   const resolvedBlockId = blockId ?? process.env.NEXT_PUBLIC_ADSGRAM_BLOCK_ID ?? "";
   const [eligible, setEligible] = useState(false);
@@ -117,7 +124,7 @@ export function AdsgramBanner({ blockId, onReward, placement }: AdsgramBannerPro
 
   // Decided on the client only (navigator/localStorage); until then nothing is loaded.
   useEffect(() => {
-    if (isEligible(resolvedBlockId)) setEligible(true);
+    if (isInsideTelegram() && isEligible(resolvedBlockId)) setEligible(true);
   }, [resolvedBlockId]);
 
   useEffect(() => {
