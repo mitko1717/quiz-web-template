@@ -147,6 +147,8 @@ export const en = {
   question_hint_free_used: 'Free daily hint used.',
   question_hint_points_spent: 'Spent {points} insight points.',
   question_skip: 'Skip',
+  question_explanation_title: 'Explanation',
+  question_explanation_reference: 'Rule {reference}',
   question_next: 'Next question',
   question_suggestion_up: "You're doing great at this level - want to try the next one?",
   question_suggestion_down: 'This level might be a bit tough right now - want to drop down?',

@@ -146,6 +146,7 @@ export function SettingsPageContent() {
   return (
     <>
       <section className="w-full space-y-2.5 sm:space-y-3">
+        {topicConfig.languages.length > 1 ? (
         <SettingsSection>
           <SectionHeader
             tone="sky"
@@ -157,6 +158,7 @@ export function SettingsPageContent() {
             <LanguageSwitcher onChange={setPreferredLanguage} />
           </div>
         </SettingsSection>
+        ) : null}
 
         <SettingsSection>
           <SectionHeader tone="mint" icon={<ShareIcon className="h-4 w-4" />} title={t("settings_referral_title")} />

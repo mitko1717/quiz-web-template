@@ -6,6 +6,7 @@ import { useI18n } from '@/providers/I18nProvider';
 import { type Language } from '@/lib/i18n';
 import { LANGUAGE_FLAGS } from '@/lib/constants/language-flags';
 import { GlobeIcon } from '@/components/icons';
+import { topicConfig } from '@/lib/topic.config';
 
 interface LanguageSwitcherProps {
   onChange?: (language: Language) => Promise<void> | void;
@@ -68,11 +69,12 @@ export function LanguageSwitcher({ onChange, disabled = false, compact = false, 
     }
   };
 
-  const languageOptions: Array<{ code: Language; short: string; label: string }> = [
+  const allLanguageOptions: Array<{ code: Language; short: string; label: string }> = [
     { code: 'en', short: 'EN', label: t('lang_en') },
     { code: 'es', short: 'ES', label: t('lang_es') },
     { code: 'uk', short: 'UK', label: t('lang_uk') },
   ];
+  const languageOptions = allLanguageOptions.filter((option) => topicConfig.languages.includes(option.code));
 
   const selectControl = (
     <select
@@ -94,6 +96,8 @@ export function LanguageSwitcher({ onChange, disabled = false, compact = false, 
       ))}
     </select>
   );
+
+  if (topicConfig.languages.length <= 1) return null;
 
   if (trigger === 'icon') {
     return (

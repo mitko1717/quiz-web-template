@@ -27,6 +27,7 @@ export function QuizModeControls(props: QuizModeControlsProps) {
 
   return (
     <div className="space-y-3">
+      {topicConfig.allowFreeText ? (
       <Wrapper className="mb-3">
         <Title>{t("question_input_mode_label")}</Title>
         <div className="grid grid-cols-2 gap-1.5">
@@ -52,6 +53,7 @@ export function QuizModeControls(props: QuizModeControlsProps) {
           </Button>
         </div>
       </Wrapper>
+      ) : null}
 
       {allowReverseMode !== false ? (
         <Wrapper className="mb-3">

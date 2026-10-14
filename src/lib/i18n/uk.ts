@@ -149,6 +149,8 @@ export const uk: Record<keyof typeof en, string> = {
   question_hint_free_used: 'Безкоштовну щоденну підказку вже використано.',
   question_hint_points_spent: 'Витрачено балів: {points}.',
   question_skip: 'Пропустити',
+  question_explanation_title: 'Пояснення',
+  question_explanation_reference: 'п. {reference}',
   question_next: 'Наступне питання',
   question_suggestion_up: 'Ви чудово справляєтесь на цьому рівні! Бажаєте спробувати наступний?',
   question_suggestion_down: 'Цей рівень зараз може бути занадто складним. Бажаєте перейти на рівень нижче?',

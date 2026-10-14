@@ -149,6 +149,8 @@ export const es: Record<keyof typeof en, string> = {
   question_hint_free_used: 'Ya usaste la pista gratuita de hoy.',
   question_hint_points_spent: 'Gastaste {points} puntos.',
   question_skip: 'Omitir',
+  question_explanation_title: 'Explicación',
+  question_explanation_reference: 'Regla {reference}',
   question_next: 'Siguiente pregunta',
   question_suggestion_up: '¡Lo estás haciendo genial en este nivel! ¿Quieres probar el siguiente?',
   question_suggestion_down: 'Este nivel puede ser algo difícil ahora. ¿Quieres bajar un nivel?',

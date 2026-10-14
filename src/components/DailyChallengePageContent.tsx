@@ -11,6 +11,7 @@ import { ArrowRightIcon, CheckIcon, StarIcon } from "@/components/icons";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { OfflineStateHint, SkeletonBlock, SkeletonText } from "./common/Skeleton";
 import { AnswerOption } from "./AnswerOption";
+import { QuestionImage } from "./QuestionImage";
 import { apiClient } from "@/lib/apiClient";
 import { queryKeys } from "@/lib/queryKeys";
 import { useProfileQuery, useNetworkStatus, useReferralLink } from "@/hooks";
@@ -126,6 +127,7 @@ export function DailyChallengePageContent() {
               <ScoreBadge scoreLabel={scoreLabel} />
             </div>
             <ProgressSegments done={currentQuestionNumber - 1 + (hasAnswered ? 1 : 0)} current={currentQuestionNumber} total={totalQuestions} />
+            <QuestionImage key={question.itemId} publicFields={question.publicFields} className="mt-3" />
 
             {isFlagsTopic && badge ? (
               <div className="mt-3 text-6xl leading-none sm:text-7xl" style={{ lineHeight: 0.8 }} aria-hidden="true">

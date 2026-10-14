@@ -1,5 +1,10 @@
 const ALLOWED_LINK_HOSTS = ["t.me", "telegram.org"];
-const ALLOWED_IMAGE_HOSTS = ["raw.githubusercontent.com", "t.me", "telegram.org"];
+// Extra image hosts per app (e.g. a CDN for question images), comma-separated.
+const EXTRA_IMAGE_HOSTS = (process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? "")
+  .split(",")
+  .map((host) => host.trim().toLowerCase())
+  .filter(Boolean);
+const ALLOWED_IMAGE_HOSTS = ["raw.githubusercontent.com", "t.me", "telegram.org", ...EXTRA_IMAGE_HOSTS];
 
 function isAllowedHttpsUrl(value: string, allowedHosts: string[]): boolean {
   try {

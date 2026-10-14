@@ -5,6 +5,8 @@ import { Button } from "@/components/button";
 import { HintButton } from "@/components/HintButton";
 import { AdsgramBanner } from "@/components/AdsgramBanner";
 import { ArrowRightIcon, LightbulbIcon, ModeIcon } from "@/components/icons";
+import { QuestionImage } from "@/components/QuestionImage";
+import type { AnswerExplanation } from "@/lib/types/response.types";
 import { Input } from "@/components/common/input";
 import { Modal } from "@/components/common/Modal";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -352,6 +354,28 @@ function ModeModal({
   );
 }
 
+function ExplanationNotice({ explanation }: { explanation: AnswerExplanation | null }) {
+  const { t } = useI18n();
+  if (!explanation || (!explanation.text && !explanation.reference)) return null;
+
+  return (
+    <div className="mt-3 rounded-xl bg-pastel-sky/10 p-3 text-sm ring-1 ring-inset ring-pastel-sky/25">
+      <div className="flex items-center gap-2">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-pastel-sky/15 text-pastel-sky">
+          <LightbulbIcon className="h-3.5 w-3.5" />
+        </span>
+        <p className="font-semibold text-pastel-sky">{t("question_explanation_title")}</p>
+        {explanation.reference ? (
+          <span className="ml-auto shrink-0 rounded-full bg-base-700/60 px-2 py-0.5 text-[11px] font-medium text-ink-300">
+            {t("question_explanation_reference", { reference: explanation.reference })}
+          </span>
+        ) : null}
+      </div>
+      {explanation.text ? <p className="mt-2 leading-relaxed text-ink-100">{explanation.text}</p> : null}
+    </div>
+  );
+}
+
 function ErrorNotice({ error }: ErrorNoticeProps) {
   return (
     <div className="mt-3 rounded-xl bg-pastel-coral/10 p-2.5 text-sm text-pastel-coral ring-1 ring-inset ring-pastel-coral/30 sm:p-3">
@@ -459,6 +483,7 @@ export function QuestionCard({
 
             {!showLoadingOrOfflineState && question ? (
               <>
+                <QuestionImage key={question.itemId} publicFields={question.publicFields} className="mb-2.5" />
                 <QuestionHeading question={question} actions={questionActions} />
                 {isFreeTextMode ? (
                   <FreeTextAnswerInput
@@ -485,6 +510,7 @@ export function QuestionCard({
           </QuestionContentFrame>
 
           <ResultNotice answerResult={answerResult} skipResult={skipResult} hasAnswered={hasAnswered} inputMode={inputMode} />
+          <ExplanationNotice explanation={hasAnswered ? answerResult?.explanation ?? null : null} />
           {error && !showOfflineFallback ? <ErrorNotice error={error} /> : null}
         </div>
         <ActionRow

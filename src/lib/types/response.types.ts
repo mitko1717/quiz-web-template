@@ -46,6 +46,11 @@ export interface QuestionResponse {
   options: string[];
 }
 
+export interface AnswerExplanation {
+  text: string | null;
+  reference: string | null;
+}
+
 export interface AnswerResponse {
   questionId: string;
   topicId: string;
@@ -63,6 +68,8 @@ export interface AnswerResponse {
   updatedInsightPoints: number;
   difficultySuggestion: Exclude<AdaptiveDifficultySuggestion, AdaptiveDifficultySuggestion.STAY> | null;
   unlockedAchievements: UnlockedAchievement[];
+  // Present only once the answer is revealed, for topics that author explanations.
+  explanation?: AnswerExplanation | null;
 }
  
 export interface SkipResponse {
