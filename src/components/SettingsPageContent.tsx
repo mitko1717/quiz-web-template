@@ -26,6 +26,9 @@ const SECTION_TONES = {
   sky: "bg-pastel-sky/15 text-pastel-sky",
 } as const;
 
+// Optional per-clone attribution for licensed content (e.g. NGSL for the English quiz).
+const CONTENT_CREDIT = process.env.NEXT_PUBLIC_CONTENT_CREDIT?.trim() || null;
+
 export function SettingsPageContent() {
   const { token, authMode, logout, setPreferredLanguage } = useAuthContext();
   const { t, language } = useI18n();
@@ -250,6 +253,8 @@ export function SettingsPageContent() {
           {message ? <p className="mt-3 text-sm text-pastel-mint">{message}</p> : null}
           {error ? <p className="mt-3 text-sm text-pastel-coral">{error}</p> : null}
         </SettingsSection>
+
+        {CONTENT_CREDIT ? <p className="px-2 pb-2 text-center text-[11px] leading-snug text-ink-500">{CONTENT_CREDIT}</p> : null}
       </section>
 
       <ConfirmModal
