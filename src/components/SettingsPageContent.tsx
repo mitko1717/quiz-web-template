@@ -207,6 +207,7 @@ export function SettingsPageContent() {
               onInputModeChange={updatePreferredInputMode}
               onQuestionDirectionChange={updatePreferredQuestionDirection}
               onQuestionScopeChange={updatePreferredQuestionScope}
+              allowReverseMode={profileQuery.data?.allowReverseMode ?? true}
             />
           </div>
         </SettingsSection>

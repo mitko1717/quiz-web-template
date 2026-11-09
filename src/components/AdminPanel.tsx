@@ -22,6 +22,13 @@ import type {
 } from "./types/AdminPanel.types";
 import { topicConfig, formatPercent, type AdminQuizConfigResponse, type DifficultyLevel, LEVELS } from "@/lib";
 
+// Telegram users often have an empty-string display name; `??` would keep it and show nothing.
+function firstNonBlank(...values: Array<string | null | undefined>): string | null {
+  const found = values.find((value) => typeof value === "string" && value.trim().length > 0);
+
+  return found ?? null;
+}
+
 function Surface({ children, title, subtitle, action }: SurfaceProps) {
   return (
     <section className="min-w-0 rounded-2xl bg-base-700/25 p-2.5 ring-1 ring-inset ring-base-600/40 sm:p-3">
@@ -149,7 +156,7 @@ function UserListPanel({ users, selectedUser, search, setSearch, loadingUsers, u
       <div className="space-y-1">
         {users?.items.map((i) => {
           const active = selectedUser?.summary.userId === i.userId;
-          const name = i.displayName ?? i.tgDisplayName ?? i.tgUsername ?? i.email ?? i.deviceId ?? i.userId;
+          const name = firstNonBlank(i.displayName, i.tgDisplayName, i.tgUsername, i.email, i.deviceId) ?? i.userId;
 
           return (
             <button
@@ -200,11 +207,12 @@ function UserDetailPanel({ selectedUser, loading, error }: UserDetailPanelProps)
             <MetricCard
               label={t("admin_user")}
               value={
-                selectedUser.summary.displayName
-                ?? selectedUser.summary.tgDisplayName
-                ?? selectedUser.summary.tgUsername
-                ?? selectedUser.summary.email
-                ?? t("admin_unnamed_user")
+                firstNonBlank(
+                  selectedUser.summary.displayName,
+                  selectedUser.summary.tgDisplayName,
+                  selectedUser.summary.tgUsername,
+                  selectedUser.summary.email
+                ) ?? t("admin_unnamed_user")
               }
             />
             <MetricCard label={t("stats_points")} value={selectedUser.summary.insightPointsTotal} tone="text-accent-green" />
