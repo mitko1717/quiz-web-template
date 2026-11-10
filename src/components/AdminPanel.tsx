@@ -22,11 +22,23 @@ import type {
 } from "./types/AdminPanel.types";
 import { topicConfig, formatPercent, type AdminQuizConfigResponse, type DifficultyLevel, LEVELS } from "@/lib";
 
-// Telegram users often have an empty-string display name; `??` would keep it and show nothing.
+// Telegram names can be empty, a dot, or invisible characters (zero-width, Hangul filler):
+// a value counts only if it has at least one letter or digit.
+const HAS_LETTER_OR_DIGIT = /[\p{L}\p{N}]/u;
+
+function isMeaningful(value: string | null | undefined): value is string {
+  return typeof value === "string" && HAS_LETTER_OR_DIGIT.test(value);
+}
+
 function firstNonBlank(...values: Array<string | null | undefined>): string | null {
-  const found = values.find((value) => typeof value === "string" && value.trim().length > 0);
+  const found = values.find(isMeaningful);
 
   return found ?? null;
+}
+
+// Short stable tag so unnamed users are still distinguishable in the list.
+function shortUserTag(userId: string): string {
+  return `#${userId.replace(/-/g, "").slice(0, 6)}`;
 }
 
 function Surface({ children, title, subtitle, action }: SurfaceProps) {
@@ -156,7 +168,10 @@ function UserListPanel({ users, selectedUser, search, setSearch, loadingUsers, u
       <div className="space-y-1">
         {users?.items.map((i) => {
           const active = selectedUser?.summary.userId === i.userId;
-          const name = firstNonBlank(i.displayName, i.tgDisplayName, i.tgUsername, i.email, i.deviceId) ?? i.userId;
+          const tgHandle = isMeaningful(i.tgUsername) ? `@${i.tgUsername}` : null;
+          const knownName = firstNonBlank(i.displayName, i.tgDisplayName, tgHandle, i.email);
+          const name = knownName ?? `${t("admin_unnamed_user")} ${shortUserTag(i.userId)}`;
+          const initial = knownName ? knownName.replace(/^@/, "").charAt(0) : "?";
 
           return (
             <button
@@ -176,7 +191,7 @@ function UserListPanel({ users, selectedUser, search, setSearch, loadingUsers, u
                   active ? "bg-accent-green text-base-900" : "bg-base-600/70 text-ink-300",
                 ].join(" ")}
               >
-                {String(name).charAt(0)}
+                {initial}
               </span>
               <span className="min-w-0 flex-1 truncate font-semibold text-ink-100">{name}</span>
               <span className="shrink-0 text-right text-xs leading-tight tabular-nums">
@@ -212,7 +227,7 @@ function UserDetailPanel({ selectedUser, loading, error }: UserDetailPanelProps)
                   selectedUser.summary.tgDisplayName,
                   selectedUser.summary.tgUsername,
                   selectedUser.summary.email
-                ) ?? t("admin_unnamed_user")
+                ) ?? `${t("admin_unnamed_user")} ${shortUserTag(selectedUser.summary.userId)}`
               }
             />
             <MetricCard label={t("stats_points")} value={selectedUser.summary.insightPointsTotal} tone="text-accent-green" />
