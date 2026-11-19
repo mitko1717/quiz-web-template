@@ -15,6 +15,7 @@ import { useI18n } from "@/components/I18nProvider";
 import { AdaptiveDifficultySuggestion, LEVELS, type DifficultyLevel } from "@/lib/types";
 import { topicConfig } from "@/lib/topic.config";
 import { MoreGamesSection } from "./MoreGamesSection";
+import { BotPromo } from "./BotPromo";
 
 // Each entry is the streak-threshold table used the Nth time the MOVE_UP suggestion fires on a
 // given level (index 0 = first time, index 1 = second time, ...). If it fires more times than
@@ -355,6 +356,7 @@ export function QuizPlayground() {
             >
               {t("share_button")}
             </Button>
+            <BotPromo showTitle className="w-full pb-2 text-left" />
           </div>
         }
       />

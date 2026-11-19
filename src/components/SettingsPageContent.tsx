@@ -12,6 +12,7 @@ import { useI18n } from "@/components/I18nProvider";
 import { Button } from "@/components/button";
 import { SignInPanel } from "@/components/SignInPanel";
 import { QuizModeControls } from "@/components/QuizModeControls";
+import { BotPromo, botPromoEnabled, botPromoSettingsTitle } from "@/components/BotPromo";
 import { readStoredInputMode, readStoredQuestionDirection, readStoredQuestionScope, writeStoredInputMode, writeStoredQuestionDirection, writeStoredQuestionScope, QuestionDirection, QuizScope, QuizInputMode, Language, topicConfig, shareViaTelegram, LANGUAGE_FLAGS } from "@/lib";
 import { useProfileQuery, useResetProfileMutation, useReferralLink, useNetworkStatus } from "@/hooks";
 import { useTelegram } from "@/providers/TelegramProvider";
@@ -195,6 +196,13 @@ export function SettingsPageContent() {
             </Button>
           ) : null}
         </SettingsSection>
+
+        {botPromoEnabled ? (
+          <SettingsSection>
+            <SectionHeader tone="accent" icon={<LinkIcon className="h-4 w-4" />} title={botPromoSettingsTitle} />
+            <BotPromo className="mt-2" />
+          </SettingsSection>
+        ) : null}
 
         {authMode !== "telegram" ? <SignInPanel /> : null}
 
